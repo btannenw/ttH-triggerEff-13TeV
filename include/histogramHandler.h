@@ -19,6 +19,7 @@
 #include <sys/types.h>
 
 
+
 void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
 {
   TH2D* h_2dCorr = new TH2D();
@@ -32,6 +33,45 @@ void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
   //cout << "number " << nameHLT << " histos: " << array->GetSize() << endl;
 
 }
+
+void initEfficiencyHistograms(TObjArray* array, string nameHLT)
+{
+  // Leading lepton pT
+  const Int_t nbins_pt = 7;
+  Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0};
+  TH1D* h_pt = new TH1D( ("h_" + nameHLT + "_lep0_pt").c_str(),  ("h_" + nameHLT + "_lep0_pt").c_str(), nbins_pt, edges_pt );
+
+  // Leading lepton eta
+  const Int_t nbins_eta = 5;
+  Double_t edges_eta[nbins_eta + 1] = {-2.5, -1.5, -0.75, 0.75, 1.5, 2.5};
+  TH1D* h_eta = new TH1D( ("h_" + nameHLT + "_lep0_eta").c_str(),  ("h_" + nameHLT + "_lep0_eta").c_str(), nbins_eta, edges_eta );
+
+  // N_jets
+  TH1D* h_njets = new TH1D( ("h_" + nameHLT + "_njets").c_str(),  ("h_" + nameHLT + "_njets").c_str(), 7, 0, 7);
+
+  // MET
+  const Int_t nbins_met = 11;
+  Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 150.0, 175.0, 200.0, 250.0, 300.0};
+  TH1D* h_met = new TH1D( ("h_" + nameHLT + "_met").c_str(),  ("h_" + nameHLT + "_met").c_str(), nbins_met, edges_met );
+
+  // N_vtx
+  //TH1D* h_nPV = new TH1D( ("h_" + nameHLT + "_nPV").c_str(),  ("h_" + nameHLT + "_nPV").c_str(), nbins_nPV, edges_nVtx );
+
+  array->AddLast(h_pt);
+  array->AddLast(h_eta);
+  array->AddLast(h_njets);
+  array->AddLast(h_met);
+
+}
+
+void initializeHistograms(TObjArray* array, string nameHLT)
+{
+  init2DCorrelationHistograms(array, nameHLT);
+  initEfficiencyHistograms(array, nameHLT);
+
+  return;
+}
+
 
 void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nameHLT, int passHLT)
 {

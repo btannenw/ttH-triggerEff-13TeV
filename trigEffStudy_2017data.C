@@ -63,8 +63,8 @@ void trigEffStudy_2017data()
   // *** 1. Define histograms and canvasses
   TCanvas *c0 = new TCanvas("c0", "c0", 50, 50, 800, 600);
 
-  init2DCorrelationHistograms(a_HLT_IsoMu27, "HLT_IsoMu27");
-  init2DCorrelationHistograms(a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
+  initializeHistograms(a_HLT_IsoMu27, "HLT_IsoMu27");
+  initializeHistograms(a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
 
   // *** 2. Set tree structure and variables to read
   eve=0;
