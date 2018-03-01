@@ -66,8 +66,6 @@ void trigEffStudy_2017data()
   init2DCorrelationHistograms(a_HLT_IsoMu27, "HLT_IsoMu27");
   init2DCorrelationHistograms(a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
 
-  cout << "number IsoMu27 histos: " << a_HLT_IsoMu27->GetSize() << endl;
-  cout << "number Ele23_WPTight histos: " << a_HLT_Ele32_WPTight_Gsf->GetSize() << endl;
   // *** 2. Set tree structure and variables to read
   eve=0;
   fTree->SetBranchAddress("eve.", &eve );

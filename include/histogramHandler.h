@@ -12,8 +12,8 @@
 #include <TString.h>
 #include <TObjArray.h>
 
-#include "../../cmsStyle/tdrStyle.C"
-#include "../../cmsStyle/CMS_lumi.C"
+#include "../cmsStyle/tdrStyle.C"
+#include "../cmsStyle/CMS_lumi.C"
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -27,10 +27,9 @@ void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
     //cout << metTriggers.at(i) << endl;
     h_2dCorr = new TH2D(("h_" + nameHLT + "__vs__" + metTriggers.at(i)).c_str(), ("h_" + nameHLT + "__vs__" + metTriggers.at(i)).c_str(), 2, 0, 2, 2, 0, 2);
     array->AddLast(h_2dCorr); // add histo to TObjArray
-    //cout << i << "-th: " << h_2dCorr->GetName() << ", size: " << array->GetSize() << endl;
   }
 
-  cout << "number " << nameHLT << " histos: " << array->GetSize() << endl;
+  //cout << "number " << nameHLT << " histos: " << array->GetSize() << endl;
 
 }
 
