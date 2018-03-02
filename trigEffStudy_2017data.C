@@ -18,6 +18,7 @@
 
 // Object Handlers
 #include "src/electronHandler.C"
+#include "src/jetMetHandler.C"
 
 #include <iostream>
 #include <iomanip>      // std::setprecision
@@ -39,8 +40,8 @@ void trigEffStudy_2017data()
 
   // ** B. Set output directory
   topDir = "plots/";
-  printPlots = false;
-  verbose = true;
+  printPlots = true;
+  verbose = false;
 
   // check subdirectory structure for requested options and create directories if necessary
   struct stat sb;
@@ -71,8 +72,8 @@ void trigEffStudy_2017data()
   eve=0;
   fTree->SetBranchAddress("eve.", &eve );
   elTool = electronHandler();
-  elTool.test();
-
+  jetMetTool = jetMetHandler();
+  //elTool.test();
   
   
   // *** 3. Start looping! 
@@ -93,70 +94,22 @@ void trigEffStudy_2017data()
 
     // ** II. Get objects and fill efficiency histograms
     elTool.Event(eve);
+    jetMetTool.Event(eve);
+    
+    //fillEfficiencyHistograms(elTool, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
+    fillEfficiencyHistograms(elTool, jetMetTool, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
   }
 
   // *** 4. Make plots
   //plot2Dcorrelations( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
   //plot2Dcorrelations( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
 
-  TH1D* temp = elTool.h_el_cutflow;
-  temp->Draw();
+  plot1DEfficiencyHistograms( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
 
-  TH1D* temp2 = elTool.h_el_n;
-  temp2->Draw();
 
   return;
 }
     
-
-void plot2Dcorr( TCanvas*& c0, TH2D*& h0, string xtitle, string ytitle)
-{
-
-  // *** 1. Set titles
-  h0->SetXTitle( xtitle.c_str() );
-  h0->SetYTitle( ytitle.c_str() );
- 
-
-  // *** 2. Setup LaTeX for printing correlation factor on plot
-  TLatex ltx1;
-  ltx1.SetTextAlign(9);
-  ltx1.SetTextFont(62);
-  ltx1.SetTextSize(0.04);
-  ltx1.SetNDC();
-
-  string s_corr;          // string which will contain the result
-  std::ostringstream os_corr;  // stream used for the conversion
-  os_corr << std::fixed;
-  os_corr << std::setprecision(2) << h0->GetCorrelationFactor();
-  s_corr = os_corr.str(); // set 'Result' to the contents of the stream
-  
-  
-  // *** 3. Do the drawing
-  c0->cd();
-  h0->Draw("colz");
-  ltx1.DrawLatex(0.55, 0.80, ("Corr. Factor = " + s_corr).c_str());
-  
-  cout << "Correlation Factor (" << xtitle.c_str() << " vs " << ytitle.c_str() << "): " << s_corr.c_str() << endl;
-
-  // *** 4. Set CMS style
-  //CMS_lumi( canv, iPeriod, iPos ); // <-- notes
-  CMS_lumi( c0, 0, 11);
-
-
-  // *** 5. Print plots
-  struct stat sb;
-  std::string tempDir = (topDir + "corr2D" + "/" + xtitle).c_str();
-  if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
-    cout << xtitle << " subdirectory , " << tempDir << " , DNE. Creating now" << endl;
-    mkdir(tempDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
-  }
-  if( printPlots) {
-    c0->Print( (tempDir + "/" + h0->GetName() + ".eps").c_str());
-    c0->Print( (tempDir + "/" + h0->GetName() + ".png").c_str());
-  }
-
-}
-
 
 void printProgBar( int percent )
 {

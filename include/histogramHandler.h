@@ -20,6 +20,30 @@
 
 
 
+//void fillEfficiencyHistograms(electronHandler elTool, TObjArray* array, string nameHLT)
+void fillEfficiencyHistograms(electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT)
+{
+  //cout << "fillEfficiencyHistograms()" << endl;
+
+  TH1D* h0 = new TH1D();
+
+  if ( elTool.passCuts ) { // check electron passing cuts
+    // ===  Method B: FAST  ===
+    h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_el0_pt").c_str() );
+    h0->Fill( elTool.leadPt );
+    
+    h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_el0_eta").c_str() );
+    h0->Fill( elTool.leadEta );
+
+    h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_njets").c_str() );
+    h0->Fill( jetMetTool.nJets );
+
+    h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_met").c_str() );
+    h0->Fill( jetMetTool.MET );
+  }
+
+}
+
 void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
 {
   TH2D* h_2dCorr = new TH2D();
@@ -39,20 +63,29 @@ void initEfficiencyHistograms(TObjArray* array, string nameHLT)
   // Leading lepton pT
   const Int_t nbins_pt = 7;
   Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0};
-  TH1D* h_pt = new TH1D( ("h_" + nameHLT + "_lep0_pt").c_str(),  ("h_" + nameHLT + "_lep0_pt").c_str(), nbins_pt, edges_pt );
+  TH1D* h_pt = new TH1D( ("h_" + nameHLT + "_el0_pt").c_str(),  ("h_" + nameHLT + "_el0_pt").c_str(), nbins_pt, edges_pt );
+  h_pt->SetXTitle("Leading Electron p_{T} [GeV]");
+  h_pt->SetYTitle("Entries / Bin");
 
   // Leading lepton eta
   const Int_t nbins_eta = 5;
   Double_t edges_eta[nbins_eta + 1] = {-2.5, -1.5, -0.75, 0.75, 1.5, 2.5};
-  TH1D* h_eta = new TH1D( ("h_" + nameHLT + "_lep0_eta").c_str(),  ("h_" + nameHLT + "_lep0_eta").c_str(), nbins_eta, edges_eta );
+  TH1D* h_eta = new TH1D( ("h_" + nameHLT + "_el0_eta").c_str(),  ("h_" + nameHLT + "_el0_eta").c_str(), nbins_eta, edges_eta );
+  h_eta->SetMinimum(0.0);
+  h_eta->SetXTitle("Leading Electron #eta");
+  h_eta->SetYTitle("Entries / Bin");
 
   // N_jets
-  TH1D* h_njets = new TH1D( ("h_" + nameHLT + "_njets").c_str(),  ("h_" + nameHLT + "_njets").c_str(), 7, 0, 7);
+  TH1D* h_njets = new TH1D( ("h_" + nameHLT + "_njets").c_str(),  ("h_" + nameHLT + "_njets").c_str(), 12, 0, 12);
+  h_njets->SetXTitle("N_{jets}");
+  h_njets->SetYTitle("Entries / Bin");
 
   // MET
   const Int_t nbins_met = 11;
   Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 150.0, 175.0, 200.0, 250.0, 300.0};
   TH1D* h_met = new TH1D( ("h_" + nameHLT + "_met").c_str(),  ("h_" + nameHLT + "_met").c_str(), nbins_met, edges_met );
+  h_met->SetXTitle("Missing Transverse Energy (MET) [GeV]");
+  h_met->SetYTitle("Entries / Bin");
 
   // N_vtx
   //TH1D* h_nPV = new TH1D( ("h_" + nameHLT + "_nPV").c_str(),  ("h_" + nameHLT + "_nPV").c_str(), nbins_nPV, edges_nVtx );
@@ -137,6 +170,40 @@ void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nam
   }
 
   
+}
+
+void draw1DEfficiencyHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
+{
+
+  TH1D *h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_" + var).c_str() );
+  // *** 3. Do the drawing
+  c0->cd();
+  h0->Draw();
+    
+  // *** 4. Set CMS style
+  //CMS_lumi( canv, iPeriod, iPos ); // <-- notes
+  CMS_lumi( c0, 0, 33);
+    
+  // *** 5. Print plots
+  struct stat sb;
+  std::string tempDir = (topDir + nameHLT).c_str();
+  if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
+    cout << nameHLT << " subdirectory , " << tempDir << " , DNE. Creating now" << endl;
+    mkdir(tempDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+  }
+  if( printPlots) {
+    c0->Print( (tempDir + "/" + h0->GetName() + ".eps").c_str());
+    c0->Print( (tempDir + "/" + h0->GetName() + ".png").c_str());
+  }
+
+}
+void plot1DEfficiencyHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
+{
+  draw1DEfficiencyHistograms(array, c0, nameHLT, "el0_pt");
+  draw1DEfficiencyHistograms(array, c0, nameHLT, "el0_eta");
+  draw1DEfficiencyHistograms(array, c0, nameHLT, "njets");
+  draw1DEfficiencyHistograms(array, c0, nameHLT, "met");
+
 }
 
 void plot2Dcorrelations(TObjArray* array, TCanvas* c0, string nameHLT)

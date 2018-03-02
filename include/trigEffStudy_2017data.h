@@ -7,6 +7,7 @@
 #include <TObjArray.h>
 #include "YggdrasilEventVars.h"
 #include "electronHandler.h"
+#include "jetMetHandler.h"
 
 // top level vars
 std::string topDir;
@@ -15,6 +16,7 @@ bool printPlots, verbose;
 // user tools
 yggdrasilEventVars *eve;
 electronHandler elTool;
+jetMetHandler jetMetTool;
 
 // user vars
 TObjArray* a_HLT_IsoMu27 = new TObjArray();

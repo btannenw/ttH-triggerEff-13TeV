@@ -38,6 +38,8 @@ void electronHandler::applyElectronCuts()
       h_el_cutflow->Fill("|#eta| < 2.4", 1);
 
       passCuts = true;
+      leadPt = ev->lepton_pt_[leadIndex];
+      leadEta = ev->lepton_eta_[leadIndex];
     }
   }
 
@@ -51,7 +53,7 @@ void electronHandler::findLeadingElectron()
       //if (ev->lepton_pt_[l] > 30)
       nElectrons++;
       
-      if (l == -99) leadIndex=l; // first electron
+      if (l == 0) leadIndex=l; // first electron
       else { // not first electron
 	if (ev->lepton_pt_[l] > ev->lepton_pt_[leadIndex])
 	  leadIndex = l;
