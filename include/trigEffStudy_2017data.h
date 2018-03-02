@@ -7,6 +7,7 @@
 #include <TObjArray.h>
 #include "YggdrasilEventVars.h"
 #include "electronHandler.h"
+#include "muonHandler.h"
 #include "jetMetHandler.h"
 
 // top level vars
@@ -16,6 +17,7 @@ bool printPlots, verbose;
 // user tools
 yggdrasilEventVars *eve;
 electronHandler elTool;
+muonHandler muTool;
 jetMetHandler jetMetTool;
 
 // user vars

@@ -21,7 +21,8 @@
 
 
 //void fillEfficiencyHistograms(electronHandler elTool, TObjArray* array, string nameHLT)
-void fillEfficiencyHistograms(electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT)
+//void fillEfficiencyHistograms(electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT)
+void fillEfficiencyHistograms(muonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT)
 {
   //cout << "fillEfficiencyHistograms()" << endl;
 
@@ -34,6 +35,12 @@ void fillEfficiencyHistograms(electronHandler elTool, jetMetHandler jetMetTool, 
     
     h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_el0_eta").c_str() );
     h0->Fill( elTool.leadEta );
+
+    h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_mu0_pt").c_str() );
+    h0->Fill( muTool.leadPt );
+    
+    h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_mu0_eta").c_str() );
+    h0->Fill( muTool.leadEta );
 
     h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_njets").c_str() );
     h0->Fill( jetMetTool.nJets );
@@ -60,20 +67,27 @@ void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
 
 void initEfficiencyHistograms(TObjArray* array, string nameHLT)
 {
-  // Leading lepton pT
+  // Leading electron pT
   const Int_t nbins_pt = 7;
   Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0};
-  TH1D* h_pt = new TH1D( ("h_" + nameHLT + "_el0_pt").c_str(),  ("h_" + nameHLT + "_el0_pt").c_str(), nbins_pt, edges_pt );
-  h_pt->SetXTitle("Leading Electron p_{T} [GeV]");
-  h_pt->SetYTitle("Entries / Bin");
+  TH1D* h_el_pt = new TH1D( ("h_" + nameHLT + "_el0_pt").c_str(),  ("h_" + nameHLT + "_el0_pt").c_str(), nbins_pt, edges_pt );
+  h_el_pt->SetXTitle("Leading Electron p_{T} [GeV]");
+  h_el_pt->SetYTitle("Entries / Bin");
+  TH1D* h_mu_pt = new TH1D( ("h_" + nameHLT + "_mu0_pt").c_str(),  ("h_" + nameHLT + "_mu0_pt").c_str(), nbins_pt, edges_pt );
+  h_mu_pt->SetXTitle("Leading Muon p_{T} [GeV]");
+  h_mu_pt->SetYTitle("Entries / Bin");
 
-  // Leading lepton eta
+  // Leading electron eta
   const Int_t nbins_eta = 5;
   Double_t edges_eta[nbins_eta + 1] = {-2.5, -1.5, -0.75, 0.75, 1.5, 2.5};
-  TH1D* h_eta = new TH1D( ("h_" + nameHLT + "_el0_eta").c_str(),  ("h_" + nameHLT + "_el0_eta").c_str(), nbins_eta, edges_eta );
-  h_eta->SetMinimum(0.0);
-  h_eta->SetXTitle("Leading Electron #eta");
-  h_eta->SetYTitle("Entries / Bin");
+  TH1D* h_el_eta = new TH1D( ("h_" + nameHLT + "_el0_eta").c_str(),  ("h_" + nameHLT + "_el0_eta").c_str(), nbins_eta, edges_eta );
+  h_el_eta->SetMinimum(0.0);
+  h_el_eta->SetXTitle("Leading Electron #eta");
+  h_el_eta->SetYTitle("Entries / Bin");
+  TH1D* h_mu_eta = new TH1D( ("h_" + nameHLT + "_mu0_eta").c_str(),  ("h_" + nameHLT + "_mu0_eta").c_str(), nbins_eta, edges_eta );
+  h_mu_eta->SetMinimum(0.0);
+  h_mu_eta->SetXTitle("Leading Muon #eta");
+  h_mu_eta->SetYTitle("Entries / Bin");
 
   // N_jets
   TH1D* h_njets = new TH1D( ("h_" + nameHLT + "_njets").c_str(),  ("h_" + nameHLT + "_njets").c_str(), 12, 0, 12);
@@ -90,8 +104,10 @@ void initEfficiencyHistograms(TObjArray* array, string nameHLT)
   // N_vtx
   //TH1D* h_nPV = new TH1D( ("h_" + nameHLT + "_nPV").c_str(),  ("h_" + nameHLT + "_nPV").c_str(), nbins_nPV, edges_nVtx );
 
-  array->AddLast(h_pt);
-  array->AddLast(h_eta);
+  array->AddLast(h_el_pt);
+  array->AddLast(h_el_eta);
+  array->AddLast(h_mu_pt);
+  array->AddLast(h_mu_eta);
   array->AddLast(h_njets);
   array->AddLast(h_met);
 
@@ -178,7 +194,8 @@ void draw1DEfficiencyHistograms(TObjArray* array, TCanvas* c0, string nameHLT, s
   TH1D *h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + "_" + var).c_str() );
   // *** 3. Do the drawing
   c0->cd();
-  h0->Draw();
+  h0->Sumw2();
+  h0->Draw("e");
     
   // *** 4. Set CMS style
   //CMS_lumi( canv, iPeriod, iPos ); // <-- notes
@@ -201,6 +218,8 @@ void plot1DEfficiencyHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
 {
   draw1DEfficiencyHistograms(array, c0, nameHLT, "el0_pt");
   draw1DEfficiencyHistograms(array, c0, nameHLT, "el0_eta");
+  draw1DEfficiencyHistograms(array, c0, nameHLT, "mu0_pt");
+  draw1DEfficiencyHistograms(array, c0, nameHLT, "mu0_eta");
   draw1DEfficiencyHistograms(array, c0, nameHLT, "njets");
   draw1DEfficiencyHistograms(array, c0, nameHLT, "met");
 

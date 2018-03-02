@@ -18,6 +18,7 @@
 
 // Object Handlers
 #include "src/electronHandler.C"
+#include "src/muonHandler.C"
 #include "src/jetMetHandler.C"
 
 #include <iostream>
@@ -72,6 +73,7 @@ void trigEffStudy_2017data()
   eve=0;
   fTree->SetBranchAddress("eve.", &eve );
   elTool = electronHandler();
+  muTool = muonHandler();
   jetMetTool = jetMetHandler();
   //elTool.test();
   
@@ -93,11 +95,13 @@ void trigEffStudy_2017data()
     fill2DCorrHistograms(eve, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf", eve->passHLT_Ele32_WPTight_Gsf_v_ );
 
     // ** II. Get objects and fill efficiency histograms
+    muTool.Event(eve);
     elTool.Event(eve);
     jetMetTool.Event(eve);
     
     //fillEfficiencyHistograms(elTool, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
-    fillEfficiencyHistograms(elTool, jetMetTool, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
+    //fillEfficiencyHistograms(elTool, jetMetTool, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
+    fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
   }
 
   // *** 4. Make plots
