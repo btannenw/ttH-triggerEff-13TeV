@@ -6,12 +6,17 @@
 #include <TH2.h>
 #include <TObjArray.h>
 #include "YggdrasilEventVars.h"
+#include "electronHandler.h"
 
-yggdrasilEventVars *eve;
-
+// top level vars
 std::string topDir;
 bool printPlots, verbose;
 
+// user tools
+yggdrasilEventVars *eve;
+electronHandler elTool;
+
+// user vars
 TObjArray* a_HLT_IsoMu27 = new TObjArray();
 TObjArray* a_HLT_Ele32_WPTight_Gsf = new TObjArray();
 

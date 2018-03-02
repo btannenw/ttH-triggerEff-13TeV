@@ -15,8 +15,9 @@
 #include "include/YggdrasilEventVars.h"
 #include "include/trigEffStudy_2017data.h"
 #include "include/histogramHandler.h"
-//#include "../cmsStyle/tdrStyle.C"
-//#include "../cmsStyle/CMS_lumi.C"
+
+// Object Handlers
+#include "src/electronHandler.C"
 
 #include <iostream>
 #include <iomanip>      // std::setprecision
@@ -69,11 +70,14 @@ void trigEffStudy_2017data()
   // *** 2. Set tree structure and variables to read
   eve=0;
   fTree->SetBranchAddress("eve.", &eve );
+  elTool = electronHandler();
+  elTool.test();
 
   
+  
   // *** 3. Start looping! 
-  long t_entries = fTree->GetEntries();
-  //long t_entries = 5000;
+  //long t_entries = fTree->GetEntries();
+  long t_entries = 5000;
   cout << "Tree entries: " << t_entries << endl;
   
   for(int i = 0; i < t_entries; i++) {
@@ -83,18 +87,23 @@ void trigEffStudy_2017data()
     
     fTree->GetEntry(i);
     
+    // ** I. 2D Correlations comparing SL triggers to MET triggers
     fill2DCorrHistograms(eve, a_HLT_IsoMu27, "HLT_IsoMu27", eve->passHLT_IsoMu27_v_ );
     fill2DCorrHistograms(eve, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf", eve->passHLT_Ele32_WPTight_Gsf_v_ );
 
+    // ** II. Get objects and fill efficiency histograms
+    elTool.Event(eve);
   }
 
   // *** 4. Make plots
-  plot2Dcorrelations( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
-  plot2Dcorrelations( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
+  //plot2Dcorrelations( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
+  //plot2Dcorrelations( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
 
+  TH1D* temp = elTool.h_el_cutflow;
+  temp->Draw();
 
-  //for (int i = 0; i < metTriggers.size(); i++)
-  //  cout << metTriggers.at(i) << endl;
+  TH1D* temp2 = elTool.h_el_n;
+  temp2->Draw();
 
   return;
 }
