@@ -23,6 +23,9 @@ jetMetHandler jetMetTool;
 // user vars
 TObjArray* a_HLT_IsoMu27 = new TObjArray();
 TObjArray* a_HLT_Ele32_WPTight_Gsf = new TObjArray();
+TObjArray* a_HLT_PFMET120_PFMHT120_IDTight = new TObjArray();
+TObjArray* a_IsoMu27__X__PFMET120_PFMHT120_IDTight = new TObjArray();
+TObjArray* a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight = new TObjArray();
 
 std::vector <std::string> metTriggers = 
   {

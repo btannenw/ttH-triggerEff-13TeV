@@ -31,6 +31,7 @@ class electronHandler{
 
       // === Variables === //
       bool passCuts;
+      bool passSLtrigger;
       int nLeptons;
       int nElectrons;
       double leadPt;

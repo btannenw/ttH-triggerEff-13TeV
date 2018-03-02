@@ -6,12 +6,13 @@
 electronHandler::electronHandler()
 {
   passCuts = false;
+  passSLtrigger = false;
   leadPt = -99;
   leadEta = -99;
   leadIndex = -99;
   nLeptons = 0;
   nElectrons = 0;
- 
+  
 
   h_el_cutflow = new TH1D("h_el_cutflow", "h_el_cutflow", 4, 0, 4);
   h_el_n       = new TH1D("h_el_n", "h_el_n", 6, 0, 6);
@@ -70,6 +71,7 @@ void electronHandler::Event(yggdrasilEventVars* eve)
   // *** 1. Intialize some things
   ev = eve;
   passCuts = false;
+  passSLtrigger = ev->passHLT_Ele32_WPTight_Gsf_v_ ? true : false;
   nLeptons = ev->lepton_pt_.size();
   nElectrons = 0;  
   h_el_cutflow->Fill("Event", 1);

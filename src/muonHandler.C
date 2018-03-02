@@ -6,6 +6,7 @@
 muonHandler::muonHandler()
 {
   passCuts = false;
+  passSLtrigger = false;
   leadPt = -99;
   leadEta = -99;
   leadIndex = -99;
@@ -70,6 +71,7 @@ void muonHandler::Event(yggdrasilEventVars* eve)
   // *** 1. Intialize some things
   ev = eve;
   passCuts = false;
+  passSLtrigger = ev->passHLT_IsoMu27_v_ ? true : false;
   nLeptons = ev->lepton_pt_.size();
   nMuons = 0;  
   h_mu_cutflow->Fill("Event", 1);

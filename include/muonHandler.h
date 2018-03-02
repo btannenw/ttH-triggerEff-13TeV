@@ -31,6 +31,7 @@ class muonHandler{
 
       // === Variables === //
       bool passCuts;
+      bool passSLtrigger;
       int nLeptons;
       int nMuons;
       double leadPt;
