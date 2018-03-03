@@ -27,30 +27,35 @@ void electronHandler::test()
 
 void electronHandler::applyElectronCuts()
 {
-  h_el_cutflow->Fill("#geq 1 Electron", 1);
+  if (leadIndex == -99) return; // protection when no electron in event
+  
   h_el_n->Fill( nElectrons );
 
-  // Cut 1: pT > 30 GeV
-  if( ev->lepton_pt_[leadIndex] > 30 ) {
-    h_el_cutflow->Fill("p_{T} > 30", 1);
-
-    // Cut 2: |ETA| < 2.4
-    if( abs(ev->lepton_eta_[leadIndex]) < 2.4 ) {
-      h_el_cutflow->Fill("|#eta| < 2.4", 1);
-
-      passCuts = true;
-      leadPt = ev->lepton_pt_[leadIndex];
-      leadEta = ev->lepton_eta_[leadIndex];
-    }
-  }
-
+  // Cut 0: Is electron
+  if (ev->lepton_isMuon_[leadIndex] == 0) { // look only at electrons
+    h_el_cutflow->Fill("Total Electrons", 1);
+    
+    // Cut 1: pT > 30 GeV
+    if( ev->lepton_pt_[leadIndex] > 30 ) {
+      h_el_cutflow->Fill("p_{T} > 30", 1);
+      
+      // Cut 2: |ETA| < 2.4
+      if( abs(ev->lepton_eta_[leadIndex]) < 2.4 ) {
+	h_el_cutflow->Fill("|#eta| < 2.4", 1);
+	
+	passCuts = true;
+	leadPt = ev->lepton_pt_[leadIndex];
+	leadEta = ev->lepton_eta_[leadIndex];
+      } // eta cut
+    } // pt cut
+  } // is electron
 }
 
 void electronHandler::findLeadingElectron()
 {
 
   for (unsigned int l = 0; l < ev->lepton_pt_.size() + 1; l++) {
-    if (ev->lepton_isMuon_[1] == 0) { // look only at electrons
+    if (ev->lepton_isMuon_[l] == 0) { // look only at electrons
       //if (ev->lepton_pt_[l] > 30)
       nElectrons++;
       
@@ -71,6 +76,9 @@ void electronHandler::Event(yggdrasilEventVars* eve)
   // *** 1. Intialize some things
   ev = eve;
   passCuts = false;
+  leadEta = -99;
+  leadPt = -99;
+  leadIndex = -99;
   passSLtrigger = ev->passHLT_Ele32_WPTight_Gsf_v_ ? true : false;
   nLeptons = ev->lepton_pt_.size();
   nElectrons = 0;  

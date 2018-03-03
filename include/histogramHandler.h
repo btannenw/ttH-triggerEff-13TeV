@@ -218,7 +218,7 @@ void draw1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
   c0->cd();
   h0->Sumw2();
   h0->Draw("e");
-    
+
   // *** 4. Set CMS style
   //CMS_lumi( canv, iPeriod, iPos ); // <-- notes
   CMS_lumi( c0, 0, 33);
@@ -320,6 +320,9 @@ void drawEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   h_num->Sumw2();
   h_denom->Sumw2();
   
+  cout << h_num->GetName() << " has " << h_num->GetEntries() << " entries." << endl;
+  cout << h_denom->GetName() << " has " << h_denom->GetEntries() << " entries." << endl;
+
   // *** 2. Divide to get efficiency
   TH1D* h_eff = (TH1D*)h_num->Clone();
   h_eff->Divide(h_denom);
@@ -333,12 +336,20 @@ void drawEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   c0->cd();
   h_eff->Sumw2();
   h_eff->Draw("e");
-    
-  // *** 4. Set CMS style
+
+  // *** 4. Setup LaTeX for printing correlation factor on plot
+  TLatex ltx1;
+  ltx1.SetTextAlign(9);
+  ltx1.SetTextFont(62);
+  ltx1.SetTextSize(0.025);
+  ltx1.SetNDC();
+  ltx1.DrawLatex(0.25, 0.80, nameHLT_num.c_str() );
+
+  // *** 5. Set CMS style
   //CMS_lumi( canv, iPeriod, iPos ); // <-- notes
   CMS_lumi( c0, 0, 33);
     
-  // *** 5. Print plots
+  // *** 6. Print plots
   struct stat sb;
   std::string tempDir = (topDir + nameHLT_num).c_str();
   if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
@@ -360,10 +371,10 @@ void drawEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
 void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHLT_num, TObjArray* a_denominator, string nameHLT_denom)
 {
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_pt");
-  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_eta");
+  //drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_eta");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_pt");
-  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_eta");
-  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
-  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
-
+  //drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_eta");
+  //drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
+  //drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
+ 
 }
