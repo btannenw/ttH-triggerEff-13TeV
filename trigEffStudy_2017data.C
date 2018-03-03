@@ -1,6 +1,6 @@
 // Author:  Ben Tannenwald
 // Date:    Feb 27, 2018
-// Purpose: Make python script to make trigger correlation/efficiency plots that should really be done in a .C macro
+// Purpose: Macro to make trigger correlation/efficiency plots
 
 #include <TFile.h>
 #include <TDirectory.h>
