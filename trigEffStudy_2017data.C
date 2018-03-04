@@ -40,7 +40,7 @@ void trigEffStudy_2017data()
   TTree* fTree = (TTree*) f0->Get("ttHTreeMaker/worldTree");
 
   // ** B. Set output directory
-  topDir = "plots/";
+  topDir = "plots_030518/";
   printPlots = true;
   verbose = false;
 
@@ -93,35 +93,35 @@ void trigEffStudy_2017data()
     
     fTree->GetEntry(i);
     
-    // ** I. 2D Correlations comparing SL triggers to MET triggers
-    fill2DCorrHistograms(eve, a_HLT_IsoMu27, "HLT_IsoMu27", eve->passHLT_IsoMu27_v_ );
-    fill2DCorrHistograms(eve, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf", eve->passHLT_Ele32_WPTight_Gsf_v_ );
-
-    // ** II. Get objects and fill efficiency histograms
+    // ** I. Get objects 
     muTool.Event(eve);
     elTool.Event(eve);
     jetMetTool.Event(eve);
-    
+
+    // ** II. 2D Correlations comparing SL triggers to MET triggers
+    if (muTool.passCuts && jetMetTool.MET > 125) fill2DCorrHistograms(eve, a_HLT_IsoMu27, "HLT_IsoMu27", eve->passHLT_IsoMu27_v_ );
+    if (elTool.passCuts && jetMetTool.MET > 125) fill2DCorrHistograms(eve, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf", eve->passHLT_Ele32_WPTight_Gsf_v_ );
+
     // III. Fill efficiency histograms given some trigger qualifications
     // * a. Single triggers
-    if ( eve->passHLT_Ele32_WPTight_Gsf_v_ && elTool.passCuts) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
-    if ( eve->passHLT_IsoMu27_v_ && muTool.passCuts) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_IsoMu27, "HLT_IsoMu27");
+    if ( eve->passHLT_Ele32_WPTight_Gsf_v_ && elTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_Ele32_WPTight_Gsf, "HLT_Ele32_WPTight_Gsf");
+    if ( eve->passHLT_IsoMu27_v_ && muTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_IsoMu27, "HLT_IsoMu27");
     // !!! FIXME --> how to require presence of lepton (both el and mu separately??)
-    if ( eve->passHLT_PFMET120_PFMHT120_IDTight_v_ ) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight", true);
+    if ( eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight", true);
     // * b. Cross triggers
-    if ( eve->passHLT_IsoMu27_v_ && eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && muTool.passCuts) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
-    if ( eve->passHLT_Ele32_WPTight_Gsf_v_ && eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && elTool.passCuts) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
+    if ( eve->passHLT_IsoMu27_v_ && eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && muTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
+    if ( eve->passHLT_Ele32_WPTight_Gsf_v_ && eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && elTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
 
   }
   
   // *** 4. Make plots
   // ** A. 2D correlations
-  //plot2Dcorrelations( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
-  //plot2Dcorrelations( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
+  plot2Dcorrelations( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
+  plot2Dcorrelations( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
   
   // ** B. 1D distributions
-  //plot1DHistograms( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
-  //plot1DHistograms( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
+  plot1DHistograms( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
+  plot1DHistograms( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
   //plot1DHistograms( a_HLT_PFMET120_PFMHT120_IDTight, c0, "HLT_PFMET120_PFMHT120_IDTight");
   //plot1DHistograms( a_IsoMu27__X__PFMET120_PFMHT120_IDTight, c0, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
   //plot1DHistograms( a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, c0, "Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");

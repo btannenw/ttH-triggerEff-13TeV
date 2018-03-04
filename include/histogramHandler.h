@@ -144,6 +144,19 @@ void initializeHistograms(TObjArray* array, string nameHLT, bool splitStreams=fa
 }
 
 
+void fill2DCorrHistogramsWithLabels(TH2D*& hist, int passHLT_lep, int passHLT_MET)
+{
+  if (passHLT_lep && passHLT_MET)
+    hist->Fill("Fired", "Fired", 1);
+  else if (passHLT_lep && !passHLT_MET)
+    hist->Fill("Fired", "Not Fired", 1);
+  else if (!passHLT_lep && passHLT_MET)
+    hist->Fill("Not Fired", "Fired", 1);
+  else // !passHLT_lep && !passHLT_MET)
+    hist->Fill("Not Fired", "Not Fired", 1);
+
+}
+
 void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nameHLT, int passHLT)
 {
   TH2D* temp = new TH2D();
@@ -170,6 +183,43 @@ void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nam
 
 
     // *** 2. Fill histograms depending on variable
+
+    if( metTriggers.at(i) == "HLT_PFHT500_PFMET100_PFMHT100_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFHT500_PFMET110_PFMHT110_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFHT700_PFMET85_PFMHT85_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFHT700_PFMET95_PFMHT95_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFHT700_PFMET95_PFMHT95_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFHT800_PFMET75_PFMHT75_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFHT800_PFMET85_PFMHT85_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFHT800_PFMET85_PFMHT85_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_CaloMET300_HBHECleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_CaloMET300_HBHECleaned_v_);
+    else if( metTriggers.at(i) == "HLT_CaloMET350_HBHECleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_CaloMET350_HBHECleaned_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET250_HBHECleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET250_HBHECleaned_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET300_HBHECleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET300_HBHECleaned_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET200_HBHE_BeamHaloCleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET200_HBHE_BeamHaloCleaned_v_);
+    else if( metTriggers.at(i) == "HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_);
+    else if( metTriggers.at(i) == "HLT_MET105_IsoTrk50")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_MET105_IsoTrk50_v_);
+    else if( metTriggers.at(i) == "HLT_MET120_IsoTrk50")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_MET120_IsoTrk50_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET120_PFMHT120_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET120_PFMHT120_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET130_PFMHT130_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET130_PFMHT130_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET140_PFMHT140_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET140_PFMHT140_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v_);
+    else if( metTriggers.at(i) == "HLT_DiJet110_35_Mjj650_PFMET110")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_DiJet110_35_Mjj650_PFMET110_v_);
+    else if( metTriggers.at(i) == "HLT_DiJet110_35_Mjj650_PFMET120")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_DiJet110_35_Mjj650_PFMET120_v_);
+    else if( metTriggers.at(i) == "HLT_DiJet110_35_Mjj650_PFMET130")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_DiJet110_35_Mjj650_PFMET130_v_);
+    else if( metTriggers.at(i) == "HLT_TripleJet110_35_35_Mjj650_PFMET110")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_TripleJet110_35_35_Mjj650_PFMET110_v_);
+    else if( metTriggers.at(i) == "HLT_TripleJet110_35_35_Mjj650_PFMET120")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_TripleJet110_35_35_Mjj650_PFMET120_v_);
+    else if( metTriggers.at(i) == "HLT_TripleJet110_35_35_Mjj650_PFMET130")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_TripleJet110_35_35_Mjj650_PFMET130_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v_);
+    else if( metTriggers.at(i) == "HLT_PFMET120_PFMHT120_IDTight_PFHT60")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMET120_PFMHT120_IDTight_PFHT60_v_);
+    else if( metTriggers.at(i) == "HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v_);
+    else if( metTriggers.at(i) == "HLT_PFMETTypeOne120_PFMHT120_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne120_PFMHT120_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFMETTypeOne130_PFMHT130_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne130_PFMHT130_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_PFMETTypeOne140_PFMHT140_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_);
+    else if( metTriggers.at(i) == "HLT_CaloMET250_HBHECleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_CaloMET250_HBHECleaned_v_);
+
+      /*
     if( metTriggers.at(i) == "HLT_PFHT500_PFMET100_PFMHT100_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_PFHT500_PFMET110_PFMHT110_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_PFHT700_PFMET85_PFMHT85_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v_);
@@ -204,7 +254,7 @@ void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nam
     else if( metTriggers.at(i) == "HLT_PFMETTypeOne130_PFMHT130_IDTight") hist->Fill(passHLT, eve->passHLT_PFMETTypeOne130_PFMHT130_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_PFMETTypeOne140_PFMHT140_IDTight") hist->Fill(passHLT, eve->passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_CaloMET250_HBHECleaned") hist->Fill(passHLT, eve->passHLT_CaloMET250_HBHECleaned_v_);
-
+    */
   }
 
   
@@ -371,10 +421,10 @@ void drawEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
 void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHLT_num, TObjArray* a_denominator, string nameHLT_denom)
 {
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_pt");
-  //drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_eta");
+  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_eta");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_pt");
-  //drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_eta");
-  //drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
-  //drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
+  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_eta");
+  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
+  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
  
 }
