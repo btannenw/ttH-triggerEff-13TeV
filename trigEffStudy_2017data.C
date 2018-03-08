@@ -40,8 +40,9 @@ void trigEffStudy_2017data()
   TTree* fTree = (TTree*) f0->Get("ttHTreeMaker/worldTree");
 
   // ** B. Set output directory
-  topDir = "plots_030518/";
+  topDir = "plots_030718/";
   printPlots = true;
+  dumpFile = true;
   verbose = false;
 
   // check subdirectory structure for requested options and create directories if necessary
@@ -50,6 +51,8 @@ void trigEffStudy_2017data()
     cout << "TopDir, " << topDir << " , DNE. EXITING" << endl;
     exit(0);
   }
+  outfile = new TFile( (topDir + "/outfile.root").c_str(), "RECREATE");
+
   std::string tempDir = (topDir + "corr2D" + "/").c_str();
   if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
     cout << "corr2D subdirectory , " << tempDir << " , DNE. Creating now" << endl;
@@ -115,9 +118,10 @@ void trigEffStudy_2017data()
   }
   
   // *** 4. Make plots
+  if( dumpFile) outfile->cd();
   // ** A. 2D correlations
-  plot2Dcorrelations( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
-  plot2Dcorrelations( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
+  //plot2Dcorrelations( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
+  //plot2Dcorrelations( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
   
   // ** B. 1D distributions
   plot1DHistograms( a_HLT_Ele32_WPTight_Gsf, c0, "HLT_Ele32_WPTight_Gsf");
@@ -131,6 +135,10 @@ void trigEffStudy_2017data()
   //makeEfficiencyHistograms( c0, a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight");
   makeEfficiencyHistograms( c0, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight_muStream");
   makeEfficiencyHistograms( c0, a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight_elStream");
+
+
+  if (dumpFile)
+    outfile->Write();
 
   return;
 }

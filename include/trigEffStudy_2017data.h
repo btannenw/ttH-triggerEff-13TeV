@@ -4,6 +4,7 @@
 
 #include <string>
 #include <TH2.h>
+#include <TFile.h>
 #include <TObjArray.h>
 #include "YggdrasilEventVars.h"
 #include "electronHandler.h"
@@ -12,13 +13,16 @@
 
 // top level vars
 std::string topDir;
-bool printPlots, verbose;
+bool printPlots, dumpFile, verbose;
 
 // user tools
 yggdrasilEventVars *eve;
 electronHandler elTool;
 muonHandler muTool;
 jetMetHandler jetMetTool;
+
+// user file
+TFile* outfile = new TFile();
 
 // user vars
 TObjArray* a_HLT_IsoMu27 = new TObjArray();

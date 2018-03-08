@@ -27,28 +27,44 @@ void electronHandler::test()
 
 void electronHandler::applyElectronCuts()
 {
-  if (leadIndex == -99) return; // protection when no electron in event
+  //if (leadIndex == -99) return; // protection when no electron in event
   
-  h_el_n->Fill( nElectrons );
 
-  // Cut 0: Is electron
-  if (ev->lepton_isMuon_[leadIndex] == 0) { // look only at electrons
-    h_el_cutflow->Fill("Total Electrons", 1);
+
+  for (unsigned int l = 0; l < ev->lepton_pt_.size() + 1; l++) {
     
-    // Cut 1: pT > 30 GeV
-    if( ev->lepton_pt_[leadIndex] > 30 ) {
-      h_el_cutflow->Fill("p_{T} > 30", 1);
+    // Cut 0: Is electron
+    if (ev->lepton_isMuon_[l] == 0) { // look only at electrons
+      h_el_cutflow->Fill("Total Electrons", 1);
       
-      // Cut 2: |ETA| < 2.4
-      if( abs(ev->lepton_eta_[leadIndex]) < 2.4 ) {
-	h_el_cutflow->Fill("|#eta| < 2.4", 1);
+      // Cut 1: pT > 30 GeV
+      if( ev->lepton_pt_[l] > 30 ) {
+	h_el_cutflow->Fill("p_{T} > 30", 1);
 	
-	passCuts = true;
-	leadPt = ev->lepton_pt_[leadIndex];
-	leadEta = ev->lepton_eta_[leadIndex];
-      } // eta cut
-    } // pt cut
-  } // is electron
+	// Cut 2: |ETA| < 2.4
+	if( abs(ev->lepton_eta_[l]) < 2.4 ) {
+	  h_el_cutflow->Fill("|#eta| < 2.4", 1);
+	  
+	  // Cut 3: tight ID
+	  if( ev->lepton_isTight_[l] ) {
+	    h_el_cutflow->Fill("Tight ID", 1);
+	    nElectrons++;
+	    passCuts = true;
+
+	    // set leading lepton if appropriate
+	    if (ev->lepton_pt_[l] > leadPt) {
+	      leadPt = ev->lepton_pt_[leadIndex];
+	      leadEta = ev->lepton_eta_[leadIndex];
+	    }
+
+	  } // is tight
+	} // eta cut
+      } // pt cut
+    } // is electron
+
+  } // loop over electrons
+
+  h_el_n->Fill( nElectrons );
 }
 
 void electronHandler::findLeadingElectron()
@@ -82,11 +98,11 @@ void electronHandler::Event(yggdrasilEventVars* eve)
   passSLtrigger = ev->passHLT_Ele32_WPTight_Gsf_v_ ? true : false;
   nLeptons = ev->lepton_pt_.size();
   nElectrons = 0;  
-  h_el_cutflow->Fill("Event", 1);
+  //h_el_cutflow->Fill("Event", 1);
 
   // *** 2. Start handling business! (or at least electrons)
   if (nLeptons > 0 ) {
-    findLeadingElectron();
+    //findLeadingElectron();
     applyElectronCuts();
   }
 

@@ -27,29 +27,42 @@ void muonHandler::test()
 
 void muonHandler::applyMuonCuts()
 {
-  if (leadIndex == -99) return; // protection when no muon in event
+  //if (leadIndex == -99) return; // protection when no muon in event
+
+  for (unsigned int l = 0; l < ev->lepton_pt_.size() + 1; l++) {
+    
+  // Cut 0: is muon
+  if (ev->lepton_isMuon_[l] == 1) { 
+      h_mu_cutflow->Fill("Total Muons", 1);
+      
+      // Cut 1: pT > 30 GeV
+      if( ev->lepton_pt_[l] > 30 ) {
+	h_mu_cutflow->Fill("p_{T} > 30", 1);
+	
+	// Cut 2: |ETA| < 2.4
+	if( abs(ev->lepton_eta_[l]) < 2.4 ) {
+	  h_mu_cutflow->Fill("|#eta| < 2.4", 1);
+	
+	  // Cut 3: Isolation < 0.15
+	  if( ev->lepton_relIso_[l] < 0.15 )  {
+	    h_mu_cutflow->Fill("Isolation < 0.15", 1);
+	    nMuons++;    
+	    passCuts = true;
+
+	    // set leading lepton if appropriate
+	    if (ev->lepton_pt_[l] > leadPt) {
+	      leadPt = ev->lepton_pt_[l];
+	      leadEta = ev->lepton_eta_[l];
+	    }
+	    
+	  } // isolation cut
+	} // eta cut
+      } // pt cut
+    } // is muon
+  
+  } // loop over muons
 
   h_mu_n->Fill( nMuons );
-  // Cut 0: is muon
-
-  if (ev->lepton_isMuon_[leadIndex] == 1) { // look only at muons
-    h_mu_cutflow->Fill("Total Muons", 1);
-    
-    // Cut 1: pT > 30 GeV
-    if( ev->lepton_pt_[leadIndex] > 30 ) {
-      h_mu_cutflow->Fill("p_{T} > 30", 1);
-
-      // Cut 2: |ETA| < 2.4
-      if( abs(ev->lepton_eta_[leadIndex]) < 2.4 ) {
-	h_mu_cutflow->Fill("|#eta| < 2.4", 1);
-	
-	passCuts = true;
-	leadPt = ev->lepton_pt_[leadIndex];
-	leadEta = ev->lepton_eta_[leadIndex];
-      } // eta cut
-    } // pt cut
-  } // is muon
-
 }
 
 void muonHandler::findLeadingMuon()
@@ -83,11 +96,11 @@ void muonHandler::Event(yggdrasilEventVars* eve)
   leadEta = -99;
   leadIndex = -99;
   nMuons = 0;  
-  h_mu_cutflow->Fill("Event", 1);
+  //h_mu_cutflow->Fill("Event", 1);
 
   // *** 2. Start handling business! (or at least muons)
   if (nLeptons > 0 ) {
-    findLeadingMuon();
+    //findLeadingMuon();
     applyMuonCuts();
   }
 

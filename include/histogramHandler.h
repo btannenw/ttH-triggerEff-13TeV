@@ -11,6 +11,8 @@
 #include <TLatex.h>
 #include <TString.h>
 #include <TObjArray.h>
+#include <TEfficiency.h>
+#include <TGraphAsymmErrors.h>
 
 #include "../cmsStyle/tdrStyle.C"
 #include "../cmsStyle/CMS_lumi.C"
@@ -219,42 +221,6 @@ void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nam
     else if( metTriggers.at(i) == "HLT_PFMETTypeOne140_PFMHT140_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_CaloMET250_HBHECleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_CaloMET250_HBHECleaned_v_);
 
-      /*
-    if( metTriggers.at(i) == "HLT_PFHT500_PFMET100_PFMHT100_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFHT500_PFMET110_PFMHT110_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFHT700_PFMET85_PFMHT85_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFHT700_PFMET95_PFMHT95_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT700_PFMET95_PFMHT95_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFHT800_PFMET75_PFMHT75_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFHT800_PFMET85_PFMHT85_IDTight") hist->Fill(passHLT, eve->passHLT_PFHT800_PFMET85_PFMHT85_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_CaloMET300_HBHECleaned") hist->Fill(passHLT, eve->passHLT_CaloMET300_HBHECleaned_v_);
-    else if( metTriggers.at(i) == "HLT_CaloMET350_HBHECleaned") hist->Fill(passHLT, eve->passHLT_CaloMET350_HBHECleaned_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET250_HBHECleaned") hist->Fill(passHLT, eve->passHLT_PFMET250_HBHECleaned_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET300_HBHECleaned") hist->Fill(passHLT, eve->passHLT_PFMET300_HBHECleaned_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET200_HBHE_BeamHaloCleaned") hist->Fill(passHLT, eve->passHLT_PFMET200_HBHE_BeamHaloCleaned_v_);
-    else if( metTriggers.at(i) == "HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned") hist->Fill(passHLT, eve->passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_);
-    else if( metTriggers.at(i) == "HLT_MET105_IsoTrk50") hist->Fill(passHLT, eve->passHLT_MET105_IsoTrk50_v_);
-    else if( metTriggers.at(i) == "HLT_MET120_IsoTrk50") hist->Fill(passHLT, eve->passHLT_MET120_IsoTrk50_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET120_PFMHT120_IDTight") hist->Fill(passHLT, eve->passHLT_PFMET120_PFMHT120_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET130_PFMHT130_IDTight") hist->Fill(passHLT, eve->passHLT_PFMET130_PFMHT130_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET140_PFMHT140_IDTight") hist->Fill(passHLT, eve->passHLT_PFMET140_PFMHT140_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1") hist->Fill(passHLT, eve->passHLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1") hist->Fill(passHLT, eve->passHLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v_);
-    else if( metTriggers.at(i) == "HLT_DiJet110_35_Mjj650_PFMET110") hist->Fill(passHLT, eve->passHLT_DiJet110_35_Mjj650_PFMET110_v_);
-    else if( metTriggers.at(i) == "HLT_DiJet110_35_Mjj650_PFMET120") hist->Fill(passHLT, eve->passHLT_DiJet110_35_Mjj650_PFMET120_v_);
-    else if( metTriggers.at(i) == "HLT_DiJet110_35_Mjj650_PFMET130") hist->Fill(passHLT, eve->passHLT_DiJet110_35_Mjj650_PFMET130_v_);
-    else if( metTriggers.at(i) == "HLT_TripleJet110_35_35_Mjj650_PFMET110") hist->Fill(passHLT, eve->passHLT_TripleJet110_35_35_Mjj650_PFMET110_v_);
-    else if( metTriggers.at(i) == "HLT_TripleJet110_35_35_Mjj650_PFMET120") hist->Fill(passHLT, eve->passHLT_TripleJet110_35_35_Mjj650_PFMET120_v_);
-    else if( metTriggers.at(i) == "HLT_TripleJet110_35_35_Mjj650_PFMET130") hist->Fill(passHLT, eve->passHLT_TripleJet110_35_35_Mjj650_PFMET130_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1") hist->Fill(passHLT, eve->passHLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1") hist->Fill(passHLT, eve->passHLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1") hist->Fill(passHLT, eve->passHLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v_);
-    else if( metTriggers.at(i) == "HLT_PFMET120_PFMHT120_IDTight_PFHT60") hist->Fill(passHLT, eve->passHLT_PFMET120_PFMHT120_IDTight_PFHT60_v_);
-    else if( metTriggers.at(i) == "HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60") hist->Fill(passHLT, eve->passHLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v_);
-    else if( metTriggers.at(i) == "HLT_PFMETTypeOne120_PFMHT120_IDTight") hist->Fill(passHLT, eve->passHLT_PFMETTypeOne120_PFMHT120_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFMETTypeOne130_PFMHT130_IDTight") hist->Fill(passHLT, eve->passHLT_PFMETTypeOne130_PFMHT130_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_PFMETTypeOne140_PFMHT140_IDTight") hist->Fill(passHLT, eve->passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_);
-    else if( metTriggers.at(i) == "HLT_CaloMET250_HBHECleaned") hist->Fill(passHLT, eve->passHLT_CaloMET250_HBHECleaned_v_);
-    */
   }
 
   
@@ -285,6 +251,8 @@ void draw1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
     c0->Print( (tempDir + "/" + h0->GetName() + ".png").c_str());
   }
 
+  //if (dumpFile)
+  //  outfile->Write();
 }
 void plot1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
 {
@@ -375,6 +343,11 @@ void drawEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
 
   // *** 2. Divide to get efficiency
   TH1D* h_eff = (TH1D*)h_num->Clone();
+  string s_eff = h_num->GetName();
+  s_eff = (s_eff + "_Eff").c_str();
+
+  h_eff->SetName( s_eff.c_str() );
+  h_eff->SetTitle( s_eff.c_str() );
   h_eff->Divide(h_denom);
   h_eff->SetYTitle("Efficiency / Bin");
   //if(h_eff->GetMaximum() < 1.0)
@@ -418,13 +391,92 @@ void drawEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
 
 }
 
+void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nameHLT_num, TObjArray* a_denominator, string nameHLT_denom, string var)
+{
+
+  // *** 1. Get the histograms
+  TH1D* h_num   = (TH1D*)a_numerator->FindObject( ("h_" + nameHLT_num + "_" + var).c_str() );
+  TH1D* h_denom = (TH1D*)a_denominator->FindObject( ("h_" + nameHLT_denom + "_" + var).c_str() );
+  h_num->Sumw2();
+  h_denom->Sumw2();
+  
+  cout << h_num->GetName() << " has " << h_num->GetEntries() << " entries." << endl;
+  cout << h_denom->GetName() << " has " << h_denom->GetEntries() << " entries." << endl;
+
+  // *** 2. Divide to get efficiency
+  TH1D* h_eff = (TH1D*)h_num->Clone();
+  string s_eff = h_num->GetName();
+  s_eff = (s_eff + "_TEff").c_str();
+
+  h_eff->SetName( s_eff.c_str() );
+  h_eff->SetTitle( s_eff.c_str() );
+  h_eff->SetYTitle("Efficiency / Bin");
+  h_eff->SetMaximum(1.1);
+  h_eff->SetMinimum(0.0);
+
+  TEfficiency* tEff = new TEfficiency(*h_eff, *h_denom);
+  tEff->SetName( s_eff.c_str() );
+  tEff->SetTitle( s_eff.c_str() );
+
+  // *** 3. Do the drawing
+  //h_eff->Sumw2();
+  c0->cd();
+  tEff->Draw();
+  tEff->Paint("");
+  TGraphAsymmErrors* gr = (TGraphAsymmErrors*)tEff->GetPaintedGraph();
+  gr->SetMinimum(0);
+  gr->SetMaximum(1.1);
+  cout << s_eff << ", Min: " << h_eff->GetXaxis()->GetXmin()  << ", Max: " << h_eff->GetXaxis()->GetXmax() << endl;
+  gr->GetXaxis()->SetRangeUser( h_eff->GetXaxis()->GetXmin(), h_eff->GetXaxis()->GetXmax() );
+ 
+  tEff->Draw();
+  //c0->Update();
+
+  // *** 4. Setup LaTeX for printing correlation factor on plot
+  TLatex ltx1;
+  ltx1.SetTextAlign(9);
+  ltx1.SetTextFont(62);
+  ltx1.SetTextSize(0.025);
+  ltx1.SetNDC();
+  ltx1.DrawLatex(0.25, 0.80, nameHLT_num.c_str() );
+
+  // *** 5. Set CMS style
+  //CMS_lumi( canv, iPeriod, iPos ); // <-- notes
+  CMS_lumi( c0, 0, 33);
+    
+  // *** 6. Print plots
+  struct stat sb;
+  std::string tempDir = (topDir + nameHLT_num ).c_str();
+  if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
+    cout << nameHLT_num << " subdirectory , " << tempDir << " , DNE. Creating now" << endl;
+    mkdir(tempDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+  }
+  tempDir = (tempDir + "/efficiency1D/").c_str();
+  if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
+    cout << nameHLT_num << " subdirectory , " << tempDir << " , DNE. Creating now" << endl;
+    mkdir(tempDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+  }
+  if( printPlots) {
+    c0->Print( (tempDir + tEff->GetName() + ".eps").c_str());
+    c0->Print( (tempDir + tEff->GetName() + ".png").c_str());
+  }
+
+}
+
 void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHLT_num, TObjArray* a_denominator, string nameHLT_denom)
 {
-  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_pt");
+  /*drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_pt");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_eta");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_pt");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_eta");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
- 
+  */
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_pt");
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_eta");
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_pt");
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_eta");
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
+  
 }

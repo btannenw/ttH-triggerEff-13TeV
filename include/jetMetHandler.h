@@ -36,10 +36,12 @@ class jetMetHandler{
       double leadPt;
       double leadEta;
       double MET;
+      bool passMETXtriggers;
 
       // === Variables === //
       TH1D* h_jet_cutflow;
       TH1D* h_jet_n;
+      TH1D* h_met_passXtriggers;
 
    private:
       // === Functions === //
