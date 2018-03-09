@@ -53,6 +53,7 @@ void muonHandler::applyMuonCuts()
 	    if (ev->lepton_pt_[l] > leadPt) {
 	      leadPt = ev->lepton_pt_[l];
 	      leadEta = ev->lepton_eta_[l];
+	      leadIndex = l;
 	    }
 	    
 	  } // isolation cut

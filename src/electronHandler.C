@@ -32,7 +32,7 @@ void electronHandler::applyElectronCuts()
 
 
   for (unsigned int l = 0; l < ev->lepton_pt_.size() + 1; l++) {
-    
+    //int l =0;
     // Cut 0: Is electron
     if (ev->lepton_isMuon_[l] == 0) { // look only at electrons
       h_el_cutflow->Fill("Total Electrons", 1);
@@ -44,17 +44,18 @@ void electronHandler::applyElectronCuts()
 	// Cut 2: |ETA| < 2.4
 	if( abs(ev->lepton_eta_[l]) < 2.4 ) {
 	  h_el_cutflow->Fill("|#eta| < 2.4", 1);
-	  
+  
 	  // Cut 3: tight ID
 	  if( ev->lepton_isTight_[l] ) {
 	    h_el_cutflow->Fill("Tight ID", 1);
-	    nElectrons++;
 	    passCuts = true;
+	    nElectrons++;
 
 	    // set leading lepton if appropriate
 	    if (ev->lepton_pt_[l] > leadPt) {
-	      leadPt = ev->lepton_pt_[leadIndex];
-	      leadEta = ev->lepton_eta_[leadIndex];
+	      leadPt = ev->lepton_pt_[l];
+	      leadEta = ev->lepton_eta_[l];
+	      leadIndex = l;
 	    }
 
 	  } // is tight
