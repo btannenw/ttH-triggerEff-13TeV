@@ -42,16 +42,19 @@ class jetMetHandler{
       TH1D* h_jet_cutflow;
       TH1D* h_jet_n;
       TH1D* h_met_passXtriggers;
+      TH1D* h_met_passOnlyXtrigger;
 
    private:
       // === Functions === //
       void applyJetCuts();
       void applyMETCuts();
+      void parseMETTriggerLogic();
       
       
       // === Variables === //
       yggdrasilEventVars* ev;
       int leadIndex;
+      string metXTriggerBits;
 
 }; // End of class prototype
 

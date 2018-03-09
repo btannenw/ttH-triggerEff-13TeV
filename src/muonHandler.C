@@ -30,37 +30,32 @@ void muonHandler::applyMuonCuts()
   //if (leadIndex == -99) return; // protection when no muon in event
 
   for (unsigned int l = 0; l < ev->lepton_pt_.size() + 1; l++) {
-    
-  // Cut 0: is muon
-  if (ev->lepton_isMuon_[l] == 1) { 
-      h_mu_cutflow->Fill("Total Muons", 1);
-      
-      // Cut 1: pT > 30 GeV
-      if( ev->lepton_pt_[l] > 30 ) {
-	h_mu_cutflow->Fill("p_{T} > 30", 1);
-	
-	// Cut 2: |ETA| < 2.4
-	if( abs(ev->lepton_eta_[l]) < 2.4 ) {
-	  h_mu_cutflow->Fill("|#eta| < 2.4", 1);
-	
-	  // Cut 3: Isolation < 0.15
-	  if( ev->lepton_relIso_[l] < 0.15 )  {
-	    h_mu_cutflow->Fill("Isolation < 0.15", 1);
-	    nMuons++;    
-	    passCuts = true;
-
-	    // set leading lepton if appropriate
-	    if (ev->lepton_pt_[l] > leadPt) {
-	      leadPt = ev->lepton_pt_[l];
-	      leadEta = ev->lepton_eta_[l];
-	      leadIndex = l;
-	    }
-	    
-	  } // isolation cut
-	} // eta cut
-      } // pt cut
-    } // is muon
   
+    // Cut 0: is muon
+    if ( !(ev->lepton_isMuon_[l] == 1) ) continue;
+    h_mu_cutflow->Fill("Total Muons", 1);
+      
+    // Cut 1: pT > 30 GeV
+    if ( !(ev->lepton_pt_[l] > 30) ) continue;
+    h_mu_cutflow->Fill("p_{T} > 30", 1);
+	
+    // Cut 2: |ETA| < 2.4
+    if ( !(abs(ev->lepton_eta_[l]) < 2.4) ) continue;
+    h_mu_cutflow->Fill("|#eta| < 2.4", 1);
+	
+    // Cut 3: Isolation < 0.15
+    if ( !(ev->lepton_relIso_[l] < 0.15) ) continue;
+    h_mu_cutflow->Fill("Isolation < 0.15", 1);
+    nMuons++;    
+    passCuts = true;
+
+    // set leading lepton if appropriate
+    if (ev->lepton_pt_[l] > leadPt) {
+      leadPt = ev->lepton_pt_[l];
+      leadEta = ev->lepton_eta_[l];
+      leadIndex = l;
+    }
+
   } // loop over muons
 
   h_mu_n->Fill( nMuons );

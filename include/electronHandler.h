@@ -39,6 +39,7 @@ class electronHandler{
       
       // === Variables === //
       TH1D* h_el_cutflow;
+      TH1D* h_el_event_cutflow;
       TH1D* h_el_n;
 
    private:
