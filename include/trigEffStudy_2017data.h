@@ -31,6 +31,12 @@ TObjArray* a_HLT_PFMET120_PFMHT120_IDTight = new TObjArray();
 TObjArray* a_IsoMu27__X__PFMET120_PFMHT120_IDTight = new TObjArray();
 TObjArray* a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight = new TObjArray();
 
+TObjArray* a_HLT_SingleMu = new TObjArray();
+TObjArray* a_HLT_SingleEl = new TObjArray();
+TObjArray* a_HLT_allMET = new TObjArray();
+TObjArray* a_SingleMu__X__allMET = new TObjArray();
+TObjArray* a_SingleEl__X__allMET = new TObjArray();
+
 std::vector <std::string> metTriggers = 
   {
     "HLT_PFHT500_PFMET100_PFMHT100_IDTight", 

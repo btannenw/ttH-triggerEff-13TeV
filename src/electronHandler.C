@@ -6,7 +6,7 @@
 electronHandler::electronHandler()
 {
   passCuts = false;
-  passSLtrigger = false;
+  passSLtriggers = false;
   leadPt = -99;
   leadEta = -99;
   leadIndex = -99;
@@ -121,6 +121,11 @@ void electronHandler::findLeadingElectron()
   //cout << "1. leadIndex = " << leadIndex << endl;
 }
 
+void electronHandler::checkHLTTriggers()
+{
+  passSLtriggers = ev->passHLT_Ele32_WPTight_Gsf_v_ ? true : false;
+}
+
 void electronHandler::Event(yggdrasilEventVars* eve)
 {
   // *** 1. Intialize some things
@@ -129,12 +134,15 @@ void electronHandler::Event(yggdrasilEventVars* eve)
   leadEta = -99;
   leadPt = -99;
   leadIndex = -99;
-  passSLtrigger = ev->passHLT_Ele32_WPTight_Gsf_v_ ? true : false;
+ 
   nLeptons = ev->lepton_pt_.size();
   nElectrons = 0;  
   //h_el_cutflow->Fill("Event", 1);
 
-  // *** 2. Start handling business! (or at least electrons)
+  // *** 2. Check trigger
+  checkHLTTriggers();
+
+  // *** 3. Start handling business! (or at least electrons)
   if (nLeptons > 0 ) {
     //findLeadingElectron();
     applyElectronCuts();

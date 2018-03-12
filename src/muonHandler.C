@@ -6,7 +6,7 @@
 muonHandler::muonHandler()
 {
   passCuts = false;
-  passSLtrigger = false;
+  passSLtriggers = false;
   leadPt = -99;
   leadEta = -99;
   leadIndex = -99;
@@ -81,12 +81,16 @@ void muonHandler::findLeadingMuon()
   //cout << "1. leadIndex = " << leadIndex << endl;
 }
 
+void muonHandler::checkHLTTriggers()
+{
+  passSLtriggers = ev->passHLT_IsoMu27_v_ ? true : false;
+}
+
 void muonHandler::Event(yggdrasilEventVars* eve)
 {
   // *** 1. Intialize some things
   ev = eve;
   passCuts = false;
-  passSLtrigger = ev->passHLT_IsoMu27_v_ ? true : false;
   nLeptons = ev->lepton_pt_.size();
   leadPt = -99;
   leadEta = -99;
@@ -94,7 +98,10 @@ void muonHandler::Event(yggdrasilEventVars* eve)
   nMuons = 0;  
   //h_mu_cutflow->Fill("Event", 1);
 
-  // *** 2. Start handling business! (or at least muons)
+  // *** 2. Check trigger
+  checkHLTTriggers();
+
+  // *** 3. Start handling business! (or at least muons)
   if (nLeptons > 0 ) {
     //findLeadingMuon();
     applyMuonCuts();

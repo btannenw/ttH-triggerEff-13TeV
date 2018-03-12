@@ -31,7 +31,7 @@ class muonHandler{
 
       // === Variables === //
       bool passCuts;
-      bool passSLtrigger;
+      bool passSLtriggers;
       int nLeptons;
       int nMuons;
       double leadPt;
@@ -45,7 +45,7 @@ class muonHandler{
       // === Functions === //
       void findLeadingMuon();
       void applyMuonCuts();
-      
+      void checkHLTTriggers();
       
       // === Variables === //
       yggdrasilEventVars* ev;

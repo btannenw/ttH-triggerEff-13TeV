@@ -31,7 +31,7 @@ class electronHandler{
 
       // === Variables === //
       bool passCuts;
-      bool passSLtrigger;
+      bool passSLtriggers;
       int nLeptons;
       int nElectrons;
       double leadPt;
@@ -46,7 +46,7 @@ class electronHandler{
       // === Functions === //
       void findLeadingElectron();
       void applyElectronCuts();
-      
+      void checkHLTTriggers();
       
       // === Variables === //
       yggdrasilEventVars* ev;
