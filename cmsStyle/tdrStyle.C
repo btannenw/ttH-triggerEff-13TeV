@@ -1,4 +1,5 @@
 #include "TStyle.h"
+#include "TPad.h"
 
 // fixOverlay: Redraws the axis
 

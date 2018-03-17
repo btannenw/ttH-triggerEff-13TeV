@@ -34,37 +34,63 @@ void plot2Dcorr( TCanvas*& c0, TH2D*& h0, string xtitle, string ytitle);
 void trigEffStudy_2017data()
 {
   // *** 0. Set style, set file, set output directory
-  // ** A. Set input file
-  //TFile* f0 = new TFile("rootfiles/yggdrasil_treeMaker_2kEvents_addUnprescaled2017TrigBranches.root", "READ");
-  TFile* f0 = new TFile("rootfiles/yggdrasil_treeMaker_25kEvents_addUnprescaled2017TrigBranches.root", "READ");
-  TTree* fTree = (TTree*) f0->Get("ttHTreeMaker/worldTree");
-
-  // ** B. Set output directory
-  topDir = "plots_030918/";
+  // ** A. Set output directory and global bools
+  topDir = "plots_031618/";
+  isMC = true;
   printPlots = true;
   dumpFile = true;
   verbose = false;
 
-  // check subdirectory structure for requested options and create directories if necessary
+  // ** B. Set input file
+  TFile *f0 = new TFile();
+  if (isMC){
+    f0 = new TFile("rootfiles/yggdrasil_treeMaker_25kEvents_addUnprescaled2017TrigBranches.root", "READ");
+  }
+  else{ // data!
+    f0 = new TFile("rootfiles/data/SingleElectron_Run2017D-17Nov2017-v1_treeMaker_1.root", "READ");
+  }
+
+  TTree* fTree = (TTree*) f0->Get("ttHTreeMaker/worldTree");
+
+  // ** C. Check subdirectory structure for requested options and create directories if necessary
+  // * i. Check if topdir exists
   struct stat sb;
   if (!(stat(topDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
     cout << "TopDir, " << topDir << " , DNE. EXITING" << endl;
     exit(0);
   }
+  // * ii. Make appropriate subdir
+  // * iv. Create corr2D subdir
+  std::string sampleDir = "";
+  if(isMC)
+    sampleDir = "MC";
+  else
+    sampleDir = "data";
+
+  topDir = (topDir + sampleDir + "/").c_str();
+  if (!(stat(topDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
+    cout << "sample subdirectory , " << topDir << " , DNE. Creating now" << endl;
+    mkdir(topDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+  }
+  
+  // * iii. Set output file
   outfile = new TFile( (topDir + "/outfile.root").c_str(), "RECREATE");
 
+  // * iv. Create corr2D subdir
   std::string tempDir = (topDir + "corr2D" + "/").c_str();
   if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
     cout << "corr2D subdirectory , " << tempDir << " , DNE. Creating now" << endl;
     mkdir(tempDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
   }
 
-  // ** B. CMS Style
+  // ** D. CMS Style
   setTDRStyle();
   writeExtraText = true;       // if extra text                                                
   //extraText  = "Internal";  // default extra text is "Preliminary"
   lumi_sqrtS = "#sqrt{s} = 13 TeV";       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
   int iPeriod = 0;    // 1=7TeV, 2=8TeV, 3=7+8TeV, 7=7+8+13TeV, 0=free form (uses lumi_sqrtS)  
+
+
 
   // *** 1. Define histograms and canvasses
   TCanvas *c0 = new TCanvas("c0", "c0", 50, 50, 800, 600);
@@ -75,17 +101,11 @@ void trigEffStudy_2017data()
   initializeHistograms(a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
   initializeHistograms(a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
 
-  if (verbose) cout << "a" << endl;
   initializeHistograms(a_HLT_SingleMu, "HLT_SingleMu");
-  if (verbose) cout << "a" << endl;
   initializeHistograms(a_HLT_SingleEl, "HLT_SingleEl");
-  if (verbose) cout << "a" << endl;
   initializeHistograms(a_HLT_allMET, "HLT_allMET", true);
-  if (verbose) cout << "a" << endl;
   initializeHistograms(a_SingleMu__X__allMET, "SingleMu__X__allMET");
-  if (verbose) cout << "a" << endl;
   initializeHistograms(a_SingleEl__X__allMET, "SingleEl__X__allMET");
-  if (verbose) cout << "a" << endl;
  
   // *** 2. Set tree structure and variables to read
   eve=0;
@@ -97,8 +117,8 @@ void trigEffStudy_2017data()
   
   
   // *** 3. Start looping! 
-  long t_entries = fTree->GetEntries();
-  //long t_entries = 5000;
+  //long t_entries = fTree->GetEntries();
+  long t_entries = 25000;
   cout << "Tree entries: " << t_entries << endl;
   
   for(int i = 0; i < t_entries; i++) {
@@ -128,11 +148,11 @@ void trigEffStudy_2017data()
 
 
     // * c. Use multiple triggers defined in handlers
-    if ( elTool.passSLtriggers && elTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_SingleEl, "HLT_SingleEl");
+    if ( elTool.passSLtriggers && elTool.passSLCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_SingleEl, "HLT_SingleEl");
     if ( muTool.passSLtriggers && muTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_SingleMu, "HLT_SingleMu");
     if ( jetMetTool.passMETTriggers && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_allMET, "HLT_allMET", true);
     if ( muTool.passSLtriggers && jetMetTool.passMETTriggers && muTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_SingleMu__X__allMET, "SingleMu__X__allMET");
-    if ( elTool.passSLtriggers && jetMetTool.passMETTriggers && elTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_SingleEl__X__allMET, "SingleEl__X__allMET");
+    if ( elTool.passSLtriggers && jetMetTool.passMETTriggers && elTool.passSLCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_SingleEl__X__allMET, "SingleEl__X__allMET");
 
 
   }

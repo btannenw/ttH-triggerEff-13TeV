@@ -13,7 +13,7 @@
 
 // top level vars
 std::string topDir;
-bool printPlots, dumpFile, verbose;
+bool printPlots, dumpFile, verbose, isMC;
 
 // user tools
 yggdrasilEventVars *eve;

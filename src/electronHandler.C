@@ -6,6 +6,7 @@
 electronHandler::electronHandler()
 {
   passCuts = false;
+  passSLCuts = false;
   passSLtriggers = false;
   leadPt = -99;
   leadEta = -99;
@@ -24,6 +25,11 @@ electronHandler::~electronHandler() {}
 void electronHandler::test()
 {
   std::cout << "Test!" << endl;
+}
+void electronHandler::checkSLCuts()
+{
+  if (passCuts && nElectrons == 1)
+    passSLCuts = true;
 }
 
 void electronHandler::applyElectronCuts()
@@ -65,13 +71,13 @@ void electronHandler::applyElectronCuts()
     h_el_cutflow->Fill("Reject Crack Cluster #eta", 1);
     if (!pass3) h_el_event_cutflow->Fill("Reject Crack Cluster #eta", 1);
     pass3 = true;
-      
+    
     // Cut 4: tight ID
     if ( !(ev->lepton_isTight_[l]) ) continue;
     h_el_cutflow->Fill("Tight ID", 1);
     if (!pass4) h_el_event_cutflow->Fill("Tight ID", 1);
     pass4 = true;
-
+    
     // Trigger cuts 
     if ( ev->passHLT_Ele32_WPTight_Gsf_v_ ) {
       if (!pass5) h_el_event_cutflow->Fill("El Trigger", 1);
@@ -131,6 +137,7 @@ void electronHandler::Event(yggdrasilEventVars* eve)
   // *** 1. Intialize some things
   ev = eve;
   passCuts = false;
+  passSLCuts = false;
   leadEta = -99;
   leadPt = -99;
   leadIndex = -99;
@@ -146,6 +153,7 @@ void electronHandler::Event(yggdrasilEventVars* eve)
   if (nLeptons > 0 ) {
     //findLeadingElectron();
     applyElectronCuts();
+    checkSLCuts();
   }
 
 }
