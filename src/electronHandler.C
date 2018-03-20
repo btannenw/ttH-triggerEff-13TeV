@@ -16,7 +16,7 @@ electronHandler::electronHandler()
   
 
   h_el_cutflow = new TH1D("h_el_cutflow", "h_el_cutflow", 5, 0, 5);
-  h_el_event_cutflow = new TH1D("h_el_event_cutflow", "h_el_event_cutflow", 8, 0, 8);
+  h_el_event_cutflow = new TH1D("h_el_event_cutflow", "h_el_event_cutflow", 11, 0, 11);
   h_el_n       = new TH1D("h_el_n", "h_el_n", 6, 0, 6);
 }
 
@@ -28,8 +28,13 @@ void electronHandler::test()
 }
 void electronHandler::checkSLCuts()
 {
-  if (passCuts && nElectrons == 1)
-    passSLCuts = true;
+  //if (nElectrons != 1)
+  //passCuts = false;
+  //if (passCuts && nElectrons == 1)
+  //  passSLCuts = true;
+  //if (nLeptons > 1 && passCuts && ev->passHLT_PFMET120_PFMHT120_IDTight_v_ && ev->MET_[0] > 125)
+  //  nLeptons_int++;
+  
 }
 
 void electronHandler::applyElectronCuts()
@@ -45,27 +50,28 @@ void electronHandler::applyElectronCuts()
   bool pass6 = false;
   bool pass7 = false;
 
-  for (unsigned int l = 0; l < ev->lepton_pt_.size() + 1; l++) {
+  for (unsigned int l = 0; l < ev->lepton_pt_.size(); l++) {
+    //if ( ev->lepton_pt_.size() == 0) continue ; // protection against events w/o leptons
     //if ( l > 0) continue ; // only for testing
 
-    // Cut 0: Is electron
+     // Cut 0: Is electron
     if ( !(ev->lepton_isMuon_[l] == 0) ) continue;
     h_el_cutflow->Fill("Total Electrons", 1);
     if (!pass0) h_el_event_cutflow->Fill("Total Electrons", 1);
     pass0 = true;
-      
+        
     // Cut 1: pT > 30 GeV
     if ( !(ev->lepton_pt_[l] > 40) ) continue;
     h_el_cutflow->Fill("p_{T} > 40", 1);
     if (!pass1) h_el_event_cutflow->Fill("p_{T} > 40", 1);
     pass1 = true;
-
+    
     // Cut 2: |ETA| < 2.4
     if ( !(abs(ev->lepton_eta_[l]) < 2.4) ) continue;
     h_el_cutflow->Fill("|#eta| < 2.4", 1);
     if (!pass2) h_el_event_cutflow->Fill("|#eta| < 2.4", 1);
     pass2 = true;
-
+    
     // Cut 3: Reject cluster |ETA| in crack ( < 1.4442, > 1.566 )
     if ( !(abs(ev->lepton_scEta_[l]) < 1.4442 || abs(ev->lepton_scEta_[l]) > 1.566) ) continue;
     h_el_cutflow->Fill("Reject Crack Cluster #eta", 1);
@@ -73,7 +79,7 @@ void electronHandler::applyElectronCuts()
     pass3 = true;
     
     // Cut 4: tight ID
-    if ( !(ev->lepton_isTight_[l]) ) continue;
+    if ( !(ev->lepton_isTight_[l] == 1) ) continue;
     h_el_cutflow->Fill("Tight ID", 1);
     if (!pass4) h_el_event_cutflow->Fill("Tight ID", 1);
     pass4 = true;
@@ -94,7 +100,7 @@ void electronHandler::applyElectronCuts()
 
     passCuts = true;
     nElectrons++;
-    
+
     // set leading lepton if appropriate
     if (ev->lepton_pt_[l] > leadPt) {
       leadPt = ev->lepton_pt_[l];
@@ -105,6 +111,10 @@ void electronHandler::applyElectronCuts()
   } // loop over electrons
 
   h_el_n->Fill( nElectrons );
+  if (passCuts && nElectrons == 1) h_el_event_cutflow->Fill("==1 Electron", 1);
+  if (passCuts && nElectrons == 1 && ev->MET_[0] > 125 && ev->passHLT_PFMET120_PFMHT120_IDTight_v_) h_el_event_cutflow->Fill("==1 Electron RefTrig", 1);
+  if (passCuts && nElectrons == 1 && ev->MET_[0] > 125 && ev->passHLT_Ele32_WPTight_Gsf_v_ && ev->passHLT_PFMET120_PFMHT120_IDTight_v_) h_el_event_cutflow->Fill("==1 Electron AllTrig", 1);
+
 }
 
 void electronHandler::findLeadingElectron()
@@ -143,6 +153,7 @@ void electronHandler::Event(yggdrasilEventVars* eve)
   leadIndex = -99;
  
   nLeptons = ev->lepton_pt_.size();
+
   nElectrons = 0;  
   //h_el_cutflow->Fill("Event", 1);
 
@@ -150,10 +161,11 @@ void electronHandler::Event(yggdrasilEventVars* eve)
   checkHLTTriggers();
 
   // *** 3. Start handling business! (or at least electrons)
+
   if (nLeptons > 0 ) {
     //findLeadingElectron();
     applyElectronCuts();
-    checkSLCuts();
+    //checkSLCuts();
   }
 
 }

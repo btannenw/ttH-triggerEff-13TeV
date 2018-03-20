@@ -29,7 +29,7 @@ void muonHandler::applyMuonCuts()
 {
   //if (leadIndex == -99) return; // protection when no muon in event
 
-  for (unsigned int l = 0; l < ev->lepton_pt_.size() + 1; l++) {
+  for (unsigned int l = 0; l < ev->lepton_pt_.size(); l++) {
   
     // Cut 0: is muon
     if ( !(ev->lepton_isMuon_[l] == 1) ) continue;
