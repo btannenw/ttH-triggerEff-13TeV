@@ -35,7 +35,7 @@ void trigEffStudy_2017data()
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_031618/";
+  topDir = "plots_032218/";
   isMC = true;
   printPlots = true;
   dumpFile = true;
@@ -47,7 +47,8 @@ void trigEffStudy_2017data()
     f0 = new TFile("rootfiles/yggdrasil_treeMaker_25kEvents_addUnprescaled2017TrigBranches.root", "READ");
   }
   else{ // data!
-    f0 = new TFile("rootfiles/data/SingleElectron_Run2017D-17Nov2017-v1_treeMaker_1.root", "READ");
+    //f0 = new TFile("rootfiles/data/SingleMuon_Run2017D-17Nov2017-v1_treeMaker_1.root", "READ");
+    f0 = new TFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root", "READ");
   }
 
   TTree* fTree = (TTree*) f0->Get("ttHTreeMaker/worldTree");
@@ -119,8 +120,8 @@ void trigEffStudy_2017data()
   
   
   // *** 3. Start looping! 
-  //long t_entries = fTree->GetEntries();
-  long t_entries = 25000;
+  long t_entries = fTree->GetEntries();
+  //long t_entries = 25000;
   cout << "Tree entries: " << t_entries << endl;
   
   for(int i = 0; i < t_entries; i++) {
