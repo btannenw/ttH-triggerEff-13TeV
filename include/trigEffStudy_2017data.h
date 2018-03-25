@@ -12,8 +12,8 @@
 #include "jetMetHandler.h"
 
 // top level vars
-std::string topDir;
-bool printPlots, dumpFile, verbose, isMC;
+std::string topDir, fileList;
+bool printPlots, dumpFile, verbose, isMC, singleFile;
 
 // user tools
 yggdrasilEventVars *eve;

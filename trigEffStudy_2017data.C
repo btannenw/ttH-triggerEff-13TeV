@@ -7,6 +7,9 @@
 #include <TTree.h>
 #include <TBranch.h>
 #include <TCanvas.h>
+#include <TSystem.h>
+#include <TChain.h>
+#include <TFileCollection.h>
 #include <TH2.h>
 #include <TLatex.h>
 #include <TString.h>
@@ -35,23 +38,44 @@ void trigEffStudy_2017data()
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_032218/";
-  isMC = true;
+  topDir = "plots_032418/";
+  isMC = false;
+  singleFile = false;
+  fileList="";
   printPlots = true;
   dumpFile = true;
   verbose = false;
 
   // ** B. Set input file
-  TFile *f0 = new TFile();
-  if (isMC){
-    f0 = new TFile("rootfiles/yggdrasil_treeMaker_25kEvents_addUnprescaled2017TrigBranches.root", "READ");
+  TChain* fChain = new TChain("ttHTreeMaker/worldTree");
+  if(singleFile) { // single file
+    if (isMC){
+      fChain->AddFile("rootfiles/yggdrasil_treeMaker_25kEvents_addUnprescaled2017TrigBranches.root");
+    }
+    else{ // data!
+      fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
+    }
   }
-  else{ // data!
-    //f0 = new TFile("rootfiles/data/SingleMuon_Run2017D-17Nov2017-v1_treeMaker_1.root", "READ");
-    f0 = new TFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root", "READ");
+  else{ // entire directory 
+    if (isMC)
+      fileList="rootfiles/data/allFiles_032418.txt";
+    else // data!
+      fileList="rootfiles/data/allFiles_032418.txt";
+
+    // check to make sure fileList
+    if(gSystem->AccessPathName(fileList.c_str()) )
+      {
+	cout<<"Input list file /"<<fileList.c_str()<<" DNE."<<endl;
+	gSystem->Exit(0);
+      }
+    TFileCollection *fc= new TFileCollection("fc","files",fileList.c_str());
+    fChain->AddFileInfoList((TCollection*)fc->GetList());
   }
 
-  TTree* fTree = (TTree*) f0->Get("ttHTreeMaker/worldTree");
+  //TFileCollection *fc= new TFileCollection("fc","files",infile.Data());
+  //fChain->AddFileInfoList(fc->GetList());
+
+  
 
   // ** C. Check subdirectory structure for requested options and create directories if necessary
   // * i. Check if topdir exists
@@ -112,7 +136,7 @@ void trigEffStudy_2017data()
  
   // *** 2. Set tree structure and variables to read
   eve=0;
-  fTree->SetBranchAddress("eve.", &eve );
+  fChain->SetBranchAddress("eve.", &eve );
   elTool = electronHandler();
   muTool = muonHandler();
   jetMetTool = jetMetHandler();
@@ -120,16 +144,16 @@ void trigEffStudy_2017data()
   
   
   // *** 3. Start looping! 
-  long t_entries = fTree->GetEntries();
+  long t_entries = fChain->GetEntries();
   //long t_entries = 25000;
-  cout << "Tree entries: " << t_entries << endl;
+  cout << "Chain entries: " << t_entries << endl;
   
   for(int i = 0; i < t_entries; i++) {
     if ( t_entries > 100) {
       if ((i+1)%(5*t_entries/100)==0)  printProgBar(100*i/t_entries +1); }
     if (i == t_entries-1) {printProgBar(100); cout << endl;}
     
-    fTree->GetEntry(i);
+    fChain->GetEntry(i);
 
     // ** I. Get objects 
     muTool.Event(eve);
