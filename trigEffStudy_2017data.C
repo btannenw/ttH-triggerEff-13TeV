@@ -34,13 +34,13 @@
 void printProgBar( int percent );
 void plot2Dcorr( TCanvas*& c0, TH2D*& h0, string xtitle, string ytitle);
 
-void trigEffStudy_2017data()
+void trigEffStudy_2017data(string p_passFile="")
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_032418/";
-  isMC = false;
-  singleFile = false;
+  topDir = "plots_032618/";
+  isMC = true;
+  singleFile = true;
   fileList="";
   printPlots = true;
   dumpFile = true;
@@ -49,12 +49,16 @@ void trigEffStudy_2017data()
   // ** B. Set input file
   TChain* fChain = new TChain("ttHTreeMaker/worldTree");
   if(singleFile) { // single file
-    if (isMC){
-      fChain->AddFile("rootfiles/yggdrasil_treeMaker_25kEvents_addUnprescaled2017TrigBranches.root");
+    if (p_passFile==""){ // basically a local test
+      if (isMC){
+	fChain->AddFile("rootfiles/yggdrasil_treeMaker_25kEvents_addUnprescaled2017TrigBranches.root");
+      }
+      else{ // data!
+	fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
+      }
     }
-    else{ // data!
-      fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
-    }
+    else // pass name of analysis file --> this probably means Condor submission
+      fChain->AddFile( p_passFile.c_str() );
   }
   else{ // entire directory 
     if (isMC)
@@ -72,10 +76,6 @@ void trigEffStudy_2017data()
     fChain->AddFileInfoList((TCollection*)fc->GetList());
   }
 
-  //TFileCollection *fc= new TFileCollection("fc","files",infile.Data());
-  //fChain->AddFileInfoList(fc->GetList());
-
-  
 
   // ** C. Check subdirectory structure for requested options and create directories if necessary
   // * i. Check if topdir exists
@@ -99,8 +99,12 @@ void trigEffStudy_2017data()
   }
   
   // * iii. Set output file
-  outfile = new TFile( (topDir + "/outfile.root").c_str(), "RECREATE");
+  if(p_passFile == "")
+    outfile = new TFile( (topDir + "/outfile.root").c_str(), "RECREATE");
+  else // add identifier so no overwrites
+    outfile = new TFile( (topDir + "/outfile" + p_passFile.substr(p_passFile.find_last_of("_"), p_passFile.find(".root")) ).c_str(), "RECREATE");
 
+  
   // * iv. Create corr2D subdir
   std::string tempDir = (topDir + "corr2D" + "/").c_str();
   if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
