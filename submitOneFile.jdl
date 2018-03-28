@@ -1,0 +1,8 @@
+universe = vanilla
+Executable = runOneFile.sh 
+Output = good1.out
+Error = good1.err
+Log = good1.log
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = /uscms_data/d1/username/input_file.root, /uscms_data/d1/username/good1.C

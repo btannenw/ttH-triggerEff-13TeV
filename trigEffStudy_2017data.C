@@ -34,12 +34,14 @@
 void printProgBar( int percent );
 void plot2Dcorr( TCanvas*& c0, TH2D*& h0, string xtitle, string ytitle);
 
-void trigEffStudy_2017data(string p_passFile="")
+void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFile="")
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
   topDir = "plots_032618/";
+  if (p_topDir != "") topDir = p_topDir;
   isMC = true;
+  if (p_isMC != "") isMC = p_isMC=="true" ? true : false;
   singleFile = true;
   fileList="";
   printPlots = true;
@@ -88,9 +90,9 @@ void trigEffStudy_2017data(string p_passFile="")
   // * iv. Create corr2D subdir
   std::string sampleDir = "";
   if(isMC)
-    sampleDir = "MC";
+    sampleDir = "/MC";
   else
-    sampleDir = "data";
+    sampleDir = "/data";
 
   topDir = (topDir + sampleDir + "/").c_str();
   if (!(stat(topDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
