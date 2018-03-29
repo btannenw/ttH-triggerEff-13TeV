@@ -59,10 +59,10 @@ else:
 # *** 1. Create .tar of directory and store in personal EOS
 print "##########     Tarring workdir     ##########"
 tarball_name = "{0}.tar.gz".format(args.outputDir)
-os.system("tar -cvzf {0} ./ --exclude 'plots*' --exclude '.git' --exclude 'test*' --exclude 'submitOneFile_' --exclude '*.tar.gz'".format(tarball_name))
+os.system("tar -cvzf {0} ./ --exclude 'plots*' --exclude '.git' --exclude 'test*' --exclude 'submitOneFile_' --exclude '*.tar.gz' --exclude 'ttbar*' --exclude 'single*'".format(tarball_name))
 if ( not os.path.exists("/eos/uscms/store/user/benjtann/{0}/".format(args.outputDir)) ):
     os.system("mkdir /eos/uscms/store/user/benjtann/{0}/".format(args.outputDir))
-os.system("xrdcp {0} root://cmseos.fnal.gov//store/user/benjtann/{0}/{1}".format(args.outputDir, tarball_name))
+os.system("xrdcp {0} root://cmseos.fnal.gov//store/user/benjtann/{0}/{1}".format(tarball_name, args.outputDir))
 #os.system("rm {0}".format(tarball_name))
 
 # *** 2. Create temporary .pdl file for condor submission
@@ -92,3 +92,8 @@ for line in txtfile:
     
     os.system("condor_submit {0}".format(jdl_filename))
 
+
+# *** 3. Cleanup submission directory
+print "\n##########     Cleanup submission directory     ##########\n"
+os.system("rm *.jdl")
+#os.system("mv {0} {1}/".format(tarball_name, args.outputDir) )
