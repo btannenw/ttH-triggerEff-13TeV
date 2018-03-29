@@ -83,11 +83,18 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   // * i. Check if topdir exists
   struct stat sb;
   if (!(stat(topDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
+    cout << "top-level director, " << topDir << " , DNE. Creating now" << endl;
+    mkdir(topDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+  }
+  /*
+    // old code for exiting if top-level director DNE. can't use via condor, but maybe this isn't even necessary anymore...?
+    if (!(stat(topDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
     cout << "TopDir, " << topDir << " , DNE. EXITING" << endl;
     exit(0);
-  }
-  // * ii. Make appropriate subdir
-  // * iv. Create corr2D subdir
+  }*/
+
+
+  // * ii. Create corr2D subdir
   std::string sampleDir = "";
   if(isMC)
     sampleDir = "/MC";
