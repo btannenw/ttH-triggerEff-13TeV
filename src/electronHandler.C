@@ -85,7 +85,7 @@ void electronHandler::applyElectronCuts()
     pass4 = true;
     
     // Trigger cuts 
-    if ( ev->passHLT_Ele32_WPTight_Gsf_v_ ) {
+    if ( ev->passHLT_Ele35_WPTight_Gsf_v_ ) {
       if (!pass5) h_el_event_cutflow->Fill("El Trigger", 1);
       pass5 = true;
     }
@@ -93,7 +93,7 @@ void electronHandler::applyElectronCuts()
       if (!pass6) h_el_event_cutflow->Fill("MET Trigger", 1);
       pass6 = true;
     }
-    if ( ev->passHLT_Ele32_WPTight_Gsf_v_ && ev->passHLT_PFMET120_PFMHT120_IDTight_v_ ) {
+    if ( ev->passHLT_Ele35_WPTight_Gsf_v_ && ev->passHLT_PFMET120_PFMHT120_IDTight_v_ ) {
       if (!pass7) h_el_event_cutflow->Fill("MET+Lep Trigger", 1);
       pass7 = true;
     }
@@ -113,7 +113,7 @@ void electronHandler::applyElectronCuts()
   h_el_n->Fill( nElectrons );
   if (passCuts && nElectrons == 1) h_el_event_cutflow->Fill("==1 Electron", 1);
   if (passCuts && nElectrons == 1 && ev->MET_[0] > 125 && ev->passHLT_PFMET120_PFMHT120_IDTight_v_) h_el_event_cutflow->Fill("==1 Electron RefTrig", 1);
-  if (passCuts && nElectrons == 1 && ev->MET_[0] > 125 && ev->passHLT_Ele32_WPTight_Gsf_v_ && ev->passHLT_PFMET120_PFMHT120_IDTight_v_) h_el_event_cutflow->Fill("==1 Electron AllTrig", 1);
+  if (passCuts && nElectrons == 1 && ev->MET_[0] > 125 && ev->passHLT_Ele35_WPTight_Gsf_v_ && ev->passHLT_PFMET120_PFMHT120_IDTight_v_) h_el_event_cutflow->Fill("==1 Electron AllTrig", 1);
 
 }
 
@@ -139,7 +139,7 @@ void electronHandler::findLeadingElectron()
 
 void electronHandler::checkHLTTriggers()
 {
-  passSLtriggers = ev->passHLT_Ele32_WPTight_Gsf_v_ ? true : false;
+  passSLtriggers = ev->passHLT_Ele35_WPTight_Gsf_v_ ? true : false;
 }
 
 void electronHandler::Event(yggdrasilEventVars* eve)

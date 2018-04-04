@@ -26,18 +26,20 @@ TFile* outfile = new TFile();
 
 // user vars
 TObjArray* a_HLT_IsoMu27 = new TObjArray();
-TObjArray* a_HLT_Ele32_WPTight_Gsf = new TObjArray();
+TObjArray* a_HLT_Ele35_WPTight_Gsf = new TObjArray();
 TObjArray* a_HLT_PFMET120_PFMHT120_IDTight = new TObjArray();
 TObjArray* a_HLT_PFMET120_PFMHT120_IDTight_elStream = new TObjArray();
 TObjArray* a_HLT_PFMET120_PFMHT120_IDTight_muStream = new TObjArray();
 TObjArray* a_IsoMu27__X__PFMET120_PFMHT120_IDTight = new TObjArray();
-TObjArray* a_Ele32_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight = new TObjArray();
+TObjArray* a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight = new TObjArray();
 
 TObjArray* a_HLT_SingleMu = new TObjArray();
 TObjArray* a_HLT_SingleEl = new TObjArray();
 TObjArray* a_HLT_allMET = new TObjArray();
 TObjArray* a_SingleMu__X__allMET = new TObjArray();
 TObjArray* a_SingleEl__X__allMET = new TObjArray();
+
+TObjArray* a_Efficiencies = new TObjArray();
 
 std::vector <std::string> metTriggers = 
   {
@@ -79,4 +81,4 @@ std::vector <std::string> metTriggers =
 
 // Lepton Triggers
 // Single Muon: HLT_IsoMu27
-// Single Electron: HLT_Ele32_WPTight_Gsf
+// Single Electron: HLT_Ele35_WPTight_Gsf

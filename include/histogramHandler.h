@@ -406,8 +406,9 @@ void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nam
   // *** 2. Divide to get efficiency
   TH1D* h_eff = (TH1D*)h_num->Clone();
   string s_eff = h_num->GetName();
-  s_eff = (s_eff + "_TEff").c_str();
+  s_eff = (s_eff + "_TH1").c_str();
 
+  //h_eff->Divide(h_denom);
   h_eff->SetName( s_eff.c_str() );
   h_eff->SetTitle( s_eff.c_str() );
   h_eff->SetYTitle("Efficiency / Bin");
@@ -415,6 +416,8 @@ void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nam
   h_eff->SetMinimum(0.0);
 
   TEfficiency* tEff = new TEfficiency(*h_eff, *h_denom);
+  s_eff = h_num->GetName();
+  s_eff = (s_eff + "_TEff").c_str();
   tEff->SetName( s_eff.c_str() );
   tEff->SetTitle( s_eff.c_str() );
 
@@ -460,7 +463,9 @@ void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nam
     c0->Print( (tempDir + tEff->GetName() + ".eps").c_str());
     c0->Print( (tempDir + tEff->GetName() + ".png").c_str());
   }
-
+  
+  // add to efficiency for storing in outfile
+  a_Efficiencies->AddLast(tEff);
 }
 
 void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHLT_num, TObjArray* a_denominator, string nameHLT_denom)
