@@ -56,6 +56,12 @@ else:
     else:
         print '-- Setting isMC = {0}'.format(args.isMC)
 
+# ** D. Exit if no grid proxy
+if ( not os.path.exists(os.path.expandvars("$X509_USER_PROXY")) ):
+    print "#### No GRID PROXY detected. Please do voms-proxy-init -voms cms before submitting Condor jobs ####.\nEXITING"
+    quit()
+
+
 # *** 1. Create .tar of directory and store in personal EOS
 print "##########     Tarring workdir     ##########"
 tarball_name = "{0}.tar.gz".format(args.outputDir)
