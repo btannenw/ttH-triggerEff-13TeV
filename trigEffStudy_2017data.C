@@ -47,6 +47,7 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   printPlots = true;
   dumpFile = true;
   verbose = false;
+  nJetsCut = 4;
 
   // ** B. Set input file
   TChain* fChain = new TChain("ttHTreeMaker/worldTree");
@@ -134,9 +135,9 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
 
   initializeHistograms(a_HLT_IsoMu27, "HLT_IsoMu27");
   initializeHistograms(a_HLT_Ele35_WPTight_Gsf, "HLT_Ele35_WPTight_Gsf");
-  //initializeHistograms(a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight", true);
-  initializeHistograms(a_HLT_PFMET120_PFMHT120_IDTight_elStream, "HLT_PFMET120_PFMHT120_IDTight_elStream");
-  initializeHistograms(a_HLT_PFMET120_PFMHT120_IDTight_muStream, "HLT_PFMET120_PFMHT120_IDTight_muStream");
+  initializeHistograms(a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight", true);
+  //initializeHistograms(a_HLT_PFMET120_PFMHT120_IDTight_elStream, "HLT_PFMET120_PFMHT120_IDTight_elStream");
+  //initializeHistograms(a_HLT_PFMET120_PFMHT120_IDTight_muStream, "HLT_PFMET120_PFMHT120_IDTight_muStream");
   initializeHistograms(a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
   initializeHistograms(a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
 
@@ -156,8 +157,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   
   
   // *** 3. Start looping! 
-  //long t_entries = fChain->GetEntries();
-  long t_entries = 25000;
+  long t_entries = fChain->GetEntries();
+  //long t_entries = 25000;
   cout << "Chain entries: " << t_entries << endl;
   
   for(int i = 0; i < t_entries; i++) {
@@ -173,29 +174,28 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
     jetMetTool.Event(eve);
 
     // ** II. 2D Correlations comparing SL triggers to MET triggers
-    if (muTool.passCuts && jetMetTool.MET > 125) fill2DCorrHistograms(eve, a_HLT_IsoMu27, "HLT_IsoMu27", eve->passHLT_IsoMu27_v_ );
-    if (elTool.passCuts && jetMetTool.MET > 125) fill2DCorrHistograms(eve, a_HLT_Ele35_WPTight_Gsf, "HLT_Ele35_WPTight_Gsf", eve->passHLT_Ele35_WPTight_Gsf_v_ );
+    if (muTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fill2DCorrHistograms(eve, a_HLT_IsoMu27, "HLT_IsoMu27", eve->passHLT_IsoMu27_v_ );
+    if (elTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fill2DCorrHistograms(eve, a_HLT_Ele35_WPTight_Gsf, "HLT_Ele35_WPTight_Gsf", eve->passHLT_Ele35_WPTight_Gsf_v_ );
 
     // III. Fill efficiency histograms given some trigger qualifications
     // * a. Single triggers
-    if ( eve->passHLT_Ele35_WPTight_Gsf_v_ && elTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_Ele35_WPTight_Gsf, "HLT_Ele35_WPTight_Gsf");
-    if ( eve->passHLT_IsoMu27_v_ && muTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_IsoMu27, "HLT_IsoMu27");
-    //if ( eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight", true);
+    if ( eve->passHLT_Ele35_WPTight_Gsf_v_ && elTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_Ele35_WPTight_Gsf, "HLT_Ele35_WPTight_Gsf");
+    if ( eve->passHLT_IsoMu27_v_ && muTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_IsoMu27, "HLT_IsoMu27");
+    if ( eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight", true);
 
-    if ( eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && jetMetTool.MET > 125 && muTool.passCuts) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_PFMET120_PFMHT120_IDTight_muStream, "HLT_PFMET120_PFMHT120_IDTight_muStream");
+    //if ( eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && jetMetTool.MET > 125 && muTool.passCuts) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_PFMET120_PFMHT120_IDTight_muStream, "HLT_PFMET120_PFMHT120_IDTight_muStream");
     //if ( eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && jetMetTool.MET > 125 && elTool.passCuts) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_PFMET120_PFMHT120_IDTight_elStream, "HLT_PFMET120_PFMHT120_IDTight_elStream");
-    if ( eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && jetMetTool.MET > 125 && elTool.passCuts) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_PFMET120_PFMHT120_IDTight_elStream, "HLT_PFMET120_PFMHT120_IDTight_elStream");
     // * b. Cross triggers
-    if ( eve->passHLT_IsoMu27_v_ && eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && muTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
-    if ( eve->passHLT_Ele35_WPTight_Gsf_v_ && eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && elTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
+    if ( eve->passHLT_IsoMu27_v_ && eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && muTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
+    if ( eve->passHLT_Ele35_WPTight_Gsf_v_ && eve->passHLT_PFMET120_PFMHT120_IDTight_v_ && elTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
 
 
     // * c. Use multiple triggers defined in handlers
-    if ( elTool.passSLtriggers && elTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_SingleEl, "HLT_SingleEl");
-    if ( muTool.passSLtriggers && muTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_SingleMu, "HLT_SingleMu");
-    if ( jetMetTool.passMETTriggers && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_allMET, "HLT_allMET", true);
-    if ( muTool.passSLtriggers && jetMetTool.passMETTriggers && muTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_SingleMu__X__allMET, "SingleMu__X__allMET");
-    if ( elTool.passSLtriggers && jetMetTool.passMETTriggers && elTool.passCuts && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_SingleEl__X__allMET, "SingleEl__X__allMET");
+    if ( elTool.passSLtriggers && elTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_SingleEl, "HLT_SingleEl");
+    if ( muTool.passSLtriggers && muTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_SingleMu, "HLT_SingleMu");
+    if ( jetMetTool.passAllMETTriggers && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_HLT_allMET, "HLT_allMET", true);
+    if ( muTool.passSLtriggers && jetMetTool.passAllMETTriggers && muTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_SingleMu__X__allMET, "SingleMu__X__allMET");
+    if ( elTool.passSLtriggers && jetMetTool.passAllMETTriggers && elTool.passCuts && jetMetTool.nJets >= nJetsCut && jetMetTool.MET > 125) fillEfficiencyHistograms(muTool, elTool, jetMetTool, a_SingleEl__X__allMET, "SingleEl__X__allMET");
 
 
   }
@@ -214,10 +214,10 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   //plot1DHistograms( a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, c0, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
   
   // ** C. 1D efficiencies
-  makeEfficiencyHistograms( c0, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight_muStream, "HLT_PFMET120_PFMHT120_IDTight_muStream");
-  makeEfficiencyHistograms( c0, a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight_elStream, "HLT_PFMET120_PFMHT120_IDTight_elStream");
-  //makeEfficiencyHistograms( c0, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight_muStream");
-  //makeEfficiencyHistograms( c0, a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight_elStream");
+  //makeEfficiencyHistograms( c0, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight_muStream, "HLT_PFMET120_PFMHT120_IDTight_muStream");
+  //makeEfficiencyHistograms( c0, a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight_elStream, "HLT_PFMET120_PFMHT120_IDTight_elStream");
+  makeEfficiencyHistograms( c0, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight_muStream");
+  makeEfficiencyHistograms( c0, a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight_elStream");
 
   makeEfficiencyHistograms( c0, a_SingleMu__X__allMET, "SingleMu__X__allMET", a_HLT_allMET, "HLT_allMET_muStream");
   makeEfficiencyHistograms( c0, a_SingleEl__X__allMET, "SingleEl__X__allMET", a_HLT_allMET, "HLT_allMET_elStream");

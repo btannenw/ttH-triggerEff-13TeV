@@ -36,7 +36,8 @@ class jetMetHandler{
       double leadPt;
       double leadEta;
       double MET;
-      bool passMETTriggers;
+      bool passOneMETTrigger;
+      bool passAllMETTriggers;
 
       // === Variables === //
       TH1D* h_jet_cutflow;

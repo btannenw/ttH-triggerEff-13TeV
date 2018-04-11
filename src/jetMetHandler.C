@@ -10,7 +10,8 @@ jetMetHandler::jetMetHandler()
   leadIndex = -99;
   nPreCutJets = 0;
   nJets = 0;
-  passMETTriggers = false;
+  passOneMETTrigger = false;
+  passAllMETTriggers = false;
   metXTriggerBits = "";
 
   h_jet_cutflow  = new TH1D("h_jet_cutflow", "h_jet_cutflow", 4, 0, 4);
@@ -42,7 +43,7 @@ void jetMetHandler::parseMETTriggerLogic()
   // Fill plots
   if ( metXTriggerBits.at(0) == '1' ) h_met_passXtriggers->Fill("PFMET120_PFMHT120_IDTight", 1);
   if ( metXTriggerBits.at(1) == '1' ) h_met_passXtriggers->Fill("PFMETTypeOne120_PFMHT120_IDTight", 1);
-  if ( metXTriggerBits.at(2) == '1' ) h_met_passXtriggers->Fill("HLT_PFHT500_PFMET100_PFMHT100_IDTight", 1);
+  if ( metXTriggerBits.at(2) == '1' ) h_met_passXtriggers->Fill("PFHT500_PFMET100_PFMHT100_IDTight", 1);
   if ( metXTriggerBits.at(3) == '1' ) h_met_passXtriggers->Fill("PFHT700_PFMET85_PFMHT85_IDTight", 1);
   if ( metXTriggerBits.at(4) == '1' ) h_met_passXtriggers->Fill("PFHT800_PFMET75_PFMHT75_IDTight", 1);
   if ( metXTriggerBits.at(5) == '1' ) h_met_passXtriggers->Fill("CaloMET250_HBHECleaned", 1);
@@ -52,7 +53,7 @@ void jetMetHandler::parseMETTriggerLogic()
   // Fill plots
   if ( metXTriggerBits.find("10000000") != string::npos ) h_met_passOnlyXtrigger->Fill("PFMET120_PFMHT120_IDTight", 1);
   if ( metXTriggerBits.find("01000000") != string::npos ) h_met_passOnlyXtrigger->Fill("PFMETTypeOne120_PFMHT120_IDTight", 1);
-  if ( metXTriggerBits.find("00100000") != string::npos ) h_met_passOnlyXtrigger->Fill("HLT_PFHT500_PFMET100_PFMHT100_IDTight", 1);
+  if ( metXTriggerBits.find("00100000") != string::npos ) h_met_passOnlyXtrigger->Fill("PFHT500_PFMET100_PFMHT100_IDTight", 1);
   if ( metXTriggerBits.find("00010000") != string::npos ) h_met_passOnlyXtrigger->Fill("PFHT700_PFMET85_PFMHT85_IDTight", 1);
   if ( metXTriggerBits.find("00001000") != string::npos ) h_met_passOnlyXtrigger->Fill("PFHT800_PFMET75_PFMHT75_IDTight", 1);
   if ( metXTriggerBits.find("00000100") != string::npos ) h_met_passOnlyXtrigger->Fill("CaloMET250_HBHECleaned", 1);
@@ -60,9 +61,9 @@ void jetMetHandler::parseMETTriggerLogic()
   if ( metXTriggerBits.find("00000001") != string::npos ) h_met_passOnlyXtrigger->Fill("PFMET200_HBHE_BeamHaloCleaned", 1);
 
   // set boolean of passing desired X triggers
-  //passMETTriggers = metXTriggerBits.find('1') != string::npos ? true : false; // pass any X trigger
+  passAllMETTriggers = metXTriggerBits.find('1') != string::npos ? true : false; // pass any X trigger
   
-  passMETTriggers = metXTriggerBits.at(0) == '1' ? true : false; // pass PFMET120_PFMHT120_IDTight
+  passOneMETTrigger = metXTriggerBits.at(0) == '1' ? true : false; // pass PFMET120_PFMHT120_IDTight
   
   /*passMETTriggers = 
     metXTriggerBits.at(0) == '1' || // pass PFMET120_PFMHT120_IDTight
@@ -121,7 +122,8 @@ void jetMetHandler::Event(yggdrasilEventVars* eve)
   nJets = 0;
   leadIndex = -1;
   MET = -99;
-  passMETTriggers = false;
+  passOneMETTrigger = false;
+  passAllMETTriggers = false;
   metXTriggerBits = "";
 
   // *** 2. Start handling business! (or at least jets and MET)

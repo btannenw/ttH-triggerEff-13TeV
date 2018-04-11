@@ -81,8 +81,10 @@ void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
 void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream="")
 {
   // Leading electron pT
-  const Int_t nbins_pt = 7;
-  Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0};
+  //const Int_t nbins_pt = 7;
+  //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0};
+  const Int_t nbins_pt = 27; // 4-11-18
+  Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 300.0}; // 4-11-18
   TH1D* h_el_pt = new TH1D( ("h_" + nameHLT + stream + "_el0_pt").c_str(),  ("h_" + nameHLT + stream + "_el0_pt").c_str(), nbins_pt, edges_pt );
   h_el_pt->SetXTitle("Leading Electron p_{T} [GeV]");
   h_el_pt->SetYTitle("Entries / Bin");
@@ -108,8 +110,10 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_njets->SetYTitle("Entries / Bin");
 
   // MET
-  const Int_t nbins_met = 11;
-  Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 150.0, 175.0, 200.0, 250.0, 300.0};
+  //const Int_t nbins_met = 11;
+  //Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 150.0, 175.0, 200.0, 250.0, 300.0};
+  const Int_t nbins_met = 23; // 4-11-18
+  Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 135.0, 145.0, 155.0, 165.0, 175.0, 185.0, 195.0, 205.0, 215.0, 225.0, 235.0, 245.0, 255.0, 265.0, 275.0, 285.0, 300.0}; // 4-11-18
   TH1D* h_met = new TH1D( ("h_" + nameHLT + stream + "_met").c_str(),  ("h_" + nameHLT + stream + "_met").c_str(), nbins_met, edges_met );
   h_met->SetXTitle("Missing Transverse Energy (MET) [GeV]");
   h_met->SetYTitle("Entries / Bin");
