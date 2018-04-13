@@ -230,6 +230,18 @@ void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nam
   
 }
 
+
+void addOverflow(TH1D*& histo)
+{
+  // put overflow bin at end
+  int maxBin = histo->GetNbinsX();
+  histo->SetBinContent( maxBin, histo->GetBinContent( maxBin ) + histo->GetBinContent( maxBin+1 ) );
+  histo->SetBinError  ( maxBin, sqrt( histo->GetBinError(maxBin)*histo->GetBinError(maxBin) + histo->GetBinError(maxBin+1)*histo->GetBinError(maxBin+1) ) );
+  histo->SetBinContent( maxBin + 1, 0 );
+  histo->SetBinError( maxBin + 1, 0 );
+
+}
+
 void draw1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
 {
 
@@ -237,6 +249,7 @@ void draw1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
   // *** 3. Do the drawing
   c0->cd();
   h0->Sumw2();
+  addOverflow(h0);
   h0->Draw("e");
 
   // *** 4. Set CMS style
@@ -341,7 +354,10 @@ void drawEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   TH1D* h_denom = (TH1D*)a_denominator->FindObject( ("h_" + nameHLT_denom + "_" + var).c_str() );
   h_num->Sumw2();
   h_denom->Sumw2();
-  
+  addOverflow(h_num);
+  addOverflow(h_denom);
+
+
   cout << h_num->GetName() << " has " << h_num->GetEntries() << " entries." << endl;
   cout << h_denom->GetName() << " has " << h_denom->GetEntries() << " entries." << endl;
 
@@ -403,7 +419,9 @@ void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nam
   TH1D* h_denom = (TH1D*)a_denominator->FindObject( ("h_" + nameHLT_denom + "_" + var).c_str() );
   h_num->Sumw2();
   h_denom->Sumw2();
-  
+  addOverflow(h_num);
+  addOverflow(h_denom);
+
   cout << h_num->GetName() << " has " << h_num->GetEntries() << " entries." << endl;
   cout << h_denom->GetName() << " has " << h_denom->GetEntries() << " entries." << endl;
 
