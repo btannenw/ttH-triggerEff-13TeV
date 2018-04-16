@@ -86,7 +86,7 @@ void setTDRStyle() {
   //tdrStyle->SetPadRightMargin(0.02);
   // BBT, 2-27-18
   tdrStyle->SetPadRightMargin(0.15);
-
+  
   // For the Global title:
 
   tdrStyle->SetOptTitle(0);

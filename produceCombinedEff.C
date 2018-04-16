@@ -10,6 +10,8 @@
 
 #include <iostream>
 
+std::string topDir = "04-16-18_files/";
+
 void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
 {
   TEfficiency* t_ttbar = (TEfficiency*)ttbar->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
@@ -19,13 +21,18 @@ void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string trigger
   t_ttbar->Draw();
   t_ttbar->Paint("");
   TGraphAsymmErrors* gr = (TGraphAsymmErrors*)t_ttbar->GetPaintedGraph();
+  gr->Draw("ep");
   gr->SetMinimum(0);
   gr->SetMaximum(1.1);
+  TH1D* temp = (TH1D*)t_ttbar->GetCopyTotalHisto();
   //cout << s_eff << ", Min: " << h_eff->GetXaxis()->GetXmin()  << ", Max: " << h_eff->GetXaxis()->GetXmax() << endl;
-  //gr->GetXaxis()->SetRangeUser( h_eff->GetXaxis()->GetXmin(), h_eff->GetXaxis()->GetXmax() );
+  gr->GetXaxis()->SetRangeUser( temp->GetXaxis()->GetXmin(), temp->GetXaxis()->GetXmax() );
+  gr->GetYaxis()->SetTitle("Efficiency / Bin");
+  gr->Draw("ep");
   t_data->SetLineColor(kRed);
   t_data->SetMarkerStyle(0);
   t_data->Draw("same");
+  //gr->GetHistogram()->GetYaxis()->SetTitle("Efficiency / Bin");
 
   TLegend* leg = new TLegend(0.7, 0.4, .85, .5);
   leg->AddEntry(t_data, "2017 RunC", "el");
@@ -39,14 +46,18 @@ void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string trigger
   ltx1.SetNDC();
   ltx1.DrawLatex(0.2, 0.52, triggerSet.c_str());
 
+  //c0->Update();
+  //gr->GetYaxis()->SetTitle("Efficiency / Bin");
+  //c0->Modified();
   
   CMS_lumi( c0, 0, 33);
 
   c0->SetLeftMargin(0.15);
   c0->SetRightMargin(0.05);
   c0->SetBottomMargin(0.15);
-  
-  c0->Print( ("h_" + triggerSet + "_" + variable + ".png").c_str() );
+
+  c0->Print( (topDir + "/h_" + triggerSet + "_" + variable + ".png").c_str() );
+  //c0->Print( (topDir + "/h_" + triggerSet + "_" + variable + ".C").c_str() );
 }
 
 void drawDoubleHist(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
@@ -54,14 +65,27 @@ void drawDoubleHist(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, s
   TH1D* t_ttbar = (TH1D*)ttbar->Get( ("h_" + triggerSet + "_" + variable).c_str() );
   TH1D* t_data = (TH1D*)data->Get( ("h_" + triggerSet + "_" + variable).c_str() );
   c0->cd();
-  //t_ttbar->SetMarkerStyle(0);
-  t_ttbar->GetYaxis()->SetTitle ("Normalized Entries / Bin");
-  //t_ttbar->GetYaxis()->SetRangeUser(0, 1.1);
-  t_ttbar->DrawNormalized("hist e");
-  t_data->SetLineColor(kRed);
-  //t_data->SetMarkerStyle(0);
-  t_data->SetMarkerColor(kRed);
-  t_data->DrawNormalized("hist e same");
+
+  if (t_ttbar->GetBinContent(t_ttbar->GetMaximumBin())/t_ttbar->Integral() > t_data->GetBinContent(t_data->GetMaximumBin())/t_data->Integral() ) {
+    //t_ttbar->SetMarkerStyle(0);
+    t_ttbar->GetYaxis()->SetTitle ("Normalized Entries / Bin");
+    t_ttbar->SetMarkerStyle(0);
+    //t_ttbar->GetYaxis()->SetRangeUser(0, 1.1);
+    t_ttbar->DrawNormalized("hist e");
+    t_data->SetLineColor(kRed);
+    t_data->SetMarkerStyle(0);
+    t_data->SetMarkerColor(kRed);
+    t_data->DrawNormalized("hist e same");
+  }
+  else {
+    t_data->SetLineColor(kRed);
+    t_data->SetMarkerColor(kRed);
+    t_data->GetYaxis()->SetTitle ("Normalized Entries / Bin");
+    t_data->SetMarkerStyle(0);
+    t_data->DrawNormalized("hist e");
+    t_ttbar->SetMarkerStyle(0);
+    t_ttbar->DrawNormalized("hist e same");
+  }
 
   TLegend* leg = new TLegend(0.7, 0.7, .85, .8);
   leg->AddEntry(t_data, "2017 RunC", "el");
@@ -83,15 +107,15 @@ void drawDoubleHist(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, s
   c0->SetBottomMargin(0.15);
   //c0->SetTopMargin(0.05);
 
-  c0->Print( ("h_" + triggerSet + "_" + variable + "_TH1.png").c_str() );
+  c0->Print( (topDir + "/h_" + triggerSet + "_" + variable + "_TH1.png").c_str() );
 }
 
 
 void produceCombinedEff()
 {
-  TFile* mc_ttbar     = new TFile("ttbarMC_full_04-07-18.root", "READ");
-  TFile* data_el_runC = new TFile("singleElectron_Run2017C_full_04-07-18.root", "READ");
-  TFile* data_mu_runC = new TFile("singleMuon_Run2017C_full_04-07-18.root", "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_pres_04-16-18.root").c_str(), "READ");
+  TFile* data_el_runC = new TFile( (topDir + "/outfile_singleElectron_Run2017C_pres_04-16-18.root").c_str(), "READ");
+  TFile* data_mu_runC = new TFile( (topDir + "/outfile_singleMuon_Run2017C_pres_04-16-18.root").c_str(), "READ");
 
   TCanvas* c1 = new TCanvas("c1", "c1", 800, 800);
 
@@ -135,6 +159,6 @@ void produceCombinedEff()
   drawDoubleHist( c1, mc_ttbar, data_mu_runC, "HLT_IsoMu27", "mu0_eta" );
   drawDoubleHist( c1, mc_ttbar, data_mu_runC, "HLT_IsoMu27", "met" );
   drawDoubleHist( c1, mc_ttbar, data_mu_runC, "HLT_IsoMu27", "njets" );
-
+  
 }
 
