@@ -22,7 +22,7 @@ class electronHandler{
 
    public: 
       // Constructor(s) and destructor
-      electronHandler();
+      electronHandler(bool passMC);
       virtual ~electronHandler();
 
       // === Functions === //
@@ -37,7 +37,9 @@ class electronHandler{
       int nElectrons;
       double leadPt;
       double leadEta;
-      
+      bool isMC;
+      double lepSF;
+
       // === Variables === //
       TH1D* h_el_cutflow;
       TH1D* h_el_event_cutflow;

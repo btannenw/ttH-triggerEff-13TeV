@@ -3,7 +3,7 @@
 
 
 
-electronHandler::electronHandler()
+electronHandler::electronHandler(bool passMC)
 {
   passCuts = false;
   passSLCuts = false;
@@ -13,6 +13,8 @@ electronHandler::electronHandler()
   leadIndex = -99;
   nLeptons = 0;
   nElectrons = 0;
+  lepSF = 1.;
+  isMC = passMC;
   
 
   h_el_cutflow = new TH1D("h_el_cutflow", "h_el_cutflow", 5, 0, 5);
@@ -100,6 +102,10 @@ void electronHandler::applyElectronCuts()
 
     passCuts = true;
     nElectrons++;
+
+    // set lepton scale factors if MC
+    if (isMC)
+      lepSF = ev->lepton_IDSF_ * ev->lepton_IsoRecoSF_;
 
     // set leading lepton if appropriate
     if (ev->lepton_pt_[l] > leadPt) {

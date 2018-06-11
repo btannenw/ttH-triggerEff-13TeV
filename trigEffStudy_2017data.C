@@ -150,8 +150,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   // *** 2. Set tree structure and variables to read
   eve=0;
   fChain->SetBranchAddress("eve.", &eve );
-  elTool = electronHandler();
-  muTool = muonHandler();
+  elTool = electronHandler(isMC);
+  muTool = muonHandler(isMC);
   jetMetTool = jetMetHandler();
   //elTool.test();
   
