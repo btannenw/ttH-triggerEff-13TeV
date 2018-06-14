@@ -22,11 +22,12 @@ class muonHandler{
 
    public: 
       // Constructor(s) and destructor
-      muonHandler(bool passMC);
+      muonHandler();
       virtual ~muonHandler();
 
       // === Functions === //
       void test();
+      void setMCflag(bool passMC);
       void Event(yggdrasilEventVars* eve);
 
       // === Variables === //

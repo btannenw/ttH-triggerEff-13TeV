@@ -22,11 +22,12 @@ class electronHandler{
 
    public: 
       // Constructor(s) and destructor
-      electronHandler(bool passMC);
+      electronHandler();
       virtual ~electronHandler();
 
       // === Functions === //
       void test();
+      void setMCflag(bool passMC);
       void Event(yggdrasilEventVars* eve);
 
       // === Variables === //

@@ -3,7 +3,7 @@
 
 
 
-muonHandler::muonHandler(bool passMC)
+muonHandler::muonHandler()
 {
   passCuts = false;
   passSLtriggers = false;
@@ -13,7 +13,7 @@ muonHandler::muonHandler(bool passMC)
   nLeptons = 0;
   nMuons = 0;
   lepSF = 1.;
-  isMC = passMC;
+  isMC = false;
 
   h_mu_cutflow = new TH1D("h_mu_cutflow", "h_mu_cutflow", 4, 0, 4);
   h_mu_n       = new TH1D("h_mu_n", "h_mu_n", 6, 0, 6);
@@ -24,6 +24,16 @@ muonHandler::~muonHandler() {}
 void muonHandler::test()
 {
   std::cout << "Test!" << endl;
+}
+
+
+void muonHandler::setMCflag(bool passMC)
+{
+  isMC = passMC;
+  if (isMC)
+    std::cout << "muTool.isMC = true!" << endl;
+  else
+    std::cout << "muTool.isMC = false!" << endl;
 }
 
 void muonHandler::applyMuonCuts()

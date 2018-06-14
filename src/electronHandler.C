@@ -3,7 +3,7 @@
 
 
 
-electronHandler::electronHandler(bool passMC)
+electronHandler::electronHandler()
 {
   passCuts = false;
   passSLCuts = false;
@@ -14,7 +14,7 @@ electronHandler::electronHandler(bool passMC)
   nLeptons = 0;
   nElectrons = 0;
   lepSF = 1.;
-  isMC = passMC;
+  isMC = false;
   
 
   h_el_cutflow = new TH1D("h_el_cutflow", "h_el_cutflow", 5, 0, 5);
@@ -28,6 +28,17 @@ void electronHandler::test()
 {
   std::cout << "Test!" << endl;
 }
+
+
+void electronHandler::setMCflag(bool passMC)
+{
+  isMC = passMC;
+  if (isMC)
+    std::cout << "elTool.isMC = true!" << endl;
+  else
+    std::cout << "elTool.isMC = false!" << endl;
+}
+
 void electronHandler::checkSLCuts()
 {
   //if (nElectrons != 1)
