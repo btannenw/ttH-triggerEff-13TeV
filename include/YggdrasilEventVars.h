@@ -50,11 +50,13 @@ struct yggdrasilEventVars{
   int passHLT_IsoMu24_v_;
   int passHLT_IsoTkMu24_v_;
   int passHLT_IsoMu20_eta2p1_v_;
+  int passHLT_IsoMu24_eta2p1_v_;
 
   int passHLT_Ele27_eta2p1_WPTight_Gsf_v_;
   int passHLT_Ele27_WPTight_Gsf_v;
   int passHLT_IsoMu22_v_;
   int passHLT_IsoTkMu22_v_;
+  int passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_;
 
   int passHLT_Ele27_WP85_Gsf_v_;
   int passHLT_Ele27_eta2p1_WPLoose_Gsf_v_;
@@ -68,44 +70,40 @@ struct yggdrasilEventVars{
   int passHLT_Mu30_TkMu11_v_;
   int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v_;
   int passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_;
-  
+  int passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_;
+  int passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_;
+  int passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_;
+  int passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_;
+
+
   int passHLT_Ele25WP60_SC4_Mass55_v_;
 
   /* int passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_; */
   /* int passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_; */
   /* int passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_; */
+  int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_;
   int passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_;
 
   int passHLT_Ele28_eta2p1_WPTight_Gsf_HT150_v_                      ;
   int passHLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned_v_  ;
+  int passHLT_Ele32_WPTight_Gsf_L1DoubleEG_v_                  	    ;
+  int passHLT_Ele32_WPTight_Gsf_v_                                   ;  
+  int passHLT_Ele35_WPTight_Gsf_v_                                   ;  
+  int passHLT_Ele38_WPTight_Gsf_v_                                   ;  
+  int passHLT_Ele40_WPTight_Gsf_v_                                   ;  
   int passHLT_IsoMu24_2p1_v_                                   	    ;
+  int passHLT_IsoMu27_v_                                             ;  
   int passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_         ;
+  int passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_      ;
+  int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_               ;  
+  int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_             ;  
   int passHLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v_           	    ;
   int passHLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2_v_              ;  
   int passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v_          ;  
   int passHLT_PFHT430_SixJet40_BTagCSV_p080_v_                       ;  
   int passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_                    ;  
 
-  // BBT [Added Feb 26, 2018]: add 2016 branches for trigger efficiency study
-  /* 
-  //NOTE [2-27-18]: these don't work!!
-  int passHLT_LooseIsoPFTau50_Trk30_eta2p1_MET120_v1_ ;
-  int passHLT_PFHT350_PFMET120_NoiseCleaned_v1_ ;
-  int passHLT_PFMET120_NoiseCleaned_BTagCSV07_v1_ ;
-  int passHLT_Photon22_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ ;
-  int passHLT_PFMET170_NoiseCleaned_v1_ ;
-  int passHLT_Photon36_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ ;
-  int passHLT_Photon50_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ ;
-  int passHLT_Photon135_PFMET40_v1_ ;
-  int passHLT_Photon75_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ ;
-  int passHLT_Photon150_PFMET40_v1_ ;
-  int passHLT_Photon160_PFMET40_v1_ ;
-  int passHLT_Photon90_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ ;
-  int passHLT_Photon250_NoHE_PFMET40_v1_ ;
-  int passHLT_Photon300_NoHE_PFMET40_v1_ ;
-  */
-  // 2-27-18: add all 2017 branches for trigger efficiency study, need to weed out later to remove prescaled HLT and L1
-  // 2-28-18: unprescaled known... just gonna keep them all for sanity's sake. also, adding 2017 single and double lepton triggers
+  // 5-15-18: unprescaled known... just gonna keep them all for sanity's sake [BBT]
   // 2017 MET triggers
   int passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ ;
   int passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_ ;
@@ -150,26 +148,31 @@ struct yggdrasilEventVars{
   int passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_ ;
   int passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v_ ;
   int passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v_ ;
-
-  // 2017 singleLepton and diLepton triggers
-  int passHLT_IsoMu27_v_ ;    
-  int passHLT_IsoMu24_eta2p1_v_;
-  int passHLT_Ele32_WPTight_Gsf_v_ ;  
-  int passHLT_Ele35_WPTight_Gsf_v_ ;  
-  int passHLT_Ele38_WPTight_Gsf_v_ ;  
-  int passHLT_Ele40_WPTight_Gsf_v_ ;  
-  int passHLT_Ele32_WPTight_Gsf_L1DoubleEG_v_ ;
-  int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_;
-  int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ ;
-  int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ ;
-  int passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_;
-  int passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_;
-  int passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_;
-  int passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ ;
-  int passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ ; 
-
-  // END
-
+  
+  // 5-16-18: adding jet triggers for Abhisek [BBT]
+  int passHLT_PFHT180_v_ ;
+  int passHLT_PFHT250_v_ ;
+  int passHLT_PFHT350_v_ ;
+  int passHLT_PFHT370_v_ ;
+  int passHLT_PFHT430_v_ ;
+  int passHLT_PFHT510_v_ ;
+  int passHLT_PFHT590_v_ ;
+  int passHLT_PFHT680_v_ ;
+  int passHLT_PFHT780_v_ ;
+  int passHLT_PFHT890_v_ ;
+  int passHLT_PFHT1050_v_ ;
+  int passHLT_PFJet40_v_ ;
+  int passHLT_PFJet60_v_ ;
+  int passHLT_PFJet80_v_ ;
+  int passHLT_PFJet140_v_ ;
+  int passHLT_PFJet200_v_ ;
+  int passHLT_PFJet260_v_ ;
+  int passHLT_PFJet320_v_ ;
+  int passHLT_PFJet400_v_ ;
+  int passHLT_PFJet450_v_ ;
+  int passHLT_PFJet500_v_ ;
+  int passHLT_PFJet550_v_ ;
+  
   int run_;
   int lumi_;
   long evt_;
@@ -207,6 +210,14 @@ struct yggdrasilEventVars{
   vdouble lepton_puppiIsoWithoutLep_PH_ ;
   vdouble lepton_scEta_;
   vdouble lepton_dRSingleLepTrig_;
+  vdouble lepton_dRDiLepTrig_;
+
+  Float_t lepton_IDSF_;
+  Float_t lepton_IsoRecoSF_;
+  //vdouble lepton_mu_IDSF_;
+  //vdouble lepton_mu_IsoSF_;
+  //vdouble lepton_el_IDSF_;
+  //vdouble lepton_el_RecoSF_;
 
   vfloat truth_pt_;
   vfloat truth_eta_;
@@ -266,6 +277,8 @@ struct yggdrasilEventVars{
   vdouble jet_phi_[rNumSys];
   vdouble jet_m_[rNumSys];
 
+  vint    jet_puid_[rNumSys];
+
 
   vdouble  jet_precorr_pt_  [rNumSys];
   vdouble  jet_precorr_phi_  [rNumSys];
@@ -286,6 +299,52 @@ struct yggdrasilEventVars{
   vdouble genjet_phi_[rNumSys];
   vdouble genjet_m_[rNumSys];
   vint    genjet_BhadronMatch_[rNumSys];
+
+
+  vdouble puppijet_pt_  [rNumSys]                ;
+  vdouble puppijet_phi_ [rNumSys]                ;
+  vdouble puppijet_eta_ [rNumSys]                ;
+  vdouble puppijet_m_   [rNumSys]                ;
+  vint    puppijet_puid_[rNumSys]                ;
+  vdouble puppijet_precorr_pt_  [rNumSys]        ;
+  vdouble puppijet_precorr_phi_ [rNumSys]        ;
+  vdouble puppijet_AssociatedGenJet_pt_[rNumSys] ;
+  vdouble puppijet_AssociatedGenJet_eta_[rNumSys];
+  vdouble puppijet_AssociatedGenJet_phi_[rNumSys];
+  vdouble puppijet_AssociatedGenJet_m_[rNumSys]  ;
+  vint    puppijet_partonflavour_[rNumSys]       ;
+  vint    puppijet_flavour_[rNumSys]             ;
+  vdouble puppijet_DeepCSV_b_  [rNumSys]         ;
+  vdouble puppijet_DeepCSV_bb_ [rNumSys]         ;
+
+
+    std::vector<double>  fatjet_pt            [rNumSys];
+    std::vector<double>  fatjet_eta	      [rNumSys];
+    std::vector<double>  fatjet_phi	      [rNumSys];
+    std::vector<double>  fatjet_m  	      [rNumSys];
+    std::vector<int>     fatjet_nSubjet 	      [rNumSys];
+    std::vector<double>  fatjet_sdmass_miniaod [rNumSys];
+    std::vector<double>  fatjet_sdmass_uncorr  [rNumSys];
+    std::vector<double>  fatjet_tau1	      [rNumSys];
+    std::vector<double>  fatjet_tau2	      [rNumSys];
+    std::vector<double>  fatjet_tau3	      [rNumSys];
+    std::vector<double>  fatjet_tau4	      [rNumSys];
+    std::vector<double>  fatjet_chstau1	      [rNumSys];
+    std::vector<double>  fatjet_chstau2	      [rNumSys];
+    std::vector<double>  fatjet_chstau3	      [rNumSys];
+    std::vector<double>  fatjet_nb1N2 	      [rNumSys];
+    std::vector<double>  fatjet_nb1N3 	      [rNumSys];
+    std::vector<double>  fatjet_nb2N2 	      [rNumSys];
+    std::vector<double>  fatjet_nb2N3 	      [rNumSys];
+    std::vector<double>  fatjet_chsprunedmass  [rNumSys];
+
+  std::vector<std::vector<double>>  fatjet_subjet_pt  [rNumSys];
+  std::vector<std::vector<double>>  fatjet_subjet_eta  [rNumSys];
+  std::vector<std::vector<double>>  fatjet_subjet_phi  [rNumSys];
+  std::vector<std::vector<double>>  fatjet_subjet_m  [rNumSys];
+  std::vector<std::vector<double>>  fatjet_subjet_beepcsv  [rNumSys];
+  std::vector<std::vector<double>>  fatjet_subjet_csvv2  [rNumSys];
+
 
   ///boosted jets
   vvdouble topfatJet_vect_TLV_;
@@ -324,10 +383,12 @@ void yggdrasilEventVars::initialize(){
   passHLT_IsoMu24_v_ = -99;
   passHLT_IsoTkMu24_v_ = -99;
   passHLT_IsoMu20_eta2p1_v_ = -99;
+  passHLT_IsoMu24_eta2p1_v_ = -99;
 
   passHLT_Ele27_eta2p1_WPTight_Gsf_v_ = -99 ;
   passHLT_IsoMu22_v_ = -99 ;
   passHLT_IsoTkMu22_v_ = -99 ;
+  passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ;
   
   passHLT_Ele27_WP85_Gsf_v_ = -99;
   passHLT_Ele27_WPTight_Gsf_v = -99;
@@ -342,34 +403,40 @@ void yggdrasilEventVars::initialize(){
   passHLT_Mu30_TkMu11_v_ = -99;
   passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v_ = - 99;
   passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_ = -99;
-  
+  passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = -99;
+  passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_ = -99;
+  passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99;
+  passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99;
+
   passHLT_Ele25WP60_SC4_Mass55_v_ = -99;
 
   /* passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ; */
   /* passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = -99 ; */
   /* passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ = -99 ; */
+  passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = -99 ;
   passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ = -99 ;
 
+  // 5-15-18: add 2017 single lepton
+  passHLT_Ele28_eta2p1_WPTight_Gsf_HT150_v_ = -99 ;
+  passHLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned_v_ = -99 ;
+  passHLT_Ele32_WPTight_Gsf_L1DoubleEG_v_ = -99 ;
+  passHLT_Ele32_WPTight_Gsf_v_ = -99 ;
+  passHLT_Ele35_WPTight_Gsf_v_ = -99 ;
+  passHLT_Ele38_WPTight_Gsf_v_ = -99 ;
+  passHLT_Ele40_WPTight_Gsf_v_ = -99 ;
+  passHLT_IsoMu24_2p1_v_       = -99 ;                            
+  passHLT_IsoMu27_v_           = -99 ;                             
+  passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_ = -99 ;   
+  passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ;
+  passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ = -99 ;      
+  passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ = -99 ;    
+  passHLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v_ = -99 ;        
+  passHLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2_v_  = -99 ;    
+  passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v_ = -99 ; 
+  passHLT_PFHT430_SixJet40_BTagCSV_p080_v_  = -99 ;   
+  passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_  = -99 ;
 
-  // BBT [Added Feb 26, 2018]: add branches for trigger efficiency study
-  /*
-  // 2-27-18: these are 2016 and don't work!
-  passHLT_LooseIsoPFTau50_Trk30_eta2p1_MET120_v1_ = -99 ;
-  passHLT_PFHT350_PFMET120_NoiseCleaned_v1_ = -99 ;
-  passHLT_PFMET120_NoiseCleaned_BTagCSV07_v1_ = -99 ;
-  passHLT_Photon22_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ = -99 ;
-  passHLT_PFMET170_NoiseCleaned_v1_ = -99 ;
-  passHLT_Photon36_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ = -99 ;
-  passHLT_Photon50_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ = -99 ;
-  passHLT_Photon135_PFMET40_v1_ = -99 ;
-  passHLT_Photon75_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ = -99 ;
-  passHLT_Photon150_PFMET40_v1_ = -99 ;
-  passHLT_Photon160_PFMET40_v1_ = -99 ;
-  passHLT_Photon90_R9Id90_HE10_Iso40_EBOnly_PFMET40_v1_ = -99 ;
-  passHLT_Photon250_NoHE_PFMET40_v1_ = -99 ;
-  passHLT_Photon300_NoHE_PFMET40_v1_ = -99 ;
-  */
-  // 2-27-18: add 2017 branhces
+  // 5-15-18 [BBT]: add 2017 MET branhces
   passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ = -99 ;
   passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_ = -99 ;
   passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v_ = -99 ;
@@ -413,25 +480,31 @@ void yggdrasilEventVars::initialize(){
   passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_ = -99 ;
   passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v_ = -99 ;
   passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v_ = -99 ;
-
-  // 2017 singleLepton and diLepton triggers
-  passHLT_IsoMu27_v_ = -99 ;    
-  passHLT_IsoMu24_eta2p1_v_ = -99 ;
-  passHLT_Ele32_WPTight_Gsf_v_ = -99 ;  
-  passHLT_Ele35_WPTight_Gsf_v_ = -99 ;  
-  passHLT_Ele38_WPTight_Gsf_v_ = -99 ;  
-  passHLT_Ele40_WPTight_Gsf_v_ = -99 ;  
-  passHLT_Ele32_WPTight_Gsf_L1DoubleEG_v_ = -99 ;
-  passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = -99 ;
-  passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ = -99 ;
-  passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ = -99 ;
-  passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ;
-  passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ;
-  passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = -99 ;
-  passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ;
-  passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ; 
-  // END
-
+  
+  // 05-16-18: adding jet triggers for Abhisek [BBT]
+  passHLT_PFHT180_v_ = -99 ;
+  passHLT_PFHT250_v_ = -99 ;
+  passHLT_PFHT350_v_ = -99 ;
+  passHLT_PFHT370_v_ = -99 ;
+  passHLT_PFHT430_v_ = -99 ;
+  passHLT_PFHT510_v_ = -99 ;
+  passHLT_PFHT590_v_ = -99 ;
+  passHLT_PFHT680_v_ = -99 ;
+  passHLT_PFHT780_v_ = -99 ;
+  passHLT_PFHT890_v_ = -99 ;
+  passHLT_PFHT1050_v_ = -99 ;
+  passHLT_PFJet40_v_ = -99 ;
+  passHLT_PFJet60_v_ = -99 ;
+  passHLT_PFJet80_v_ = -99 ;
+  passHLT_PFJet140_v_ = -99 ;
+  passHLT_PFJet200_v_ = -99 ;
+  passHLT_PFJet260_v_ = -99 ;
+  passHLT_PFJet320_v_ = -99 ;
+  passHLT_PFJet400_v_ = -99 ;
+  passHLT_PFJet450_v_ = -99 ;
+  passHLT_PFJet500_v_ = -99 ;
+  passHLT_PFJet550_v_ = -99 ;
+  
   run_  = -99;
   lumi_ = -99;
   evt_ = -99;
@@ -465,6 +538,13 @@ void yggdrasilEventVars::initialize(){
   lepton_relIso_.clear();
   lepton_puppirelIso_.clear();
 
+  lepton_IDSF_        = -99.9;
+  lepton_IsoRecoSF_   = -99.9;
+  //lepton_mu_IDSF_.clear();
+  //lepton_mu_IsoSF_.clear();
+  //lepton_el_IDSF_.clear();
+  //lepton_el_RecoSF_.clear();
+
   lepton_dbiso_CH_ .clear();
   lepton_dbiso_NH_ .clear();
   lepton_dbiso_PH_ .clear();
@@ -478,6 +558,7 @@ void yggdrasilEventVars::initialize(){
   lepton_puppiIsoWithoutLep_PH_.clear() ;
   lepton_scEta_.clear();
   lepton_dRSingleLepTrig_.clear();
+  lepton_dRDiLepTrig_.clear();
 
   wgt_generator_        = -99.9;
   wgt_lumi_             = -99.9;
@@ -526,6 +607,8 @@ void yggdrasilEventVars::initialize(){
     jet_eta_[iSys].clear();
     jet_m_  [iSys].clear();
 
+    jet_puid_ [iSys].clear();
+
     jet_precorr_pt_  [iSys].clear();
     jet_precorr_phi_  [iSys].clear();
 
@@ -545,6 +628,49 @@ void yggdrasilEventVars::initialize(){
     jet_genId_[iSys].clear();
     jet_genParentId_[iSys].clear();
     jet_genGrandParentId_[iSys].clear();
+
+    puppijet_pt_  [iSys]                .clear();
+    puppijet_phi_ [iSys]                .clear();
+    puppijet_eta_ [iSys]                .clear();
+    puppijet_m_   [iSys]                .clear();
+    puppijet_puid_[iSys]                .clear();
+    puppijet_precorr_pt_  [iSys]        .clear();
+    puppijet_precorr_phi_ [iSys]        .clear();
+    puppijet_AssociatedGenJet_pt_[iSys] .clear();
+    puppijet_AssociatedGenJet_eta_[iSys].clear();
+    puppijet_AssociatedGenJet_phi_[iSys].clear();
+    puppijet_AssociatedGenJet_m_[iSys]  .clear();
+    puppijet_partonflavour_[iSys]       .clear();
+    puppijet_flavour_[iSys]             .clear();
+    puppijet_DeepCSV_b_  [iSys]         .clear();
+    puppijet_DeepCSV_bb_ [iSys]         .clear();
+
+    fatjet_pt            [iSys] .clear() ;
+    fatjet_eta	      [iSys] .clear() ;
+    fatjet_phi	      [iSys] .clear() ;
+    fatjet_m  	      [iSys] .clear() ;
+    fatjet_nSubjet 	      [iSys] .clear() ;
+    fatjet_sdmass_miniaod [iSys] .clear() ;
+    fatjet_sdmass_uncorr  [iSys] .clear() ;
+    fatjet_tau1	      [iSys] .clear() ;
+    fatjet_tau2	      [iSys] .clear() ;
+    fatjet_tau3	      [iSys] .clear() ;
+    fatjet_tau4	      [iSys] .clear() ;
+    fatjet_chstau1	      [iSys] .clear() ;
+    fatjet_chstau2	      [iSys] .clear() ;
+    fatjet_chstau3	      [iSys] .clear() ;
+    fatjet_nb1N2 	      [iSys] .clear() ;
+    fatjet_nb1N3 	      [iSys] .clear() ;
+    fatjet_nb2N2 	      [iSys] .clear() ;
+    fatjet_nb2N3 	      [iSys] .clear() ;
+    fatjet_chsprunedmass  [iSys] .clear() ;
+
+    fatjet_subjet_pt  [iSys] .clear() ;
+    fatjet_subjet_eta [iSys] .clear() ;
+    fatjet_subjet_phi [iSys] .clear() ;
+    fatjet_subjet_m  [iSys] .clear() ;
+    fatjet_subjet_beepcsv [iSys] .clear() ;
+    fatjet_subjet_csvv2  [iSys] .clear() ;
 
   }
 

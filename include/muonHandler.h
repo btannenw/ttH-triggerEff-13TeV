@@ -22,7 +22,7 @@ class muonHandler{
 
    public: 
       // Constructor(s) and destructor
-      muonHandler();
+      muonHandler(bool passMC);
       virtual ~muonHandler();
 
       // === Functions === //
@@ -36,7 +36,9 @@ class muonHandler{
       int nMuons;
       double leadPt;
       double leadEta;
-      
+      double lepSF;
+      bool isMC;
+
       // === Variables === //
       TH1D* h_mu_cutflow;
       TH1D* h_mu_n;

@@ -29,25 +29,31 @@ void fillEfficiencyHistogramsByStream(muonHandler muTool, electronHandler elTool
   if (stream !=  "")
     stream = ("_" + stream).c_str();
 
+  double lepSF = 1.;
+  if (stream == "elStream")
+    lepSF = elTool.lepSF;
+  else if (stream == "muStream")
+    lepSF = muTool.lepSF;
+
   // ===  Method B: FAST  ===
   //cout << ("h_" + nameHLT + stream + "_el0_pt").c_str() << endl;
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt").c_str() );
-  h0->Fill( elTool.leadPt );
+  h0->Fill( elTool.leadPt, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_eta").c_str() );
-  h0->Fill( elTool.leadEta );
+  h0->Fill( elTool.leadEta, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt").c_str() );
-  h0->Fill( muTool.leadPt );
+  h0->Fill( muTool.leadPt, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta").c_str() );
-  h0->Fill( muTool.leadEta );
+  h0->Fill( muTool.leadEta, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_njets").c_str() );
-  h0->Fill( jetMetTool.nJets );
+  h0->Fill( jetMetTool.nJets, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_met").c_str() );
-  h0->Fill( jetMetTool.MET );
+  h0->Fill( jetMetTool.MET, lepSF );
 
 }
 
@@ -105,15 +111,19 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_mu_eta->SetYTitle("Entries / Bin");
 
   // N_jets
-  TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 12, 0, 12);
+  TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 8, 4, 12);
   h_njets->SetXTitle("N_{jets}");
   h_njets->SetYTitle("Entries / Bin");
 
   // MET
   //const Int_t nbins_met = 11;
   //Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 150.0, 175.0, 200.0, 250.0, 300.0};
-  const Int_t nbins_met = 23; // 4-11-18
-  Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 135.0, 145.0, 155.0, 165.0, 175.0, 185.0, 195.0, 205.0, 215.0, 225.0, 235.0, 245.0, 255.0, 265.0, 275.0, 285.0, 300.0}; // 4-11-18
+  // ==== 4-11-18 ====
+  //const Int_t nbins_met = 23; 
+  //Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 135.0, 145.0, 155.0, 165.0, 175.0, 185.0, 195.0, 205.0, 215.0, 225.0, 235.0, 245.0, 255.0, 265.0, 275.0, 285.0, 300.0}; 
+  // ==== 4-16-18 ====
+  const Int_t nbins_met = 18; 
+  Double_t edges_met[nbins_met + 1] = {110.0, 125.0, 135.0, 145.0, 155.0, 165.0, 175.0, 185.0, 195.0, 205.0, 215.0, 225.0, 235.0, 245.0, 255.0, 265.0, 275.0, 285.0, 300.0}; 
   TH1D* h_met = new TH1D( ("h_" + nameHLT + stream + "_met").c_str(),  ("h_" + nameHLT + stream + "_met").c_str(), nbins_met, edges_met );
   h_met->SetXTitle("Missing Transverse Energy (MET) [GeV]");
   h_met->SetYTitle("Entries / Bin");

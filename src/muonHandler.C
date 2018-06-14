@@ -3,7 +3,7 @@
 
 
 
-muonHandler::muonHandler()
+muonHandler::muonHandler(bool passMC)
 {
   passCuts = false;
   passSLtriggers = false;
@@ -12,7 +12,8 @@ muonHandler::muonHandler()
   leadIndex = -99;
   nLeptons = 0;
   nMuons = 0;
- 
+  lepSF = 1.;
+  isMC = passMC;
 
   h_mu_cutflow = new TH1D("h_mu_cutflow", "h_mu_cutflow", 4, 0, 4);
   h_mu_n       = new TH1D("h_mu_n", "h_mu_n", 6, 0, 6);
@@ -48,6 +49,10 @@ void muonHandler::applyMuonCuts()
     h_mu_cutflow->Fill("Isolation < 0.15", 1);
     nMuons++;    
     passCuts = true;
+
+    // set lepton scale factors if MC
+    if (isMC)
+      lepSF = ev->lepton_IDSF_ * ev->lepton_IsoRecoSF_;
 
     // set leading lepton if appropriate
     if (ev->lepton_pt_[l] > leadPt) {
