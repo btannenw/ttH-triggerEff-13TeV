@@ -30,10 +30,10 @@ void muonHandler::test()
 void muonHandler::setMCflag(bool passMC)
 {
   isMC = passMC;
-  if (isMC)
+  /*  if (isMC)
     std::cout << "muTool.isMC = true!" << endl;
   else
-    std::cout << "muTool.isMC = false!" << endl;
+  std::cout << "muTool.isMC = false!" << endl;*/
 }
 
 void muonHandler::applyMuonCuts()
@@ -61,9 +61,10 @@ void muonHandler::applyMuonCuts()
     passCuts = true;
 
     // set lepton scale factors if MC
-    if (isMC)
+    if (isMC) {
       lepSF = ev->lepton_IDSF_ * ev->lepton_IsoRecoSF_;
-
+      //std::cout << "MU lepton SF!" << std::endl;
+    }
     // set leading lepton if appropriate
     if (ev->lepton_pt_[l] > leadPt) {
       leadPt = ev->lepton_pt_[l];

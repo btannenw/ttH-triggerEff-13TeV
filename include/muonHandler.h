@@ -53,6 +53,7 @@ class muonHandler{
       // === Variables === //
       yggdrasilEventVars* ev;
       int leadIndex;
+      bool passMC;
 
 }; // End of class prototype
 

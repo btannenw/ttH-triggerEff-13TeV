@@ -159,8 +159,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   
   
   // *** 3. Start looping! 
-  long t_entries = fChain->GetEntries();
-  //long t_entries = 25000;
+  //long t_entries = fChain->GetEntries();
+  long t_entries = 25000;
   cout << "Chain entries: " << t_entries << endl;
   
   for(int i = 0; i < t_entries; i++) {

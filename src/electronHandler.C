@@ -29,14 +29,13 @@ void electronHandler::test()
   std::cout << "Test!" << endl;
 }
 
-
 void electronHandler::setMCflag(bool passMC)
 {
   isMC = passMC;
-  if (isMC)
+  /*  if (isMC)
     std::cout << "elTool.isMC = true!" << endl;
   else
-    std::cout << "elTool.isMC = false!" << endl;
+  std::cout << "elTool.isMC = false!" << endl;*/
 }
 
 void electronHandler::checkSLCuts()
@@ -115,8 +114,10 @@ void electronHandler::applyElectronCuts()
     nElectrons++;
 
     // set lepton scale factors if MC
-    if (isMC)
+    if (isMC) {
       lepSF = ev->lepton_IDSF_ * ev->lepton_IsoRecoSF_;
+      //std::cout << "EL lepton SF!" << std::endl;
+    }
 
     // set leading lepton if appropriate
     if (ev->lepton_pt_[l] > leadPt) {

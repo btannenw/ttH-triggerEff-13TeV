@@ -18,8 +18,8 @@ int nJetsCut;
 
 // user tools
 yggdrasilEventVars *eve;
-electronHandler elTool(false);
-muonHandler muTool(false);
+electronHandler elTool;
+muonHandler muTool;
 jetMetHandler jetMetTool;
 
 // user file

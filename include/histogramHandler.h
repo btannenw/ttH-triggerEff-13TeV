@@ -35,6 +35,9 @@ void fillEfficiencyHistogramsByStream(muonHandler muTool, electronHandler elTool
   else if (stream == "muStream")
     lepSF = muTool.lepSF;
 
+  if (lepSF!=1)
+    std::cout << "lepSF = " << lepSF << std::endl;
+
   // ===  Method B: FAST  ===
   //cout << ("h_" + nameHLT + stream + "_el0_pt").c_str() << endl;
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt").c_str() );
