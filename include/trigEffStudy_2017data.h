@@ -9,6 +9,7 @@
 #include "YggdrasilEventVars.h"
 #include "electronHandler.h"
 #include "muonHandler.h"
+#include "leptonHandler.h"
 #include "jetMetHandler.h"
 
 // top level vars
@@ -19,8 +20,10 @@ int nJetsCut;
 // user tools
 yggdrasilEventVars *eve;
 electronHandler elTool;
-muonHandler muTool;
+//muonHandler muTool;
+leptonHandler muTool;
 jetMetHandler jetMetTool;
+
 
 // user file
 TFile* outfile = new TFile();

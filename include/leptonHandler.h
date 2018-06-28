@@ -1,5 +1,5 @@
-#ifndef _muonHandler_h
-#define _muonHandler_h
+#ifndef _leptonHandler_h
+#define _leptonHandler_h
 
 #include <TH1.h>
 #include <TH2.h>
@@ -18,45 +18,61 @@
 
 #endif
 
-class muonHandler{
+class leptonHandler{
 
    public: 
       // Constructor(s) and destructor
-      muonHandler();
-      virtual ~muonHandler();
+      leptonHandler();
+      virtual ~leptonHandler();
 
       // === Functions === //
       void test();
-      void setMCflag(bool passMC);
+      void setFlags(bool passMC, bool passIsMuon);
       void Event(yggdrasilEventVars* eve);
 
       // === Variables === //
       bool passCuts;
+      bool passSLCuts;
+      bool passDLCuts;
       bool passSLtriggers;
       bool passDLtriggers;
       int nLeptons;
       int nMuons;
-      double leadPt;
-      double leadEta;
-      double subPt;
-      double subEta;
+      int nElectrons;
+      double leadPt_el;
+      double leadEta_el;
+      double subPt_el;
+      double subEta_el;
+      double leadPt_mu;
+      double leadEta_mu;
+      double subPt_mu;
+      double subEta_mu;
       double lepSF;
       bool isMC;
+      bool isMuon;
 
       // === Variables === //
       TH1D* h_mu_cutflow;
+      TH1D* h_mu_event_cutflow;
       TH1D* h_mu_n;
+      TH1D* h_el_cutflow;
+      TH1D* h_el_event_cutflow;
+      TH1D* h_el_n;
 
    private:
       // === Functions === //
-      void findLeadingMuon();
       void applyMuonCuts();
+      void applyElectronCuts();
       void checkHLTTriggers();
-      
+      void checkSLCuts();
+      void setLeadSubleadIndices(int l, int& lead, int& sub);
+
       // === Variables === //
       yggdrasilEventVars* ev;
-      int leadIndex;
-      int subIndex;
+      int leadIndex_el;
+      int subIndex_el;
+      int leadIndex_mu;
+      int subIndex_mu;
       bool passMC;
 
 }; // End of class prototype
@@ -64,4 +80,4 @@ class muonHandler{
 
 
 
-#endif // _muonHandler_h
+#endif // _leptonHandler_h

@@ -7,9 +7,13 @@ muonHandler::muonHandler()
 {
   passCuts = false;
   passSLtriggers = false;
+  passDLtriggers = false;
   leadPt = -99;
   leadEta = -99;
   leadIndex = -99;
+  subPt = -99;
+  subEta = -99;
+  subIndex = -99;
   nLeptons = 0;
   nMuons = 0;
   lepSF = 1.;
@@ -100,6 +104,7 @@ void muonHandler::findLeadingMuon()
 void muonHandler::checkHLTTriggers()
 {
   passSLtriggers = ev->passHLT_IsoMu27_v_ ? true : false;
+  passDLtriggers = ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ ? true : false;
 }
 
 void muonHandler::Event(yggdrasilEventVars* eve)
@@ -111,6 +116,9 @@ void muonHandler::Event(yggdrasilEventVars* eve)
   leadPt = -99;
   leadEta = -99;
   leadIndex = -99;
+  subPt = -99;
+  subEta = -99;
+  subIndex = -99;
   nMuons = 0;  
   //h_mu_cutflow->Fill("Event", 1);
 

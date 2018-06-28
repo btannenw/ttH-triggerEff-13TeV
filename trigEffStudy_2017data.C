@@ -22,6 +22,7 @@
 // Object Handlers
 #include "src/electronHandler.C"
 #include "src/muonHandler.C"
+#include "src/leptonHandler.C"
 #include "src/jetMetHandler.C"
 
 #include <iostream>
@@ -152,8 +153,11 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   fChain->SetBranchAddress("eve.", &eve );
   elTool = electronHandler();
   elTool.setMCflag(isMC);
-  muTool = muonHandler();
-  muTool.setMCflag(isMC);
+  //muTool = muonHandler();
+  //muTool.setMCflag(isMC);
+  muTool = leptonHandler();
+  muTool.setFlags(isMC, true);
+  
   jetMetTool = jetMetHandler();
 
   
@@ -171,8 +175,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
     fChain->GetEntry(i);
 
     // ** I. Get objects 
-    muTool.Event(eve);
     elTool.Event(eve);
+    muTool.Event(eve);
     jetMetTool.Event(eve);
 
     // ** II. 2D Correlations comparing SL triggers to MET triggers

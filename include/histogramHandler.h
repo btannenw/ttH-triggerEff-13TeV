@@ -22,7 +22,8 @@
 
 
 
-void fillEfficiencyHistogramsByStream(muonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string stream="")
+void fillEfficiencyHistogramsByStream(leptonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string stream="")
+//void fillEfficiencyHistogramsByStream(muonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string stream="")
 {
   // initialization
   TH1D* h0 = new TH1D();
@@ -47,11 +48,14 @@ void fillEfficiencyHistogramsByStream(muonHandler muTool, electronHandler elTool
   h0->Fill( elTool.leadEta, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt").c_str() );
-  h0->Fill( muTool.leadPt, lepSF );
+  h0->Fill( muTool.leadPt_mu, lepSF );
+
+  h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu1_pt").c_str() );
+  h0->Fill( muTool.subPt_mu, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta").c_str() );
-  h0->Fill( muTool.leadEta, lepSF );
-  
+  h0->Fill( muTool.leadEta_mu, lepSF );
+
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_njets").c_str() );
   h0->Fill( jetMetTool.nJets, lepSF );
   
@@ -60,7 +64,8 @@ void fillEfficiencyHistogramsByStream(muonHandler muTool, electronHandler elTool
 
 }
 
-void fillEfficiencyHistograms(muonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, bool splitStreams=false)
+void fillEfficiencyHistograms(leptonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, bool splitStreams=false)
+//void fillEfficiencyHistograms(muonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, bool splitStreams=false)
 {
   //cout << "fillEfficiencyHistograms()" << endl;
   fillEfficiencyHistogramsByStream( muTool, elTool, jetMetTool, array, nameHLT);
@@ -94,24 +99,40 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0};
   const Int_t nbins_pt = 27; // 4-11-18
   Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 300.0}; // 4-11-18
-  TH1D* h_el_pt = new TH1D( ("h_" + nameHLT + stream + "_el0_pt").c_str(),  ("h_" + nameHLT + stream + "_el0_pt").c_str(), nbins_pt, edges_pt );
-  h_el_pt->SetXTitle("Leading Electron p_{T} [GeV]");
-  h_el_pt->SetYTitle("Entries / Bin");
-  TH1D* h_mu_pt = new TH1D( ("h_" + nameHLT + stream + "_mu0_pt").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt").c_str(), nbins_pt, edges_pt );
-  h_mu_pt->SetXTitle("Leading Muon p_{T} [GeV]");
-  h_mu_pt->SetYTitle("Entries / Bin");
+  TH1D* h_el0_pt = new TH1D( ("h_" + nameHLT + stream + "_el0_pt").c_str(),  ("h_" + nameHLT + stream + "_el0_pt").c_str(), nbins_pt, edges_pt );
+  h_el0_pt->SetXTitle("Leading Electron p_{T} [GeV]");
+  h_el0_pt->SetYTitle("Entries / Bin");
+  TH1D* h_el1_pt = new TH1D( ("h_" + nameHLT + stream + "_el1_pt").c_str(),  ("h_" + nameHLT + stream + "_el1_pt").c_str(), nbins_pt, edges_pt );
+  h_el1_pt->SetXTitle("Leading Electron p_{T} [GeV]");
+  h_el1_pt->SetYTitle("Entries / Bin");
+
+  TH1D* h_mu0_pt = new TH1D( ("h_" + nameHLT + stream + "_mu0_pt").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt").c_str(), nbins_pt, edges_pt );
+  h_mu0_pt->SetXTitle("Leading Muon p_{T} [GeV]");
+  h_mu0_pt->SetYTitle("Entries / Bin");
+  TH1D* h_mu1_pt = new TH1D( ("h_" + nameHLT + stream + "_mu1_pt").c_str(),  ("h_" + nameHLT + stream + "_mu1_pt").c_str(), nbins_pt, edges_pt );
+  h_mu1_pt->SetXTitle("Sub-Leading Muon p_{T} [GeV]");
+  h_mu1_pt->SetYTitle("Entries / Bin");
 
   // Leading electron eta
   const Int_t nbins_eta = 5;
   Double_t edges_eta[nbins_eta + 1] = {-2.5, -1.5, -0.75, 0.75, 1.5, 2.5};
-  TH1D* h_el_eta = new TH1D( ("h_" + nameHLT + stream + "_el0_eta").c_str(),  ("h_" + nameHLT + stream + "_el0_eta").c_str(), nbins_eta, edges_eta );
-  h_el_eta->SetMinimum(0.0);
-  h_el_eta->SetXTitle("Leading Electron #eta");
-  h_el_eta->SetYTitle("Entries / Bin");
-  TH1D* h_mu_eta = new TH1D( ("h_" + nameHLT + stream + "_mu0_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_eta").c_str(), nbins_eta, edges_eta );
-  h_mu_eta->SetMinimum(0.0);
-  h_mu_eta->SetXTitle("Leading Muon #eta");
-  h_mu_eta->SetYTitle("Entries / Bin");
+  TH1D* h_el0_eta = new TH1D( ("h_" + nameHLT + stream + "_el0_eta").c_str(),  ("h_" + nameHLT + stream + "_el0_eta").c_str(), nbins_eta, edges_eta );
+  h_el0_eta->SetMinimum(0.0);
+  h_el0_eta->SetXTitle("Leading Electron #eta");
+  h_el0_eta->SetYTitle("Entries / Bin");
+  TH1D* h_el1_eta = new TH1D( ("h_" + nameHLT + stream + "_el1_eta").c_str(),  ("h_" + nameHLT + stream + "_el1_eta").c_str(), nbins_eta, edges_eta );
+  h_el1_eta->SetMinimum(0.0);
+  h_el1_eta->SetXTitle("Leading Electron #eta");
+  h_el1_eta->SetYTitle("Entries / Bin");
+
+  TH1D* h_mu0_eta = new TH1D( ("h_" + nameHLT + stream + "_mu0_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_eta").c_str(), nbins_eta, edges_eta );
+  h_mu0_eta->SetMinimum(0.0);
+  h_mu0_eta->SetXTitle("Leading Muon #eta");
+  h_mu0_eta->SetYTitle("Entries / Bin");
+  TH1D* h_mu1_eta = new TH1D( ("h_" + nameHLT + stream + "_mu1_eta").c_str(),  ("h_" + nameHLT + stream + "_mu1_eta").c_str(), nbins_eta, edges_eta );
+  h_mu1_eta->SetMinimum(0.0);
+  h_mu1_eta->SetXTitle("Leading Muon #eta");
+  h_mu1_eta->SetYTitle("Entries / Bin");
 
   // N_jets
   TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 8, 4, 12);
@@ -134,10 +155,14 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   // N_vtx
   //TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), nbins_nPV, edges_nVtx );
 
-  array->AddLast(h_el_pt);
-  array->AddLast(h_el_eta);
-  array->AddLast(h_mu_pt);
-  array->AddLast(h_mu_eta);
+  array->AddLast(h_el0_pt);
+  array->AddLast(h_el1_pt);
+  array->AddLast(h_el0_eta);
+  array->AddLast(h_el1_eta);
+  array->AddLast(h_mu0_pt);
+  array->AddLast(h_mu1_pt);
+  array->AddLast(h_mu0_eta);
+  array->AddLast(h_mu1_eta);
   array->AddLast(h_njets);
   array->AddLast(h_met);
 }
