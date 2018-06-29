@@ -31,11 +31,16 @@ class leptonHandler{
       void Event(yggdrasilEventVars* eve);
 
       // === Variables === //
-      bool passCuts;
-      bool passSLCuts;
-      bool passDLCuts;
-      bool passSLtriggers;
-      bool passDLtriggers;
+      bool passSLCuts_el;
+      bool passSLCuts_mu;
+      bool passDLCuts_el;
+      bool passDLCuts_mu;
+      bool passDLCuts_emu;
+      bool passSLtriggers_el;
+      bool passSLtriggers_mu;
+      bool passDLtriggers_el;
+      bool passDLtriggers_mu;
+      bool passDLtriggers_emu;
       int nLeptons;
       int nMuons;
       int nElectrons;
@@ -64,7 +69,7 @@ class leptonHandler{
       void applyMuonCuts();
       void applyElectronCuts();
       void checkHLTTriggers();
-      void checkSLCuts();
+      void checkCategoryCuts();
       void setLeadSubleadIndices(int l, int& lead, int& sub);
 
       // === Variables === //

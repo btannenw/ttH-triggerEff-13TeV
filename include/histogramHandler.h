@@ -22,19 +22,21 @@
 
 
 
-void fillEfficiencyHistogramsByStream(leptonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string stream="")
-//void fillEfficiencyHistogramsByStream(muonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string stream="")
+void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string stream="")
 {
   // initialization
   TH1D* h0 = new TH1D();
   if (stream !=  "")
     stream = ("_" + stream).c_str();
 
-  double lepSF = 1.;
+
+  double lepSF = lepTool.lepSF;
+  /*double lepSF = 1.;
   if (stream == "elStream")
-    lepSF = elTool.lepSF;
+    lepSF = lepTool.lepSF;
   else if (stream == "muStream")
-    lepSF = muTool.lepSF;
+    lepSF = lepTool.lepSF;
+  */
 
   if (lepSF!=1)
     std::cout << "lepSF = " << lepSF << std::endl;
@@ -42,19 +44,28 @@ void fillEfficiencyHistogramsByStream(leptonHandler muTool, electronHandler elTo
   // ===  Method B: FAST  ===
   //cout << ("h_" + nameHLT + stream + "_el0_pt").c_str() << endl;
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt").c_str() );
-  h0->Fill( elTool.leadPt, lepSF );
+  h0->Fill( lepTool.leadPt_el, lepSF );
   
+  h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el1_pt").c_str() );
+  h0->Fill( lepTool.subPt_el, lepSF );
+
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_eta").c_str() );
-  h0->Fill( elTool.leadEta, lepSF );
+  h0->Fill( lepTool.leadEta_el, lepSF );
+
+  h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el1_eta").c_str() );
+  h0->Fill( lepTool.subEta_el, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt").c_str() );
-  h0->Fill( muTool.leadPt_mu, lepSF );
+  h0->Fill( lepTool.leadPt_mu, lepSF );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu1_pt").c_str() );
-  h0->Fill( muTool.subPt_mu, lepSF );
+  h0->Fill( lepTool.subPt_mu, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta").c_str() );
-  h0->Fill( muTool.leadEta_mu, lepSF );
+  h0->Fill( lepTool.leadEta_mu, lepSF );
+
+  h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu1_eta").c_str() );
+  h0->Fill( lepTool.subEta_mu, lepSF );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_njets").c_str() );
   h0->Fill( jetMetTool.nJets, lepSF );
@@ -64,16 +75,18 @@ void fillEfficiencyHistogramsByStream(leptonHandler muTool, electronHandler elTo
 
 }
 
-void fillEfficiencyHistograms(leptonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, bool splitStreams=false)
-//void fillEfficiencyHistograms(muonHandler muTool, electronHandler elTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, bool splitStreams=false)
+void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, bool splitStreams=false)
 {
   //cout << "fillEfficiencyHistograms()" << endl;
-  fillEfficiencyHistogramsByStream( muTool, elTool, jetMetTool, array, nameHLT);
+  fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT);
 
   // fill histograms separated by stream if necessary --> should be needed for denominator in efficiency calculations
   if (splitStreams) {
-    if ( elTool.passCuts ) fillEfficiencyHistogramsByStream( muTool, elTool, jetMetTool, array, nameHLT, "elStream");
-    if ( muTool.passCuts ) fillEfficiencyHistogramsByStream( muTool, elTool, jetMetTool, array, nameHLT, "muStream");
+    if ( lepTool.passSLCuts_el ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamSL");
+    if ( lepTool.passSLCuts_mu ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamSL");
+    if ( lepTool.passDLCuts_el ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamDL");
+    if ( lepTool.passDLCuts_mu ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamDL");
+    if ( lepTool.passDLCuts_emu ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "emuStreamDL");
   }
 
 }
@@ -173,8 +186,11 @@ void initEfficiencyHistograms(TObjArray* array, string nameHLT, bool splitStream
   // always create general histograms
   createEfficiencyHistograms(array, nameHLT);
   if (splitStreams) { // create plots split by presence of good electron or muon if necessary --> should be needed for denominator in efficiency calculations
-    createEfficiencyHistograms(array, nameHLT, "_elStream");
-    createEfficiencyHistograms(array, nameHLT, "_muStream");
+    createEfficiencyHistograms(array, nameHLT, "_elStreamSL");
+    createEfficiencyHistograms(array, nameHLT, "_muStreamSL");
+    createEfficiencyHistograms(array, nameHLT, "_elStreamDL");
+    createEfficiencyHistograms(array, nameHLT, "_muStreamDL");
+    createEfficiencyHistograms(array, nameHLT, "_emuStreamDL");
   }
 
 }
@@ -313,8 +329,12 @@ void plot1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
 {
   draw1DHistograms(array, c0, nameHLT, "el0_pt");
   draw1DHistograms(array, c0, nameHLT, "el0_eta");
+  draw1DHistograms(array, c0, nameHLT, "el1_pt");
+  draw1DHistograms(array, c0, nameHLT, "el1_eta");
   draw1DHistograms(array, c0, nameHLT, "mu0_pt");
   draw1DHistograms(array, c0, nameHLT, "mu0_eta");
+  draw1DHistograms(array, c0, nameHLT, "mu1_pt");
+  draw1DHistograms(array, c0, nameHLT, "mu1_eta");
   draw1DHistograms(array, c0, nameHLT, "njets");
   draw1DHistograms(array, c0, nameHLT, "met");
 

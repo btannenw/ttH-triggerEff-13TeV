@@ -19,9 +19,9 @@ int nJetsCut;
 
 // user tools
 yggdrasilEventVars *eve;
-electronHandler elTool;
+//electronHandler elTool;
 //muonHandler muTool;
-leptonHandler muTool;
+leptonHandler lepTool;
 jetMetHandler jetMetTool;
 
 
@@ -42,6 +42,13 @@ TObjArray* a_HLT_SingleEl = new TObjArray();
 TObjArray* a_HLT_allMET = new TObjArray();
 TObjArray* a_SingleMu__X__allMET = new TObjArray();
 TObjArray* a_SingleEl__X__allMET = new TObjArray();
+
+TObjArray* a_HLT_DoubleMu = new TObjArray();
+TObjArray* a_HLT_DoubleEl = new TObjArray();
+TObjArray* a_HLT_EMu = new TObjArray();
+TObjArray* a_DoubleMu__X__allMET = new TObjArray();
+TObjArray* a_DoubleEl__X__allMET = new TObjArray();
+TObjArray* a_EMu__X__allMET = new TObjArray();
 
 TObjArray* a_Efficiencies = new TObjArray();
 

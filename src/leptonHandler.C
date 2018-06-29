@@ -3,9 +3,16 @@
 
 leptonHandler::leptonHandler()
 {
-  passCuts = false;
-  passSLtriggers = false;
-  passDLtriggers = false;
+  passSLCuts_el = false;
+  passSLCuts_mu = false;
+  passDLCuts_el = false;
+  passDLCuts_mu = false;
+  passDLCuts_emu = false;
+  passSLtriggers_el = false;
+  passSLtriggers_mu = false;
+  passDLtriggers_el = false;
+  passDLtriggers_mu = false;
+  passDLtriggers_emu = false;
   nLeptons = 0;
   nMuons = 0;
   leadPt_mu = -99;
@@ -42,13 +49,13 @@ void leptonHandler::test()
 }
 
 
-void leptonHandler::setFlags(bool passMC, bool passIsMuon)
+void leptonHandler::setFlags(bool passMC, bool passIsMuon=false)
 {
   isMC = passMC;
   /*  if (isMC)
     std::cout << "muTool.isMC = true!" << endl;
-  else
-  std::cout << "muTool.isMC = false!" << endl;*/
+    else
+    std::cout << "muTool.isMC = false!" << endl;*/
   isMuon = passIsMuon;
   
 }
@@ -64,7 +71,7 @@ void leptonHandler::applyMuonCuts()
     h_mu_cutflow->Fill("Total Muons", 1);
     if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Total Muons", 1);
     
-    // Cut 1: pT > 30 GeV
+    // Cut 1: pT > 15 GeV --> use SL veto as threshold for counting muons. Apply higher pT cut later
     if ( !(ev->lepton_pt_[l] > 30) ) continue;
     h_mu_cutflow->Fill("p_{T} > 30", 1);
     if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("p_{T} > 30", 1);
@@ -75,11 +82,10 @@ void leptonHandler::applyMuonCuts()
     if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("|#eta| < 2.4", 1);
 
     // Cut 3: Isolation < 0.15
-    if ( !(ev->lepton_relIso_[l] < 0.25) ) continue;
-    h_mu_cutflow->Fill("Isolation < 0.25", 1);
-    if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Isolation < 0.25", 1);
+    if ( !(ev->lepton_relIso_[l] < 0.15) ) continue;
+    h_mu_cutflow->Fill("Isolation < 0.15", 1);
+    if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Isolation < 0.15", 1);
     nMuons++;    
-    passCuts = true;
 
     // Cut 4: Trigger
     if ( ev->passHLT_IsoMu27_v_ && leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Trigger", 1);
@@ -94,24 +100,6 @@ void leptonHandler::applyMuonCuts()
     setLeadSubleadIndices(l, leadIndex_mu, subIndex_mu);
     //std::cout << "lepton pt = " << ev->lepton_pt_[l] << std::endl;
 
-    /*
-    if (ev->lepton_pt_[l] > leadPt) {
-      if (leadPt != -99){ // if already have first good lepton, set old lead lepton to sub
-	subIndex = leadIndex;
-	subPt = ev->lepton_pt_[subIndex];
-	subEta = ev->lepton_eta_[subIndex];
-      }
-      // set new leading lepton to leading
-      leadPt = ev->lepton_pt_[l];
-      leadEta = ev->lepton_eta_[l];
-      leadIndex = l;
-    }
-    else if (ev->lepton_pt_[l] < leadPt && ev->lepton_pt_[l] > subPt) { // new lepton not greater than leading but greater than sub
-      subIndex = l;
-      subPt = ev->lepton_pt_[l];
-      subEta = ev->lepton_eta_[l];
-    }
-    */
   } // loop over muons
 
   // *** ?. Wrap-up
@@ -126,12 +114,108 @@ void leptonHandler::applyMuonCuts()
   }
 
   if (nMuons > 0 && leadIndex_mu == -99)
-    cout << "NAHHHH" << endl;
+    cout << "applyMuonCuts: NAHHHH" << endl;
 
   if (subPt_mu > leadPt_mu)
     cout << "subPt_mu: " << subPt_mu << "\tleadPt_mu: " << leadPt_mu << endl;
 
 }
+
+void leptonHandler::applyElectronCuts()
+{
+  //if (leadIndex == -99) return; // protection when no electron in event
+  //bool pass0, pass1, pass2, pass3, pass4 = false;
+  bool pass0 = false;
+  bool pass1 = false;
+  bool pass2 = false;
+  bool pass3 = false;
+  bool pass4 = false;
+  bool pass5 = false;
+  bool pass6 = false;
+  bool pass7 = false;
+
+  for (unsigned int l = 0; l < ev->lepton_pt_.size(); l++) {
+    //if ( ev->lepton_pt_.size() == 0) continue ; // protection against events w/o leptons
+    //if ( l > 0) continue ; // only for testing
+
+     // Cut 0: Is electron
+    if ( !(ev->lepton_isMuon_[l] == 0) ) continue;
+    h_el_cutflow->Fill("Total Electrons", 1);
+    if (!pass0) h_el_event_cutflow->Fill("Total Electrons", 1);
+    pass0 = true;
+        
+    // Cut 1: pT > 30 GeV
+    if ( !(ev->lepton_pt_[l] > 25) ) continue;
+    h_el_cutflow->Fill("p_{T} > 25", 1);
+    if (!pass1) h_el_event_cutflow->Fill("p_{T} > 25", 1);
+    pass1 = true;
+    
+    // Cut 2: |ETA| < 2.4
+    if ( !(abs(ev->lepton_eta_[l]) < 2.4) ) continue;
+    h_el_cutflow->Fill("|#eta| < 2.4", 1);
+    if (!pass2) h_el_event_cutflow->Fill("|#eta| < 2.4", 1);
+    pass2 = true;
+    
+    // Cut 3: Reject cluster |ETA| in crack ( < 1.4442, > 1.566 )
+    if ( !(abs(ev->lepton_scEta_[l]) < 1.4442 || abs(ev->lepton_scEta_[l]) > 1.566) ) continue;
+    h_el_cutflow->Fill("Reject Crack Cluster #eta", 1);
+    if (!pass3) h_el_event_cutflow->Fill("Reject Crack Cluster #eta", 1);
+    pass3 = true;
+    
+    // Cut 4: tight ID
+    if ( !(ev->lepton_isTight_[l] == 1) ) continue;
+    h_el_cutflow->Fill("Tight ID", 1);
+    if (!pass4) h_el_event_cutflow->Fill("Tight ID", 1);
+    pass4 = true;
+    
+    // Trigger cuts 
+    if ( ev->passHLT_Ele35_WPTight_Gsf_v_ ) {
+      if (!pass5) h_el_event_cutflow->Fill("El Trigger", 1);
+      pass5 = true;
+    }
+    if ( ev->passHLT_PFMET120_PFMHT120_IDTight_v_ ) {
+      if (!pass6) h_el_event_cutflow->Fill("MET Trigger", 1);
+      pass6 = true;
+    }
+    if ( ev->passHLT_Ele35_WPTight_Gsf_v_ && ev->passHLT_PFMET120_PFMHT120_IDTight_v_ ) {
+      if (!pass7) h_el_event_cutflow->Fill("MET+Lep Trigger", 1);
+      pass7 = true;
+    }
+
+    nElectrons++;
+
+    // set lepton scale factors if MC
+    if (isMC && lepSF != 1) {
+      lepSF = ev->lepton_IDSF_ * ev->lepton_IsoRecoSF_;
+      //std::cout << "EL lepton SF!" << std::endl;
+    }
+
+    // set leading/subleading indices if appropriate
+    setLeadSubleadIndices(l, leadIndex_el, subIndex_el);
+    
+  } // loop over electrons
+
+  h_el_n->Fill( nElectrons );
+  if (nElectrons == 1) h_el_event_cutflow->Fill("==1 Electron", 1);
+  if (nElectrons == 1 && ev->MET_[0] > 125 && ev->passHLT_PFMET120_PFMHT120_IDTight_v_) h_el_event_cutflow->Fill("==1 Electron RefTrig", 1);
+  if (nElectrons == 1 && ev->MET_[0] > 125 && ev->passHLT_Ele35_WPTight_Gsf_v_ && ev->passHLT_PFMET120_PFMHT120_IDTight_v_) h_el_event_cutflow->Fill("==1 Electron AllTrig", 1);
+  if (leadIndex_el != -99){
+    leadPt_el = ev->lepton_pt_[leadIndex_el];
+    leadEta_el = ev->lepton_eta_[leadIndex_el];
+  }
+  if (subIndex_el != -99){
+    subPt_el = ev->lepton_pt_[subIndex_el];
+    subEta_el = ev->lepton_eta_[subIndex_el];
+  }
+
+  if (nElectrons > 0 && leadIndex_el == -99)
+    cout << "applyElectronCuts: NAHHHH" << endl;
+
+  if (subPt_el > leadPt_el)
+    cout << "subPt_el: " << subPt_el << "\tleadPt_el: " << leadPt_el << endl;
+
+}
+
 
 void leptonHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
 {
@@ -156,29 +240,58 @@ void leptonHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
 } 
 
 
-void leptonHandler::checkSLCuts()
+void leptonHandler::checkCategoryCuts()
 {
-  //if (nElectrons != 1)
-  //passCuts = false;
-  //if (passCuts && nElectrons == 1)
-  //  passSLCuts = true;
-  //if (nLeptons > 1 && passCuts && ev->passHLT_PFMET120_PFMHT120_IDTight_v_ && ev->MET_[0] > 125)
-  //  nLeptons_int++;
+  if (nMuons == 1 && leadPt_mu >= 30){
+    passSLCuts_mu = true;
+    //cout << "IT'S HAPPENING!!!!!!" << endl;
+  }
+  if (nMuons == 2 && leadPt_mu >= 20 && subPt_mu >= 10)
+    passDLCuts_mu = true;
+
+  if (nElectrons == 1 && leadPt_el >= 40)
+    passSLCuts_el = true;
+  if (nElectrons == 2 && leadPt_el >= 25 && subPt_el >= 15){
+    passDLCuts_el = true;
+    //cout << "HEY! You're part of it!! (passDLCuts_el)" << endl;
+  }
+
+  if ( (leadPt_mu >= 25 && subPt_el >= 15) || (leadPt_el >= 25 && subPt_mu >= 15)){
+    passDLCuts_emu = true;
+    //if (passDLtriggers_emu)
+    //  cout << "HEY! You're part of it!! (passDLCuts_emu)" << endl;
+  }
   
 }
 
 
 void leptonHandler::checkHLTTriggers()
 {
-  passSLtriggers = ev->passHLT_IsoMu27_v_ ? true : false;
-  passDLtriggers = ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ ? true : false;
+  passSLtriggers_mu = ev->passHLT_IsoMu27_v_ ? true : false;
+  passDLtriggers_mu = ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ ? true : false;
+
+  passSLtriggers_el = ev->passHLT_Ele35_WPTight_Gsf_v_ ? true : false;
+  passDLtriggers_el = ev->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v_ || ev->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ ? true : false;
+
+  //if (passDLtriggers_el)
+  //  cout << "HEY! You're part of it!! (DLtriggers_el)" << endl;
+
+  passDLtriggers_emu = ev->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ || ev->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ || ev->passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ || ev->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ ? true : false;
+
+  //if (passDLtriggers_emu)
+  //  cout << "HEY! You're part of it!! (DLtriggers_emu)" << endl;
+
 }
 
 void leptonHandler::Event(yggdrasilEventVars* eve)
 {
   // *** 1. Intialize some things
   ev = eve;
-  passCuts = false;
+  passSLCuts_el = false;
+  passSLCuts_mu = false;
+  passDLCuts_el = false;
+  passDLCuts_mu = false;
+  passDLCuts_emu = false;
   nLeptons = ev->lepton_pt_.size();
   nMuons = 0;  
   leadPt_mu = -99;
@@ -187,7 +300,7 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
   subPt_mu = -99;
   subEta_mu = -99;
   subIndex_mu = -99;
-  nElectrons = -99;
+  nElectrons = 0;
   leadPt_el = -99;
   leadEta_el = -99;
   leadIndex_el = -99;
@@ -202,8 +315,11 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
 
   // *** 3. Start handling business! (or at least muons)
   if (nLeptons > 0 ) {
-    //findLeadingMuon();
+    // ** A. Apply object selection
     applyMuonCuts();
+    applyElectronCuts();
+    // ** B. Check what category an event falls into: el/mu, SL/DL
+    checkCategoryCuts();
   }
 
 }
