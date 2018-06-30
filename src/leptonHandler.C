@@ -17,6 +17,7 @@ leptonHandler::leptonHandler()
   nMuons = 0;
   leadPt_mu = -99;
   leadEta_mu = -99;
+  leadPt_relIso = -99;
   leadIndex_mu = -99;
   subPt_mu = -99;
   subEta_mu = -99;
@@ -72,9 +73,9 @@ void leptonHandler::applyMuonCuts()
     if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Total Muons", 1);
     
     // Cut 1: pT > 15 GeV --> use SL veto as threshold for counting muons. Apply higher pT cut later
-    if ( !(ev->lepton_pt_[l] > 30) ) continue;
-    h_mu_cutflow->Fill("p_{T} > 30", 1);
-    if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("p_{T} > 30", 1);
+    if ( !(ev->lepton_pt_[l] > 15) ) continue;
+    h_mu_cutflow->Fill("p_{T} > 15", 1);
+    if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("p_{T} > 15", 1);
 	
     // Cut 2: |ETA| < 2.4
     if ( !(abs(ev->lepton_eta_[l]) < 2.4) ) continue;
@@ -107,6 +108,7 @@ void leptonHandler::applyMuonCuts()
   if (leadIndex_mu != -99){
     leadPt_mu = ev->lepton_pt_[leadIndex_mu];
     leadEta_mu = ev->lepton_eta_[leadIndex_mu];
+    leadPt_relIso = ev->lepton_relIso_[leadIndex_mu];
   }
   if (subIndex_mu != -99){
     subPt_mu = ev->lepton_pt_[subIndex_mu];
@@ -144,10 +146,10 @@ void leptonHandler::applyElectronCuts()
     if (!pass0) h_el_event_cutflow->Fill("Total Electrons", 1);
     pass0 = true;
         
-    // Cut 1: pT > 30 GeV
-    if ( !(ev->lepton_pt_[l] > 25) ) continue;
-    h_el_cutflow->Fill("p_{T} > 25", 1);
-    if (!pass1) h_el_event_cutflow->Fill("p_{T} > 25", 1);
+    // Cut 1: pT > 15 GeV
+    if ( !(ev->lepton_pt_[l] > 15) ) continue;
+    h_el_cutflow->Fill("p_{T} > 15", 1);
+    if (!pass1) h_el_event_cutflow->Fill("p_{T} > 15", 1);
     pass1 = true;
     
     // Cut 2: |ETA| < 2.4
@@ -220,8 +222,8 @@ void leptonHandler::applyElectronCuts()
 void leptonHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
 {
   // *** 0. Temporary variables
-  double leadPt = ev->lepton_pt_[lead];
-  double subPt = ev->lepton_pt_[sub];
+  double leadPt = (lead == -99) ? -99 : ev->lepton_pt_[lead];
+  double subPt  = (sub == -99) ? -99  : ev->lepton_pt_[sub];
 
   // *** 1. Set leading lepton if appropriate
   if (ev->lepton_pt_[l] > leadPt) {
@@ -246,7 +248,7 @@ void leptonHandler::checkCategoryCuts()
     passSLCuts_mu = true;
     //cout << "IT'S HAPPENING!!!!!!" << endl;
   }
-  if (nMuons == 2 && leadPt_mu >= 20 && subPt_mu >= 10)
+  if (nMuons == 2 && leadPt_mu >= 25 && subPt_mu >= 15)
     passDLCuts_mu = true;
 
   if (nElectrons == 1 && leadPt_el >= 40)
@@ -267,7 +269,7 @@ void leptonHandler::checkCategoryCuts()
 
 void leptonHandler::checkHLTTriggers()
 {
-  passSLtriggers_mu = ev->passHLT_IsoMu27_v_ ? true : false;
+  passSLtriggers_mu = ev->passHLT_IsoMu27_v_ || ev->passHLT_IsoMu24_2p1_v_ ? true : false;
   passDLtriggers_mu = ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ ? true : false;
 
   passSLtriggers_el = ev->passHLT_Ele35_WPTight_Gsf_v_ ? true : false;
@@ -296,6 +298,7 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
   nMuons = 0;  
   leadPt_mu = -99;
   leadEta_mu = -99;
+  leadPt_relIso = -99;
   leadIndex_mu = -99;
   subPt_mu = -99;
   subEta_mu = -99;

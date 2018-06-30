@@ -67,6 +67,9 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu1_eta").c_str() );
   h0->Fill( lepTool.subEta_mu, lepSF );
 
+  h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_relIso").c_str() );
+  h0->Fill( lepTool.leadPt_relIso, lepSF );
+
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_njets").c_str() );
   h0->Fill( jetMetTool.nJets, lepSF );
   
@@ -168,6 +171,11 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   // N_vtx
   //TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), nbins_nPV, edges_nVtx );
 
+  // relIso
+  TH1D* h_mu0_relIso = new TH1D( ("h_" + nameHLT + stream + "_mu0_relIso").c_str(),  ("h_" + nameHLT + stream + "_mu0_relIso").c_str(), 25, 0, 1);
+  h_mu0_relIso->SetXTitle("Leading Muon Rel. Iso");
+  h_mu0_relIso->SetYTitle("Entries / Bin");
+
   array->AddLast(h_el0_pt);
   array->AddLast(h_el1_pt);
   array->AddLast(h_el0_eta);
@@ -176,6 +184,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   array->AddLast(h_mu1_pt);
   array->AddLast(h_mu0_eta);
   array->AddLast(h_mu1_eta);
+  array->AddLast(h_mu0_relIso);
   array->AddLast(h_njets);
   array->AddLast(h_met);
 }
@@ -333,6 +342,7 @@ void plot1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
   draw1DHistograms(array, c0, nameHLT, "el1_eta");
   draw1DHistograms(array, c0, nameHLT, "mu0_pt");
   draw1DHistograms(array, c0, nameHLT, "mu0_eta");
+  draw1DHistograms(array, c0, nameHLT, "mu0_relIso");
   draw1DHistograms(array, c0, nameHLT, "mu1_pt");
   draw1DHistograms(array, c0, nameHLT, "mu1_eta");
   draw1DHistograms(array, c0, nameHLT, "njets");
@@ -563,6 +573,7 @@ void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el1_eta");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_pt");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_eta");
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_relIso");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu1_pt");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu1_eta");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
