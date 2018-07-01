@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-std::string topDir = "06-29-18_files/";
+std::string topDir = "07-01-18_files/";
 
 void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
 {
@@ -35,7 +35,7 @@ void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string trigger
   //gr->GetHistogram()->GetYaxis()->SetTitle("Efficiency / Bin");
 
   TLegend* leg = new TLegend(0.7, 0.4, .85, .5);
-  leg->AddEntry(t_data, "2017 RunC", "el");
+  leg->AddEntry(t_data, "2017 RunBCDF", "el");
   leg->AddEntry(t_ttbar, "t#bar{t} MC", "el");
   leg->Draw("same");
   
@@ -88,7 +88,7 @@ void drawDoubleHist(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, s
   }
 
   TLegend* leg = new TLegend(0.7, 0.7, .85, .8);
-  leg->AddEntry(t_data, "2017 RunC", "el");
+  leg->AddEntry(t_data, "2017 RunBCDF", "el");
   leg->AddEntry(t_ttbar, "t#bar{t} MC", "el");
   leg->Draw("same");
   
@@ -117,7 +117,7 @@ void produceCombinedEff()
   //TFile* data_el_runC = new TFile( (topDir + "/outfile_singleElectron_Run2017C_pres_04-16-18.root").c_str(), "READ");
   //TFile* data_mu_runC = new TFile( (topDir + "/outfile_singleMuon_Run2017C_pres_04-16-18.root").c_str(), "READ");
   TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_r0_06-29-18.root").c_str(), "READ");
-  TFile* data_MET_runC = new TFile( (topDir + "/outfile_MET_v7_r0_06-29-18.root").c_str(), "READ");
+  TFile* data_MET_runC = new TFile( (topDir + "/outfile_MET_RunBCDF_v7_r0.root").c_str(), "READ");
   //TFile* data_mu_runC = new TFile( (topDir + "/outfile_MET_v7_r0_06-11-18.root").c_str(), "READ");
 
   TCanvas* c1 = new TCanvas("c1", "c1", 800, 800);

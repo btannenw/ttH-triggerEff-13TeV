@@ -36,6 +36,7 @@ class jetMetHandler{
       double leadPt;
       double leadEta;
       double MET;
+      double nPV;
       bool passOneMETTrigger;
       bool passAllMETTriggers;
 
@@ -50,6 +51,7 @@ class jetMetHandler{
       void applyJetCuts();
       void applyMETCuts();
       void parseMETTriggerLogic();
+      void parseMETTriggerLogic_v2();
       
       
       // === Variables === //

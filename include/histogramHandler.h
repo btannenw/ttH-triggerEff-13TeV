@@ -76,6 +76,9 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_met").c_str() );
   h0->Fill( jetMetTool.MET, lepSF );
 
+  h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_nPV").c_str() );
+  h0->Fill( jetMetTool.nPV, lepSF );
+
 }
 
 void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, bool splitStreams=false)
@@ -111,10 +114,10 @@ void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
 void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream="")
 {
   // Leading electron pT
-  //const Int_t nbins_pt = 7;
-  //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0};
-  const Int_t nbins_pt = 27; // 4-11-18
-  Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 300.0}; // 4-11-18
+  const Int_t nbins_pt = 7;
+  Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0};
+  //const Int_t nbins_pt = 27; // 4-11-18
+  //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 300.0}; // 4-11-18
   TH1D* h_el0_pt = new TH1D( ("h_" + nameHLT + stream + "_el0_pt").c_str(),  ("h_" + nameHLT + stream + "_el0_pt").c_str(), nbins_pt, edges_pt );
   h_el0_pt->SetXTitle("Leading Electron p_{T} [GeV]");
   h_el0_pt->SetYTitle("Entries / Bin");
@@ -162,17 +165,20 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   //const Int_t nbins_met = 23; 
   //Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 135.0, 145.0, 155.0, 165.0, 175.0, 185.0, 195.0, 205.0, 215.0, 225.0, 235.0, 245.0, 255.0, 265.0, 275.0, 285.0, 300.0}; 
   // ==== 4-16-18 ====
-  const Int_t nbins_met = 18; 
-  Double_t edges_met[nbins_met + 1] = {110.0, 125.0, 135.0, 145.0, 155.0, 165.0, 175.0, 185.0, 195.0, 205.0, 215.0, 225.0, 235.0, 245.0, 255.0, 265.0, 275.0, 285.0, 300.0}; 
+  //const Int_t nbins_met = 18; 
+  //Double_t edges_met[nbins_met + 1] = {110.0, 125.0, 135.0, 145.0, 155.0, 165.0, 175.0, 185.0, 195.0, 205.0, 215.0, 225.0, 235.0, 245.0, 255.0, 265.0, 275.0, 285.0, 300.0}; 
+  // ==== 07-11-18 ====
+  const Int_t nbins_met = 8;
+  Double_t edges_met[nbins_met + 1] = {100.0, 125.0, 150.0, 175.0, 200.0, 225.0, 250.0, 275.0, 300.0};
   TH1D* h_met = new TH1D( ("h_" + nameHLT + stream + "_met").c_str(),  ("h_" + nameHLT + stream + "_met").c_str(), nbins_met, edges_met );
   h_met->SetXTitle("Missing Transverse Energy (MET) [GeV]");
   h_met->SetYTitle("Entries / Bin");
 
   // N_vtx
-  //TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), nbins_nPV, edges_nVtx );
+  TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), 25, 0, 50);
 
   // relIso
-  TH1D* h_mu0_relIso = new TH1D( ("h_" + nameHLT + stream + "_mu0_relIso").c_str(),  ("h_" + nameHLT + stream + "_mu0_relIso").c_str(), 25, 0, 1);
+  TH1D* h_mu0_relIso = new TH1D( ("h_" + nameHLT + stream + "_mu0_relIso").c_str(),  ("h_" + nameHLT + stream + "_mu0_relIso").c_str(), 10, 0, 0.25);
   h_mu0_relIso->SetXTitle("Leading Muon Rel. Iso");
   h_mu0_relIso->SetYTitle("Entries / Bin");
 
@@ -187,6 +193,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   array->AddLast(h_mu0_relIso);
   array->AddLast(h_njets);
   array->AddLast(h_met);
+  array->AddLast(h_nPV);
 }
 
 
@@ -347,6 +354,7 @@ void plot1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
   draw1DHistograms(array, c0, nameHLT, "mu1_eta");
   draw1DHistograms(array, c0, nameHLT, "njets");
   draw1DHistograms(array, c0, nameHLT, "met");
+  draw1DHistograms(array, c0, nameHLT, "nPV");
 
 }
 
@@ -578,5 +586,6 @@ void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu1_eta");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "nPV");
   
 }

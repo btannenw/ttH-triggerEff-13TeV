@@ -50,7 +50,7 @@ class leptonHandler{
       double subEta_el;
       double leadPt_mu;
       double leadEta_mu;
-      double leadPt_relIso;
+      double leadRelIso_mu;
       double subPt_mu;
       double subEta_mu;
       double lepSF;

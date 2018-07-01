@@ -17,7 +17,7 @@ leptonHandler::leptonHandler()
   nMuons = 0;
   leadPt_mu = -99;
   leadEta_mu = -99;
-  leadPt_relIso = -99;
+  leadRelIso_mu = -99;
   leadIndex_mu = -99;
   subPt_mu = -99;
   subEta_mu = -99;
@@ -82,10 +82,10 @@ void leptonHandler::applyMuonCuts()
     h_mu_cutflow->Fill("|#eta| < 2.4", 1);
     if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("|#eta| < 2.4", 1);
 
-    // Cut 3: Isolation < 0.15
-    if ( !(ev->lepton_relIso_[l] < 0.15) ) continue;
-    h_mu_cutflow->Fill("Isolation < 0.15", 1);
-    if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Isolation < 0.15", 1);
+    // Cut 3: Isolation < 0.25
+    if ( !(ev->lepton_relIso_[l] < 0.25) ) continue;
+    h_mu_cutflow->Fill("Isolation < 0.25", 1);
+    if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Isolation < 0.25", 1);
     nMuons++;    
 
     // Cut 4: Trigger
@@ -108,7 +108,7 @@ void leptonHandler::applyMuonCuts()
   if (leadIndex_mu != -99){
     leadPt_mu = ev->lepton_pt_[leadIndex_mu];
     leadEta_mu = ev->lepton_eta_[leadIndex_mu];
-    leadPt_relIso = ev->lepton_relIso_[leadIndex_mu];
+    leadRelIso_mu = ev->lepton_relIso_[leadIndex_mu];
   }
   if (subIndex_mu != -99){
     subPt_mu = ev->lepton_pt_[subIndex_mu];
@@ -244,7 +244,7 @@ void leptonHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
 
 void leptonHandler::checkCategoryCuts()
 {
-  if (nMuons == 1 && leadPt_mu >= 30){
+  if (nMuons == 1 && leadPt_mu >= 30 && leadRelIso_mu < 0.15){
     passSLCuts_mu = true;
     //cout << "IT'S HAPPENING!!!!!!" << endl;
   }
@@ -298,7 +298,7 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
   nMuons = 0;  
   leadPt_mu = -99;
   leadEta_mu = -99;
-  leadPt_relIso = -99;
+  leadRelIso_mu = -99;
   leadIndex_mu = -99;
   subPt_mu = -99;
   subEta_mu = -99;
