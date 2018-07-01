@@ -77,7 +77,8 @@ void jetMetHandler::parseMETTriggerLogic()
 void jetMetHandler::parseMETTriggerLogic_v2() // New version (07-01-18) loosely following 5-trigger bit from 2016 à la Carmen's detective work
 {
 
- "HLT_PFHT300_PFMET110_v" "HLT_MET200_v" "HLT_PFMET300_v" "HLT_PFMET120_PFMHT120_IDTight_v" "HLT_PFMET170_HBHECleaned_v"
+  // *** FROM CARMEN *** 07-01-18 --> triggers used in 2016 efficiency calculations
+  //"HLT_PFHT300_PFMET110_v" "HLT_MET200_v" "HLT_PFMET300_v" "HLT_PFMET120_PFMHT120_IDTight_v" "HLT_PFMET170_HBHECleaned_v"
 
   // store all trigger bits in single string
 

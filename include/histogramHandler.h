@@ -68,7 +68,7 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
   h0->Fill( lepTool.subEta_mu, lepSF );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_relIso").c_str() );
-  h0->Fill( lepTool.leadPt_relIso, lepSF );
+  h0->Fill( lepTool.leadRelIso_mu, lepSF );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_njets").c_str() );
   h0->Fill( jetMetTool.nJets, lepSF );
@@ -122,7 +122,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_el0_pt->SetXTitle("Leading Electron p_{T} [GeV]");
   h_el0_pt->SetYTitle("Entries / Bin");
   TH1D* h_el1_pt = new TH1D( ("h_" + nameHLT + stream + "_el1_pt").c_str(),  ("h_" + nameHLT + stream + "_el1_pt").c_str(), nbins_pt, edges_pt );
-  h_el1_pt->SetXTitle("Leading Electron p_{T} [GeV]");
+  h_el1_pt->SetXTitle("Sub-Leading Electron p_{T} [GeV]");
   h_el1_pt->SetYTitle("Entries / Bin");
 
   TH1D* h_mu0_pt = new TH1D( ("h_" + nameHLT + stream + "_mu0_pt").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt").c_str(), nbins_pt, edges_pt );
@@ -141,7 +141,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_el0_eta->SetYTitle("Entries / Bin");
   TH1D* h_el1_eta = new TH1D( ("h_" + nameHLT + stream + "_el1_eta").c_str(),  ("h_" + nameHLT + stream + "_el1_eta").c_str(), nbins_eta, edges_eta );
   h_el1_eta->SetMinimum(0.0);
-  h_el1_eta->SetXTitle("Leading Electron #eta");
+  h_el1_eta->SetXTitle("Sub-Leading Electron #eta");
   h_el1_eta->SetYTitle("Entries / Bin");
 
   TH1D* h_mu0_eta = new TH1D( ("h_" + nameHLT + stream + "_mu0_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_eta").c_str(), nbins_eta, edges_eta );
@@ -150,7 +150,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_mu0_eta->SetYTitle("Entries / Bin");
   TH1D* h_mu1_eta = new TH1D( ("h_" + nameHLT + stream + "_mu1_eta").c_str(),  ("h_" + nameHLT + stream + "_mu1_eta").c_str(), nbins_eta, edges_eta );
   h_mu1_eta->SetMinimum(0.0);
-  h_mu1_eta->SetXTitle("Leading Muon #eta");
+  h_mu1_eta->SetXTitle("Sub-Leading Muon #eta");
   h_mu1_eta->SetYTitle("Entries / Bin");
 
   // N_jets
@@ -176,6 +176,8 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
 
   // N_vtx
   TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), 25, 0, 50);
+  h_nPV->SetXTitle("N_{PV}");
+  h_nPV->SetYTitle("Entries / Bin");
 
   // relIso
   TH1D* h_mu0_relIso = new TH1D( ("h_" + nameHLT + stream + "_mu0_relIso").c_str(),  ("h_" + nameHLT + stream + "_mu0_relIso").c_str(), 10, 0, 0.25);
