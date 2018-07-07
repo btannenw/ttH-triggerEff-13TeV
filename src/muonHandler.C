@@ -19,7 +19,7 @@ muonHandler::muonHandler()
   lepSF = 1.;
   isMC = false;
 
-  h_mu_cutflow = new TH1D("h_mu_cutflow", "h_mu_cutflow", 4, 0, 4);
+  h_mu_cutflow = new TH1D("h_mu_cutflow", "h_mu_cutflow", 5, 0, 5);
   h_mu_n       = new TH1D("h_mu_n", "h_mu_n", 6, 0, 6);
 }
 
@@ -57,8 +57,12 @@ void muonHandler::applyMuonCuts()
     // Cut 2: |ETA| < 2.4
     if ( !(abs(ev->lepton_eta_[l]) < 2.4) ) continue;
     h_mu_cutflow->Fill("|#eta| < 2.4", 1);
+
+    // Cut 3: |ETA| < 2.4
+    if ( !(ev->lepton_isTight_[l] == 1) ) continue;
+    h_mu_cutflow->Fill("Tight", 1);
 	
-    // Cut 3: Isolation < 0.15
+    // Cut 4: Isolation < 0.15
     if ( !(ev->lepton_relIso_[l] < 0.15) ) continue;
     h_mu_cutflow->Fill("Isolation < 0.15", 1);
     nMuons++;    

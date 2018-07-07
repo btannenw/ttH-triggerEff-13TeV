@@ -15,7 +15,8 @@
 // top level vars
 std::string topDir, fileList;
 bool printPlots, dumpFile, verbose, isMC, singleFile;
-int nJetsCut;
+int nJetsCutSL;
+int nJetsCutDL;
 
 // user tools
 yggdrasilEventVars *eve;

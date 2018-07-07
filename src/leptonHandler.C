@@ -34,8 +34,8 @@ leptonHandler::leptonHandler()
   isMC = false;
   isMuon = false;
 
-  h_mu_cutflow = new TH1D("h_mu_cutflow", "h_mu_cutflow", 5, 0, 5);
-  h_mu_event_cutflow = new TH1D("h_mu_event_cutflow", "h_mu_event_cutflow", 5, 0, 5);
+  h_mu_cutflow = new TH1D("h_mu_cutflow", "h_mu_cutflow", 6, 0, 6);
+  h_mu_event_cutflow = new TH1D("h_mu_event_cutflow", "h_mu_event_cutflow", 6, 0, 6);
   h_mu_n       = new TH1D("h_mu_n", "h_mu_n", 6, 0, 6);
   h_el_cutflow = new TH1D("h_el_cutflow", "h_el_cutflow", 5, 0, 5);
   h_el_event_cutflow = new TH1D("h_el_event_cutflow", "h_el_event_cutflow", 11, 0, 11);
@@ -82,13 +82,19 @@ void leptonHandler::applyMuonCuts()
     h_mu_cutflow->Fill("|#eta| < 2.4", 1);
     if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("|#eta| < 2.4", 1);
 
-    // Cut 3: Isolation < 0.25
+    // Cut 3: tight ID
+    if ( !(ev->lepton_isTight_[l] == 1) ) continue;
+    h_mu_cutflow->Fill("Tight", 1);
+    if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Tight", 1);
+
+
+    // Cut 4: Isolation < 0.25
     if ( !(ev->lepton_relIso_[l] < 0.25) ) continue;
     h_mu_cutflow->Fill("Isolation < 0.25", 1);
     if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Isolation < 0.25", 1);
     nMuons++;    
 
-    // Cut 4: Trigger
+    // Cut 5: Trigger
     if ( ev->passHLT_IsoMu27_v_ && leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Trigger", 1);
 
     // set lepton scale factors if MC

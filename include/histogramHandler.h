@@ -88,11 +88,11 @@ void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, T
 
   // fill histograms separated by stream if necessary --> should be needed for denominator in efficiency calculations
   if (splitStreams) {
-    if ( lepTool.passSLCuts_el ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamSL");
-    if ( lepTool.passSLCuts_mu ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamSL");
-    if ( lepTool.passDLCuts_el ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamDL");
-    if ( lepTool.passDLCuts_mu ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamDL");
-    if ( lepTool.passDLCuts_emu ) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "emuStreamDL");
+    if ( lepTool.passSLCuts_el && jetMetTool.nJets >= nJetsCutSL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamSL");
+    if ( lepTool.passSLCuts_mu && jetMetTool.nJets >= nJetsCutSL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamSL");
+    if ( lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamDL");
+    if ( lepTool.passDLCuts_mu && jetMetTool.nJets >= nJetsCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamDL");
+    if ( lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "emuStreamDL");
   }
 
 }
@@ -154,7 +154,8 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_mu1_eta->SetYTitle("Entries / Bin");
 
   // N_jets
-  TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 8, 4, 12);
+  //TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 8, 4, 12);
+  TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 12, 0, 12);
   h_njets->SetXTitle("N_{jets}");
   h_njets->SetYTitle("Entries / Bin");
 
@@ -175,7 +176,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_met->SetYTitle("Entries / Bin");
 
   // N_vtx
-  TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), 25, 0, 50);
+  TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), 15, 0, 50);
   h_nPV->SetXTitle("N_{PV}");
   h_nPV->SetYTitle("Entries / Bin");
 
