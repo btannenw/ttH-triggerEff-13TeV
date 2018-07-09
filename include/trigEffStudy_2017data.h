@@ -17,6 +17,8 @@ std::string topDir, fileList;
 bool printPlots, dumpFile, verbose, isMC, singleFile;
 int nJetsCutSL;
 int nJetsCutDL;
+int metCutSL;
+int metCutDL;
 
 // user tools
 yggdrasilEventVars *eve;

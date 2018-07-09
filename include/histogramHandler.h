@@ -168,9 +168,12 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   // ==== 4-16-18 ====
   //const Int_t nbins_met = 18; 
   //Double_t edges_met[nbins_met + 1] = {110.0, 125.0, 135.0, 145.0, 155.0, 165.0, 175.0, 185.0, 195.0, 205.0, 215.0, 225.0, 235.0, 245.0, 255.0, 265.0, 275.0, 285.0, 300.0}; 
-  // ==== 07-11-18 ====
-  const Int_t nbins_met = 8;
-  Double_t edges_met[nbins_met + 1] = {100.0, 125.0, 150.0, 175.0, 200.0, 225.0, 250.0, 275.0, 300.0};
+  // ==== 06-11-18 ====
+  //const Int_t nbins_met = 8;
+  //Double_t edges_met[nbins_met + 1] = {100.0, 125.0, 150.0, 175.0, 200.0, 225.0, 250.0, 275.0, 300.0};
+  // ==== 07-09-18 ====
+  const Int_t nbins_met = 12;
+  Double_t edges_met[nbins_met + 1] = {0.0, 25.0, 50.0, 75.0, 100.0, 125.0, 150.0, 175.0, 200.0, 225.0, 250.0, 275.0, 300.0};
   TH1D* h_met = new TH1D( ("h_" + nameHLT + stream + "_met").c_str(),  ("h_" + nameHLT + stream + "_met").c_str(), nbins_met, edges_met );
   h_met->SetXTitle("Missing Transverse Energy (MET) [GeV]");
   h_met->SetYTitle("Entries / Bin");

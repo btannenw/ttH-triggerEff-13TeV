@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-std::string topDir = "07-01-18_files/";
+std::string topDir = "07-06-18_files/";
 
 void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
 {
@@ -116,8 +116,8 @@ void produceCombinedEff()
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_pres_04-16-18.root").c_str(), "READ");
   //TFile* data_el_runC = new TFile( (topDir + "/outfile_singleElectron_Run2017C_pres_04-16-18.root").c_str(), "READ");
   //TFile* data_mu_runC = new TFile( (topDir + "/outfile_singleMuon_Run2017C_pres_04-16-18.root").c_str(), "READ");
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_r1_07-01-18.root").c_str(), "READ");
-  TFile* data_MET_runC = new TFile( (topDir + "/outfile_MET_RunBCDF_v7_r1.root").c_str(), "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_r0_07-06-18.root").c_str(), "READ");
+  TFile* data_MET_runC = new TFile( (topDir + "/outfile_MET_RunBCDF_v7_r0.root").c_str(), "READ");
   //TFile* data_mu_runC = new TFile( (topDir + "/outfile_MET_v7_r0_06-11-18.root").c_str(), "READ");
 
   TCanvas* c1 = new TCanvas("c1", "c1", 800, 800);
