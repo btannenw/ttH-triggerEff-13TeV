@@ -512,7 +512,7 @@ void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nam
   string s_eff = h_num->GetName();
   s_eff = (s_eff + "_TH1").c_str();
 
-  //h_eff->Divide(h_denom);
+  h_eff->Divide(h_denom);
   h_eff->SetName( s_eff.c_str() );
   h_eff->SetTitle( s_eff.c_str() );
   h_eff->SetYTitle("Efficiency / Bin");
@@ -594,4 +594,30 @@ void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "nPV");
   
+}
+
+TH1D* returnRatioHistogram(TH1D* data, TH1D* pred)
+{
+  TH1D* h_ratio = (TH1D*)data->Clone();
+  double binError, ratio, errData, errPred = 0;
+
+  for(int b = 0; b < h_ratio->GetNbinsX() + 1; b++) {
+    binError = 0;
+    errPred  = 0;
+    errData  = 0;
+    ratio = 0.15;
+      
+    if (pred->GetBinContent(b) > 0 ) {
+      ratio =  data->GetBinContent(b) / pred->GetBinContent(b);
+      errData = data->GetBinContent(b) != 0 ? (data->GetBinError(b)/data->GetBinContent(b))*(data->GetBinError(b)/data->GetBinContent(b)) : 0;
+      errPred = pred->GetBinContent(b) != 0 ? (pred->GetBinError(b)/pred->GetBinContent(b))*(pred->GetBinError(b)/pred->GetBinContent(b)) : 0;
+      binError = ratio * sqrt( errData + errPred);
+      if(data->GetBinContent(b) != 0) {
+	h_ratio->SetBinContent(b, ratio);
+	h_ratio->SetBinError(b, binError);
+      }
+    }
+    
+  }
+  return h_ratio;
 }
