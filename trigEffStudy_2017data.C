@@ -19,9 +19,7 @@
 #include "include/trigEffStudy_2017data.h"
 #include "include/histogramHandler.h"
 
-;// Object Handlers
-#include "src/electronHandler.C"
-#include "src/muonHandler.C"
+// Object Handlers
 #include "src/leptonHandler.C"
 #include "src/jetMetHandler.C"
 

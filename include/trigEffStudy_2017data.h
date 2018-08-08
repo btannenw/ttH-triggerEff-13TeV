@@ -7,8 +7,6 @@
 #include <TFile.h>
 #include <TObjArray.h>
 #include "YggdrasilEventVars.h"
-#include "electronHandler.h"
-#include "muonHandler.h"
 #include "leptonHandler.h"
 #include "jetMetHandler.h"
 
