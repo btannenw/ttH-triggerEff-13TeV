@@ -512,7 +512,7 @@ void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nam
   string s_eff = h_num->GetName();
   s_eff = (s_eff + "_TH1").c_str();
 
-  h_eff->Divide(h_denom);
+  //h_eff->Divide(h_denom);
   h_eff->SetName( s_eff.c_str() );
   h_eff->SetTitle( s_eff.c_str() );
   h_eff->SetYTitle("Efficiency / Bin");
