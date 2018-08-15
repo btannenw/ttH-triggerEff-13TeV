@@ -3,9 +3,11 @@
 
 #include <TH1.h>
 #include <TH2.h>
+#include <TLorentzVector.h>
 
 #include <iostream>
 #include <vector>
+
 #include "YggdrasilEventVars.h"
 
 
@@ -27,7 +29,7 @@ class leptonHandler{
 
       // === Functions === //
       void test();
-      void setFlags(bool passMC, bool passIsMuon);
+      void setFlags(bool passMC, string inputFile);
       void Event(yggdrasilEventVars* eve);
 
       // === Variables === //
@@ -53,9 +55,10 @@ class leptonHandler{
       double leadRelIso_mu;
       double subPt_mu;
       double subEta_mu;
+      double mll;
       double lepSF;
       bool isMC;
-      bool isMuon;
+      string dataPeriod;
 
       // === Variables === //
       TH1D* h_mu_cutflow;
@@ -72,6 +75,7 @@ class leptonHandler{
       void checkHLTTriggers();
       void checkCategoryCuts();
       void setLeadSubleadIndices(int l, int& lead, int& sub);
+      double calculateDileptonMass(int index_lead, int index_sublead);
 
       // === Variables === //
       yggdrasilEventVars* ev;

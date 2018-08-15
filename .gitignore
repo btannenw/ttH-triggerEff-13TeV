@@ -1,3 +1,5 @@
 *~
 test_*
 *.root
+*.tar.gz
+*-18

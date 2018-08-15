@@ -239,7 +239,7 @@ void fill2DCorrHistogramsWithLabels(TH2D*& hist, int passHLT_lep, int passHLT_ME
 
 }
 
-void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nameHLT, int passHLT)
+void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nameHLT, int passHLT, jetMetHandler jetMetTool)
 {
   TH2D* temp = new TH2D();
   TH2D* hist = new TH2D();
@@ -300,6 +300,7 @@ void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nam
     else if( metTriggers.at(i) == "HLT_PFMETTypeOne130_PFMHT130_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne130_PFMHT130_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_PFMETTypeOne140_PFMHT140_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_CaloMET250_HBHECleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_CaloMET250_HBHECleaned_v_);
+    else if( metTriggers.at(i) == "HLT_allMET")fill2DCorrHistogramsWithLabels(hist, passHLT, jetMetTool.passAllMETTriggers);
 
   }
 

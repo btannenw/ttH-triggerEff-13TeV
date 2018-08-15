@@ -31,6 +31,7 @@ TFile* outfile = new TFile();
 
 // user vars
 TObjArray* a_HLT_IsoMu27 = new TObjArray();
+TObjArray* a_HLT_IsoMu24_2p1 = new TObjArray();
 TObjArray* a_HLT_Ele35_WPTight_Gsf = new TObjArray();
 TObjArray* a_HLT_PFMET120_PFMHT120_IDTight = new TObjArray();
 TObjArray* a_HLT_PFMET120_PFMHT120_IDTight_elStream = new TObjArray();
@@ -47,9 +48,14 @@ TObjArray* a_SingleEl__X__allMET = new TObjArray();
 TObjArray* a_HLT_DoubleMu = new TObjArray();
 TObjArray* a_HLT_DoubleEl = new TObjArray();
 TObjArray* a_HLT_EMu = new TObjArray();
+TObjArray* a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ = new TObjArray();
+TObjArray* a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8 = new TObjArray();
+TObjArray* a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8 = new TObjArray();
+
 TObjArray* a_DoubleMu__X__allMET = new TObjArray();
 TObjArray* a_DoubleEl__X__allMET = new TObjArray();
 TObjArray* a_EMu__X__allMET = new TObjArray();
+
 
 TObjArray* a_Efficiencies = new TObjArray();
 
@@ -88,8 +94,9 @@ std::vector <std::string> metTriggers =
     "HLT_PFMETTypeOne120_PFMHT120_IDTight", 
     "HLT_PFMETTypeOne130_PFMHT130_IDTight", 
     "HLT_PFMETTypeOne140_PFMHT140_IDTight", 
-    "HLT_CaloMET250_HBHECleaned" 
-  };
+    "HLT_CaloMET250_HBHECleaned", 
+    "HLT_allMET" 
+   };
 
 // Lepton Triggers
 // Single Muon: HLT_IsoMu27
