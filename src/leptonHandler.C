@@ -29,6 +29,7 @@ leptonHandler::leptonHandler()
   subPt_el = -99;
   subEta_el = -99;
   subIndex_el = -99;
+  mll = -99;
 
   lepSF = 1.;
   isMC = false;
@@ -58,8 +59,7 @@ void leptonHandler::setFlags(bool passMC, string inputFile)
     else
     std::cout << "muTool.isMC = false!" << endl;*/
   if (!isMC){
-    if (inputFile.find("Run2017A") != string::npos)      dataPeriod = "A";
-    else if (inputFile.find("Run2017B") != string::npos) dataPeriod = "B";
+    if (inputFile.find("Run2017B") != string::npos) dataPeriod = "B";
     else if (inputFile.find("Run2017C") != string::npos) dataPeriod = "C";
     else if (inputFile.find("Run2017D") != string::npos) dataPeriod = "D";
     else if (inputFile.find("Run2017E") != string::npos) dataPeriod = "E";
@@ -258,54 +258,78 @@ void leptonHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
 
 void leptonHandler::checkCategoryCuts()
 {
-  if (nMuons == 1 && leadPt_mu >= 30 && leadRelIso_mu < 0.15){
+  if (nMuons == 1 && nElectrons==0 && leadPt_mu >= 30 && leadRelIso_mu < 0.15){
     passSLCuts_mu = true;
     //cout << "IT'S HAPPENING!!!!!!" << endl;
   }
-  if (nMuons == 2 && leadPt_mu >= 25 && subPt_mu >= 15)
-    passDLCuts_mu = true;
+  if (nMuons >= 2 && leadPt_mu >= 25 && subPt_mu >= 15){
+    mll = calculateDileptonMass(leadIndex_mu, subIndex_mu);
+    if (mll > 20)
+      passDLCuts_mu = true;
+  }
 
-  if (nElectrons == 1 && leadPt_el >= 40)
+  if (nElectrons == 1 && nMuons == 0 && leadPt_el >= 40)
     passSLCuts_el = true;
-  if (nElectrons == 2 && leadPt_el >= 25 && subPt_el >= 15){
-    passDLCuts_el = true;
+
+  if (nElectrons >= 2 && leadPt_el >= 25 && subPt_el >= 15){
+    mll = calculateDileptonMass(leadIndex_el, subIndex_el);
+    if (mll > 20)
+      passDLCuts_el = true;
     //cout << "HEY! You're part of it!! (passDLCuts_el)" << endl;
   }
 
-  if ( (leadPt_mu >= 25 && subPt_el >= 15) || (leadPt_el >= 25 && subPt_mu >= 15)){
-    passDLCuts_emu = true;
+  if ( (nMuons>=1 && nElectrons>=1) && (leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)){
+    //if ( (leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)){
+    mll = calculateDileptonMass(leadIndex_mu, leadIndex_el);
+    if (mll > 20)
+      passDLCuts_emu = true;
     //if (passDLtriggers_emu)
     //  cout << "HEY! You're part of it!! (passDLCuts_emu)" << endl;
   }
   
 }
 
+double leptonHandler::calculateDileptonMass(int index_lead, int index_sub)
+{
+  TLorentzVector *l1 = new TLorentzVector();
+  TLorentzVector *l2 = new TLorentzVector();
+  l1->SetPtEtaPhiE( ev->lepton_pt_[index_lead], ev->lepton_eta_[index_lead], ev->lepton_phi_[index_lead], ev->lepton_e_[index_lead] );
+  l2->SetPtEtaPhiE( ev->lepton_pt_[index_sub], ev->lepton_eta_[index_sub], ev->lepton_phi_[index_sub], ev->lepton_e_[index_sub] );
+
+  TLorentzVector *ll = new TLorentzVector();
+  *ll = *l1 + *l2;
+
+  return ll->M();
+
+}
+
 
 void leptonHandler::checkHLTTriggers()
-{/*
+{
   bool b_periodDep__HLT_IsoMu24_2p1   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B" || dataPeriod == "C" || dataPeriod == "D") ) ? true : false; // should be true if MC || if is data and period is A, B, C, or D
   bool b_periodDep__doubleMu_noMass   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B") ) ? true : false; // should be true if MC || if sample is data and period is A or B
   bool b_periodDep__doubleMu_withMass = isMC || (!isMC && (dataPeriod == "C" || dataPeriod == "D" || dataPeriod == "E" || dataPeriod == "F") ) ? true : false; // should be true if MC || if sample is data and period is C, D, E, or F
-
+  
   // muon triggers
   passSLtriggers_mu = ev->passHLT_IsoMu27_v_ || (ev->passHLT_IsoMu24_2p1_v_ && b_periodDep__HLT_IsoMu24_2p1) ? true : false;
   passDLtriggers_mu = (ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ && b_periodDep__doubleMu_noMass) || ((ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_) && b_periodDep__doubleMu_withMass) ? true : false;
-  */
+  
   /*
   // **** WARNING: SET ALL True FOR TESTING ONLY *** [FIXME]
   bool b_periodDep__HLT_IsoMu24_2p1   = true;
   bool b_periodDep__doubleMu_noMass   = true;
   bool b_periodDep__doubleMu_withMass = true;
   */
-
+  /*
+  // **** CLASSIC --> no period dep
   // muon triggers
   passSLtriggers_mu = ev->passHLT_IsoMu27_v_ || ev->passHLT_IsoMu24_2p1_v_ ? true : false;
   passDLtriggers_mu = ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ ? true : false;
-
+  */
   // electron triggers
   passSLtriggers_el = ev->passHLT_Ele35_WPTight_Gsf_v_ ? true : false;
   passDLtriggers_el = ev->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v_ || ev->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ ? true : false;
-
+ 
   //if (passDLtriggers_el)
   //  cout << "HEY! You're part of it!! (DLtriggers_el)" << endl;
 

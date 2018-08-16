@@ -56,6 +56,13 @@ TObjArray* a_DoubleMu__X__allMET = new TObjArray();
 TObjArray* a_DoubleEl__X__allMET = new TObjArray();
 TObjArray* a_EMu__X__allMET = new TObjArray();
 
+TObjArray* a_HLT_DoubleMu_OR = new TObjArray();
+TObjArray* a_HLT_DoubleEl_OR = new TObjArray();
+TObjArray* a_HLT_EMu_OR = new TObjArray();
+TObjArray* a_DoubleMu_OR__X__allMET = new TObjArray();
+TObjArray* a_DoubleEl_OR__X__allMET = new TObjArray();
+TObjArray* a_EMu_OR__X__allMET = new TObjArray();
+
 
 TObjArray* a_Efficiencies = new TObjArray();
 

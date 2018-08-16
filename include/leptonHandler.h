@@ -75,7 +75,7 @@ class leptonHandler{
       void checkHLTTriggers();
       void checkCategoryCuts();
       void setLeadSubleadIndices(int l, int& lead, int& sub);
-      double calculateDileptonMass(int index_lead, int index_sublead);
+      double calculateDileptonMass(int index_lead, int index_sub);
 
       // === Variables === //
       yggdrasilEventVars* ev;

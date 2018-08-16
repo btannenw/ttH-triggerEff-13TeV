@@ -72,6 +72,9 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_njets").c_str() );
   h0->Fill( jetMetTool.nJets, lepSF );
+
+  h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mll").c_str() );
+  h0->Fill( lepTool.mll, lepSF );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_met").c_str() );
   h0->Fill( jetMetTool.MET, lepSF );
@@ -88,11 +91,11 @@ void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, T
 
   // fill histograms separated by stream if necessary --> should be needed for denominator in efficiency calculations
   if (splitStreams) {
-    if ( lepTool.passSLCuts_el && jetMetTool.nJets >= nJetsCutSL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamSL");
-    if ( lepTool.passSLCuts_mu && jetMetTool.nJets >= nJetsCutSL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamSL");
-    if ( lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamDL");
-    if ( lepTool.passDLCuts_mu && jetMetTool.nJets >= nJetsCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamDL");
-    if ( lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "emuStreamDL");
+    if ( lepTool.passSLCuts_el && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamSL");
+    if ( lepTool.passSLCuts_mu && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamSL");
+    if ( lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamDL");
+    if ( lepTool.passDLCuts_mu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamDL");
+    if ( lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "emuStreamDL");
   }
 
 }
@@ -159,6 +162,11 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_njets->SetXTitle("N_{jets}");
   h_njets->SetYTitle("Entries / Bin");
 
+  // m_ll
+  TH1D* h_mll = new TH1D( ("h_" + nameHLT + stream + "_mll").c_str(),  ("h_" + nameHLT + stream + "_mll").c_str(), 25, 0, 200);
+  h_mll->SetXTitle("M_{ll}");
+  h_mll->SetYTitle("Entries / Bin");
+
   // MET
   //const Int_t nbins_met = 11;
   //Double_t edges_met[nbins_met + 1] = {0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 125.0, 150.0, 175.0, 200.0, 250.0, 300.0};
@@ -198,6 +206,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   array->AddLast(h_mu1_eta);
   array->AddLast(h_mu0_relIso);
   array->AddLast(h_njets);
+  array->AddLast(h_mll);
   array->AddLast(h_met);
   array->AddLast(h_nPV);
 }
@@ -360,6 +369,7 @@ void plot1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
   draw1DHistograms(array, c0, nameHLT, "mu1_pt");
   draw1DHistograms(array, c0, nameHLT, "mu1_eta");
   draw1DHistograms(array, c0, nameHLT, "njets");
+  draw1DHistograms(array, c0, nameHLT, "mll");
   draw1DHistograms(array, c0, nameHLT, "met");
   draw1DHistograms(array, c0, nameHLT, "nPV");
 
@@ -592,6 +602,7 @@ void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu1_pt");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu1_eta");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
+  drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mll");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "nPV");
   
