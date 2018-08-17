@@ -9,8 +9,9 @@
 #include "../cmsStyle/CMS_lumi.C"
 
 #include <iostream>
+#include <fstream>
 
-std::string topDir = "07-09-18_files/";
+std::string topDir = "08-09-18_files/";
 
 void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
 {
@@ -110,14 +111,22 @@ void drawDoubleHist(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, s
   c0->Print( (topDir + "/h_" + triggerSet + "_" + variable + "_TH1.png").c_str() );
 }
 
+void dumpCorrelationNumbers(TFile* ttbar, TFile* data, string triggerSet)
+{
+  ofstream corrTXT;
+  corrTXT.open( ("correlations2D_+" + triggerSet+ ".txt").c_str() );
+
+
+  corrTXT.close();
+}
 
 void produceCombinedEff()
 {
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_pres_04-16-18.root").c_str(), "READ");
   //TFile* data_el_runC = new TFile( (topDir + "/outfile_singleElectron_Run2017C_pres_04-16-18.root").c_str(), "READ");
   //TFile* data_mu_runC = new TFile( (topDir + "/outfile_singleMuon_Run2017C_pres_04-16-18.root").c_str(), "READ");
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_r1_07-09-18.root").c_str(), "READ");
-  TFile* data_MET_runC = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_r1.root").c_str(), "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_r2_08-09-18.root").c_str(), "READ");
+  TFile* data_MET_runC = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_r2.root").c_str(), "READ");
   //TFile* data_mu_runC = new TFile( (topDir + "/outfile_MET_v7_r0_06-11-18.root").c_str(), "READ");
 
   TCanvas* c1 = new TCanvas("c1", "c1", 800, 800);
@@ -214,6 +223,7 @@ void produceCombinedEff()
   drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "met" );
   drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "njets" );
   drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "nPV" );
-  
-}
 
+  // dump some correlation madness
+  dumpCorrelationNumbers(mc_ttbar, data_MET_runC, "HLT_EMu");
+}
