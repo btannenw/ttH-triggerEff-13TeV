@@ -31,7 +31,7 @@ TFile* outfile = new TFile();
 
 // user vars
 TObjArray* a_HLT_IsoMu27 = new TObjArray();
-TObjArray* a_HLT_IsoMu24_2p1 = new TObjArray();
+TObjArray* a_HLT_IsoMu24_eta2p1 = new TObjArray();
 TObjArray* a_HLT_Ele35_WPTight_Gsf = new TObjArray();
 TObjArray* a_HLT_PFMET120_PFMHT120_IDTight = new TObjArray();
 TObjArray* a_HLT_PFMET120_PFMHT120_IDTight_elStream = new TObjArray();
@@ -51,6 +51,12 @@ TObjArray* a_HLT_EMu = new TObjArray();
 TObjArray* a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ = new TObjArray();
 TObjArray* a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8 = new TObjArray();
 TObjArray* a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8 = new TObjArray();
+TObjArray* a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL = new TObjArray();
+TObjArray* a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ = new TObjArray();
+TObjArray* a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL = new TObjArray();
+TObjArray* a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ = new TObjArray();
+TObjArray* a_HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ = new TObjArray();
+TObjArray* a_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ = new TObjArray();
 
 TObjArray* a_DoubleMu__X__allMET = new TObjArray();
 TObjArray* a_DoubleEl__X__allMET = new TObjArray();

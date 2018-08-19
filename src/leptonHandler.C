@@ -34,7 +34,7 @@ leptonHandler::leptonHandler()
   lepSF = 1.;
   isMC = false;
   dataPeriod = "";
-  b_periodDep__HLT_IsoMu24_2p1 = false;
+  b_periodDep__HLT_IsoMu24_eta2p1 = false;
   b_periodDep__doubleMu_noMass = false;
   b_periodDep__doubleMu_withMass = false;
 
@@ -283,7 +283,7 @@ void leptonHandler::checkCategoryCuts()
     //cout << "HEY! You're part of it!! (passDLCuts_el)" << endl;
   }
 
-  if ( (nMuons>=1 && nElectrons>=1) && (leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)){
+  if ( (nMuons>=1 && nElectrons>=1) && ((leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)) ){
     //if ( (leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)){
     mll = calculateDileptonMass(leadIndex_mu, leadIndex_el);
     if (mll > 20)
@@ -311,24 +311,24 @@ double leptonHandler::calculateDileptonMass(int index_lead, int index_sub)
 
 void leptonHandler::checkHLTTriggers()
 {
-  b_periodDep__HLT_IsoMu24_2p1   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B" || dataPeriod == "C" || dataPeriod == "D") ) ? true : false; // should be true if MC || if is data and period is A, B, C, or D
+  b_periodDep__HLT_IsoMu24_eta2p1   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B" || dataPeriod == "C" || dataPeriod == "D") ) ? true : false; // should be true if MC || if is data and period is A, B, C, or D
   b_periodDep__doubleMu_noMass   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B") ) ? true : false; // should be true if MC || if sample is data and period is A or B
   b_periodDep__doubleMu_withMass = isMC || (!isMC && (dataPeriod == "C" || dataPeriod == "D" || dataPeriod == "E" || dataPeriod == "F") ) ? true : false; // should be true if MC || if sample is data and period is C, D, E, or F
   
   // muon triggers
-  passSLtriggers_mu = ev->passHLT_IsoMu27_v_ || (ev->passHLT_IsoMu24_2p1_v_ && b_periodDep__HLT_IsoMu24_2p1) ? true : false;
+  passSLtriggers_mu = ev->passHLT_IsoMu27_v_ || (ev->passHLT_IsoMu24_eta2p1_v_ && b_periodDep__HLT_IsoMu24_eta2p1) ? true : false;
   passDLtriggers_mu = (ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ && b_periodDep__doubleMu_noMass) || ((ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_) && b_periodDep__doubleMu_withMass) ? true : false;
   
   /*
   // **** WARNING: SET ALL True FOR TESTING ONLY *** [FIXME]
-  bool b_periodDep__HLT_IsoMu24_2p1   = true;
+  bool b_periodDep__HLT_IsoMu24_eta2p1   = true;
   bool b_periodDep__doubleMu_noMass   = true;
   bool b_periodDep__doubleMu_withMass = true;
   */
   /*
   // **** CLASSIC --> no period dep
   // muon triggers
-  passSLtriggers_mu = ev->passHLT_IsoMu27_v_ || ev->passHLT_IsoMu24_2p1_v_ ? true : false;
+  passSLtriggers_mu = ev->passHLT_IsoMu27_v_ || ev->passHLT_IsoMu24_eta2p1_v_ ? true : false;
   passDLtriggers_mu = ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ ? true : false;
   */
   // electron triggers
@@ -371,7 +371,7 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
   subEta_el = -99;
   subIndex_el = -99;
   mll = -99;
-  b_periodDep__HLT_IsoMu24_2p1 = false;
+  b_periodDep__HLT_IsoMu24_eta2p1 = false;
   b_periodDep__doubleMu_noMass = false;
   b_periodDep__doubleMu_withMass = false;
 

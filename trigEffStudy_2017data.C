@@ -136,7 +136,7 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   TCanvas *c0 = new TCanvas("c0", "c0", 50, 50, 800, 600);
 
   initializeHistograms(a_HLT_IsoMu27, "HLT_IsoMu27");
-  initializeHistograms(a_HLT_IsoMu24_2p1, "HLT_IsoMu24_2p1");
+  initializeHistograms(a_HLT_IsoMu24_eta2p1, "HLT_IsoMu24_eta2p1");
   initializeHistograms(a_HLT_Ele35_WPTight_Gsf, "HLT_Ele35_WPTight_Gsf");
   initializeHistograms(a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight", true);
   //initializeHistograms(a_HLT_PFMET120_PFMHT120_IDTight_elStream, "HLT_PFMET120_PFMHT120_IDTight_elStream");
@@ -156,6 +156,13 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   initializeHistograms(a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ");
   initializeHistograms(a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8");
   initializeHistograms(a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8");
+  initializeHistograms(a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL, "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL");
+  initializeHistograms(a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
+  initializeHistograms(a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL");
+  initializeHistograms(a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
+  initializeHistograms(a_HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
+  initializeHistograms(a_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
+  
   initializeHistograms(a_DoubleMu__X__allMET, "DoubleMu__X__allMET");
   initializeHistograms(a_DoubleEl__X__allMET, "DoubleEl__X__allMET");
   initializeHistograms(a_EMu__X__allMET, "EMu__X__allMET");
@@ -201,11 +208,17 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
     // ** II. 2D Correlations comparing SL triggers to MET triggers
     // * A. specific triggers
     if (lepTool.passSLCuts_mu && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fill2DCorrHistograms(eve, a_HLT_IsoMu27, "HLT_IsoMu27", eve->passHLT_IsoMu27_v_, jetMetTool );
-    if (lepTool.passSLCuts_mu && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fill2DCorrHistograms(eve, a_HLT_IsoMu24_2p1, "HLT_IsoMu24_2p1", eve->passHLT_IsoMu24_2p1_v_, jetMetTool );
+    if (lepTool.passSLCuts_mu && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fill2DCorrHistograms(eve, a_HLT_IsoMu24_eta2p1, "HLT_IsoMu24_eta2p1", eve->passHLT_IsoMu24_eta2p1_v_, jetMetTool );
     if (lepTool.passSLCuts_el && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fill2DCorrHistograms(eve, a_HLT_Ele35_WPTight_Gsf, "HLT_Ele35_WPTight_Gsf", eve->passHLT_Ele35_WPTight_Gsf_v_, jetMetTool );
     if (lepTool.passDLCuts_mu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ", eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_, jetMetTool );
     if (lepTool.passDLCuts_mu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8", eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_, jetMetTool );
     if (lepTool.passDLCuts_mu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8", eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_, jetMetTool );
+    if (lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL, "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL", eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v_, jetMetTool);
+    if (lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ", eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_, jetMetTool);
+    if (lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL", eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_, jetMetTool);
+    if (lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ", eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_, jetMetTool);
+    if (lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ", eve->passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_, jetMetTool);
+    if (lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ", eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_, jetMetTool);
 
     // * B. logical OR of triggers
     if (lepTool.passSLCuts_el && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fill2DCorrHistograms(eve, a_HLT_SingleEl, "HLT_SingleEl", lepTool.passSLtriggers_el , jetMetTool );
@@ -272,10 +285,16 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   plot2Dcorrelations( a_HLT_SingleMu, c0, "HLT_SingleMu");
   plot2Dcorrelations( a_HLT_DoubleEl, c0, "HLT_DoubleEl");
   plot2Dcorrelations( a_HLT_DoubleMu, c0, "HLT_DoubleMu");
-  plot2Dcorrelations( a_HLT_IsoMu24_2p1, c0, "HLT_IsoMu24_2p1");
+  plot2Dcorrelations( a_HLT_IsoMu24_eta2p1, c0, "HLT_IsoMu24_eta2p1");
   plot2Dcorrelations( a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ, c0, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ");
   plot2Dcorrelations( a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8, c0, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8");
   plot2Dcorrelations( a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8, c0, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8");
+  plot2Dcorrelations( a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL, c0, "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL");
+  plot2Dcorrelations( a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ, c0, "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
+  plot2Dcorrelations( a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL, c0, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL");
+  plot2Dcorrelations( a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ, c0, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
+  plot2Dcorrelations( a_HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, c0, "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
+  plot2Dcorrelations( a_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, c0, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
   
   // ** B. 1D distributions
   plot1DHistograms( a_HLT_Ele35_WPTight_Gsf, c0, "HLT_Ele35_WPTight_Gsf");
