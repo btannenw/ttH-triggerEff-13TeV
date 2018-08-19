@@ -59,6 +59,9 @@ class leptonHandler{
       double lepSF;
       bool isMC;
       string dataPeriod;
+      bool b_periodDep__HLT_IsoMu24_2p1;
+      bool b_periodDep__doubleMu_noMass;
+      bool b_periodDep__doubleMu_withMass;
 
       // === Variables === //
       TH1D* h_mu_cutflow;

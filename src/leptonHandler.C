@@ -34,6 +34,10 @@ leptonHandler::leptonHandler()
   lepSF = 1.;
   isMC = false;
   dataPeriod = "";
+  b_periodDep__HLT_IsoMu24_2p1 = false;
+  b_periodDep__doubleMu_noMass = false;
+  b_periodDep__doubleMu_withMass = false;
+
 
   h_mu_cutflow = new TH1D("h_mu_cutflow", "h_mu_cutflow", 6, 0, 6);
   h_mu_event_cutflow = new TH1D("h_mu_event_cutflow", "h_mu_event_cutflow", 6, 0, 6);
@@ -59,7 +63,8 @@ void leptonHandler::setFlags(bool passMC, string inputFile)
     else
     std::cout << "muTool.isMC = false!" << endl;*/
   if (!isMC){
-    if (inputFile.find("Run2017B") != string::npos) dataPeriod = "B";
+    if (inputFile.find("Run2017A") != string::npos) dataPeriod = "A";
+    else if (inputFile.find("Run2017B") != string::npos) dataPeriod = "B";
     else if (inputFile.find("Run2017C") != string::npos) dataPeriod = "C";
     else if (inputFile.find("Run2017D") != string::npos) dataPeriod = "D";
     else if (inputFile.find("Run2017E") != string::npos) dataPeriod = "E";
@@ -306,9 +311,9 @@ double leptonHandler::calculateDileptonMass(int index_lead, int index_sub)
 
 void leptonHandler::checkHLTTriggers()
 {
-  bool b_periodDep__HLT_IsoMu24_2p1   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B" || dataPeriod == "C" || dataPeriod == "D") ) ? true : false; // should be true if MC || if is data and period is A, B, C, or D
-  bool b_periodDep__doubleMu_noMass   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B") ) ? true : false; // should be true if MC || if sample is data and period is A or B
-  bool b_periodDep__doubleMu_withMass = isMC || (!isMC && (dataPeriod == "C" || dataPeriod == "D" || dataPeriod == "E" || dataPeriod == "F") ) ? true : false; // should be true if MC || if sample is data and period is C, D, E, or F
+  b_periodDep__HLT_IsoMu24_2p1   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B" || dataPeriod == "C" || dataPeriod == "D") ) ? true : false; // should be true if MC || if is data and period is A, B, C, or D
+  b_periodDep__doubleMu_noMass   = isMC || (!isMC && (dataPeriod == "A" || dataPeriod == "B") ) ? true : false; // should be true if MC || if sample is data and period is A or B
+  b_periodDep__doubleMu_withMass = isMC || (!isMC && (dataPeriod == "C" || dataPeriod == "D" || dataPeriod == "E" || dataPeriod == "F") ) ? true : false; // should be true if MC || if sample is data and period is C, D, E, or F
   
   // muon triggers
   passSLtriggers_mu = ev->passHLT_IsoMu27_v_ || (ev->passHLT_IsoMu24_2p1_v_ && b_periodDep__HLT_IsoMu24_2p1) ? true : false;
@@ -366,6 +371,9 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
   subEta_el = -99;
   subIndex_el = -99;
   mll = -99;
+  b_periodDep__HLT_IsoMu24_2p1 = false;
+  b_periodDep__doubleMu_noMass = false;
+  b_periodDep__doubleMu_withMass = false;
 
   //h_mu_cutflow->Fill("Event", 1);
 
