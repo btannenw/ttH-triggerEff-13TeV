@@ -7,11 +7,15 @@
 
 #include "../cmsStyle/tdrStyle.C"
 #include "../cmsStyle/CMS_lumi.C"
+#include "include/trigEffStudy_2017data.h"
+// Object Handlers
+#include "src/leptonHandler.C"
+#include "src/jetMetHandler.C"
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 
-std::string topDir = "08-09-18_files/";
 
 void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
 {
@@ -111,22 +115,86 @@ void drawDoubleHist(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, s
   c0->Print( (topDir + "/h_" + triggerSet + "_" + variable + "_TH1.png").c_str() );
 }
 
-void dumpCorrelationNumbers(TFile* ttbar, TFile* data, string triggerSet)
+void dumpCorrelationNumbers(TFile* f0, string sample, string triggerSet)
 {
   ofstream corrTXT;
-  corrTXT.open( ("correlations2D_+" + triggerSet+ ".txt").c_str() );
+  corrTXT.open( (topDir + "/correlations2D_" + sample + "_" + triggerSet+ ".txt").c_str() );
 
+  // variables that i may or may not need
+  TH2D* h_corr = new TH2D();
+  double d_lepFired_metFired = 0;
+  double d_lepNotFired_metFired = 0;
+  double d_lepFired_metNotFired = 0;
+  double d_lepNotFired_metNotFired = 0;
+  double e_lepFired_metFired = 0;
+  double e_lepNotFired_metFired = 0;
+  double e_lepFired_metNotFired = 0;
+  double e_lepNotFired_metNotFired = 0;
+  double eff_lep = 0;
+  double eff_met = 0;
+  double eff_lepXmet = 0;
+  double eff_lep_err = 0;
+  double eff_met_err = 0;
+  double eff_lepXmet_err = 0;
+  double total = 0;
+  double total_err = 0;
+  double correlation = 0;
+  double correlation_err = 0;
+  
+
+  for (int i = 0; i < metTriggers.size(); i++) {
+    //cout << metTriggers.at(i) << endl;
+    h_corr = (TH2D*)f0->Get( ("h_" + triggerSet + "__vs__" + metTriggers.at(i)).c_str() );
+    // Notes: x-axis is lepton trigger, y-axis is MET trigger
+    //corrTXT << "Get correlation for " << ("h_" + triggerSet + "__vs__" + metTriggers.at(i)).c_str() << endl;
+    //corrTXT << "X-axis: " << h_corr->GetXaxis()->GetTitle() << ", Y-axis: " << h_corr->GetYaxis()->GetTitle() << endl;
+
+    // ** Step 1: Get bin values and errors from histogram
+    d_lepFired_metFired = h_corr->GetBinContent(h_corr->GetXaxis()->FindBin("Fired"), h_corr->GetYaxis()->FindBin("Fired"));
+    d_lepNotFired_metFired = h_corr->GetBinContent(h_corr->GetXaxis()->FindBin("Not Fired"), h_corr->GetYaxis()->FindBin("Fired"));
+    d_lepFired_metNotFired = h_corr->GetBinContent(h_corr->GetXaxis()->FindBin("Fired"), h_corr->GetYaxis()->FindBin("Not Fired"));
+    d_lepNotFired_metNotFired = h_corr->GetBinContent(h_corr->GetXaxis()->FindBin("Not Fired"), h_corr->GetYaxis()->FindBin("Not Fired"));
+    e_lepFired_metFired = h_corr->GetBinError(h_corr->GetXaxis()->FindBin("Fired"), h_corr->GetYaxis()->FindBin("Fired"));
+    e_lepNotFired_metFired = h_corr->GetBinError(h_corr->GetXaxis()->FindBin("Not Fired"), h_corr->GetYaxis()->FindBin("Fired"));
+    e_lepFired_metNotFired = h_corr->GetBinError(h_corr->GetXaxis()->FindBin("Fired"), h_corr->GetYaxis()->FindBin("Not Fired"));
+    e_lepNotFired_metNotFired = h_corr->GetBinError(h_corr->GetXaxis()->FindBin("Not Fired"), h_corr->GetYaxis()->FindBin("Not Fired"));
+
+    // ** Step 2: Calculate efficiencies
+    // * A. Intermediate
+    total = (d_lepFired_metFired + d_lepFired_metNotFired + d_lepNotFired_metFired + d_lepNotFired_metNotFired);
+    total_err = sqrt( e_lepFired_metFired*e_lepFired_metFired + e_lepFired_metNotFired*e_lepFired_metNotFired + e_lepNotFired_metFired*e_lepNotFired_metFired + e_lepNotFired_metNotFired*e_lepNotFired_metNotFired );
+
+    // * B. Efficiencies and errors
+    eff_lep = (d_lepFired_metFired + d_lepFired_metNotFired) / total;
+    eff_met = (d_lepFired_metFired + d_lepNotFired_metFired) / total;
+    eff_lepXmet = (d_lepFired_metFired) / total;
+    eff_lep_err = eff_lep * sqrt( (total_err/total)*(total_err/total) + ((e_lepFired_metFired*e_lepFired_metFired) + (e_lepFired_metNotFired*e_lepFired_metNotFired))/((d_lepFired_metFired + d_lepFired_metNotFired)*(d_lepFired_metFired + d_lepFired_metNotFired)) );
+    eff_met_err = eff_met * sqrt( (total_err/total)*(total_err/total) + ((e_lepFired_metFired*e_lepFired_metFired) + (e_lepNotFired_metFired*e_lepNotFired_metFired))/((d_lepFired_metFired + d_lepNotFired_metFired)*(d_lepFired_metFired + d_lepNotFired_metFired)) );
+    eff_lepXmet_err = eff_lepXmet * sqrt( (total_err/total)*(total_err/total) + ((e_lepFired_metFired*e_lepFired_metFired))/((d_lepFired_metFired*d_lepFired_metFired)) );
+
+    correlation = eff_lep * eff_met / eff_lepXmet;
+    correlation_err = correlation * sqrt( (eff_lep_err/eff_lep)*(eff_lep_err/eff_lep) + (eff_met/eff_met)*(eff_met_err/eff_met) + (eff_lepXmet_err/eff_lepXmet)*(eff_lepXmet_err/eff_lepXmet) );
+
+    // ** Step 3: Calculate errors [TO-DO]
+
+    // ** Step 4: Output results
+    corrTXT << std::fixed;
+    corrTXT << "Correlation between " << h_corr->GetXaxis()->GetTitle() << " and " << h_corr->GetYaxis()->GetTitle() << " = \t" << std::setprecision(3) << correlation << " +/- " << correlation_err << ",\t GetCorrelationFactor() = " << h_corr->GetCorrelationFactor() << endl;  
+  }
 
   corrTXT.close();
 }
 
 void produceCombinedEff()
 {
+  // now sourced from include/trigEffStudy_2017data.h
+  topDir = "08-19-18_files/";
+
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_pres_04-16-18.root").c_str(), "READ");
   //TFile* data_el_runC = new TFile( (topDir + "/outfile_singleElectron_Run2017C_pres_04-16-18.root").c_str(), "READ");
   //TFile* data_mu_runC = new TFile( (topDir + "/outfile_singleMuon_Run2017C_pres_04-16-18.root").c_str(), "READ");
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_r2_08-09-18.root").c_str(), "READ");
-  TFile* data_MET_runC = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_r2.root").c_str(), "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_r5_08-19-18.root").c_str(), "READ");
+  TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_r5.root").c_str(), "READ");
   //TFile* data_mu_runC = new TFile( (topDir + "/outfile_MET_v7_r0_06-11-18.root").c_str(), "READ");
 
   TCanvas* c1 = new TCanvas("c1", "c1", 800, 800);
@@ -141,89 +209,94 @@ void produceCombinedEff()
   lumiTextSize = 0.3;
   
   
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleEl__X__allMET", "el0_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleEl__X__allMET", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleEl__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleEl__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleEl__X__allMET", "nPV" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "el0_pt");
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "el0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "nPV" );
 
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleMu__X__allMET", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleMu__X__allMET", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleMu__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleMu__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "SingleMu__X__allMET", "nPV" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleMu__X__allMET", "mu0_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleMu__X__allMET", "mu0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleMu__X__allMET", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleMu__X__allMET", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleMu__X__allMET", "nPV" );
 
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleEl__X__allMET", "el0_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleEl__X__allMET", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleEl__X__allMET", "el1_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleEl__X__allMET", "el1_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleEl__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleEl__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleEl__X__allMET", "nPV" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl__X__allMET", "el0_pt");
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl__X__allMET", "el0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl__X__allMET", "el1_pt");
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl__X__allMET", "el1_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl__X__allMET", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl__X__allMET", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl__X__allMET", "nPV" );
 
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleMu__X__allMET", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleMu__X__allMET", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleMu__X__allMET", "mu1_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleMu__X__allMET", "mu1_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleMu__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleMu__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "DoubleMu__X__allMET", "nPV" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu__X__allMET", "mu0_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu__X__allMET", "mu0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu__X__allMET", "mu1_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu__X__allMET", "mu1_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu__X__allMET", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu__X__allMET", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu__X__allMET", "nPV" );
 
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "EMu__X__allMET", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "EMu__X__allMET", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "EMu__X__allMET", "el0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "EMu__X__allMET", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "EMu__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "EMu__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "EMu__X__allMET", "nPV" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "mu0_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "mu0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "el0_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "el0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "nPV" );
 
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_pt");
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "met" );
 
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_MET_runC, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "mu0_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "mu0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "njets" );
   
 
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_Ele35_WPTight_Gsf", "el0_pt");
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_Ele35_WPTight_Gsf", "el0_eta" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_Ele35_WPTight_Gsf", "njets" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_Ele35_WPTight_Gsf", "met" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_Ele35_WPTight_Gsf", "nPV" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_Ele35_WPTight_Gsf", "el0_pt");
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_Ele35_WPTight_Gsf", "el0_eta" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_Ele35_WPTight_Gsf", "njets" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_Ele35_WPTight_Gsf", "met" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_Ele35_WPTight_Gsf", "nPV" );
 
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_IsoMu27", "mu0_pt" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_IsoMu27", "mu0_eta" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_IsoMu27", "met" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_IsoMu27", "njets" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_IsoMu27", "nPV" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_IsoMu27", "mu0_pt" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_IsoMu27", "mu0_eta" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_IsoMu27", "met" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_IsoMu27", "njets" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_IsoMu27", "nPV" );
 
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleMu", "mu0_pt" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleMu", "mu0_eta" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleMu", "mu1_pt" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleMu", "mu1_eta" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleMu", "met" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleMu", "njets" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleMu", "nPV" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleMu", "mu0_pt" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleMu", "mu0_eta" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleMu", "mu1_pt" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleMu", "mu1_eta" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleMu", "met" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleMu", "njets" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleMu", "nPV" );
 
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleEl", "el0_pt" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleEl", "el0_eta" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleEl", "el1_pt" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleEl", "el1_eta" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleEl", "met" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleEl", "njets" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_DoubleEl", "nPV" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleEl", "el0_pt" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleEl", "el0_eta" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleEl", "el1_pt" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleEl", "el1_eta" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleEl", "met" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleEl", "njets" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_DoubleEl", "nPV" );
 
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "el0_pt" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "el0_eta" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "mu0_pt" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "mu0_eta" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "met" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "njets" );
-  drawDoubleHist( c1, mc_ttbar, data_MET_runC, "HLT_EMu", "nPV" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_EMu", "el0_pt" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_EMu", "el0_eta" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_EMu", "mu0_pt" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_EMu", "mu0_eta" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_EMu", "met" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_EMu", "njets" );
+  drawDoubleHist( c1, mc_ttbar, data_MET, "HLT_EMu", "nPV" );
 
   // dump some correlation madness
-  dumpCorrelationNumbers(mc_ttbar, data_MET_runC, "HLT_EMu");
+  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Ele35_WPTight_Gsf");
+  dumpCorrelationNumbers(mc_ttbar, "ttbar",  "HLT_IsoMu27");
+  dumpCorrelationNumbers(mc_ttbar, "ttbar",  "HLT_IsoMu24_eta2p1");
+  dumpCorrelationNumbers(data_MET, "dataBCDEF", "HLT_Ele35_WPTight_Gsf");
+  dumpCorrelationNumbers(data_MET, "dataBCDEF",  "HLT_IsoMu27");
+  dumpCorrelationNumbers(data_MET, "dataBCDEF",  "HLT_IsoMu24_eta2p1");
 }
