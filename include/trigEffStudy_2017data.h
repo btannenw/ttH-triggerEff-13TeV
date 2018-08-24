@@ -34,8 +34,7 @@ TObjArray* a_HLT_IsoMu27 = new TObjArray();
 TObjArray* a_HLT_IsoMu24_eta2p1 = new TObjArray();
 TObjArray* a_HLT_Ele35_WPTight_Gsf = new TObjArray();
 TObjArray* a_HLT_PFMET120_PFMHT120_IDTight = new TObjArray();
-TObjArray* a_HLT_PFMET120_PFMHT120_IDTight_elStream = new TObjArray();
-TObjArray* a_HLT_PFMET120_PFMHT120_IDTight_muStream = new TObjArray();
+TObjArray* a_HLT_PFHT250 = new TObjArray();
 TObjArray* a_IsoMu27__X__PFMET120_PFMHT120_IDTight = new TObjArray();
 TObjArray* a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight = new TObjArray();
 
@@ -108,6 +107,7 @@ std::vector <std::string> metTriggers =
     "HLT_PFMETTypeOne130_PFMHT130_IDTight", 
     "HLT_PFMETTypeOne140_PFMHT140_IDTight", 
     "HLT_CaloMET250_HBHECleaned", 
+    "HLT_PFHT250", 
     "HLT_allMET" 
    };
 

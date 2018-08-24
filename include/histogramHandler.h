@@ -309,6 +309,7 @@ void fill2DCorrHistograms(yggdrasilEventVars* eve, TObjArray*& array, string nam
     else if( metTriggers.at(i) == "HLT_PFMETTypeOne130_PFMHT130_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne130_PFMHT130_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_PFMETTypeOne140_PFMHT140_IDTight")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_);
     else if( metTriggers.at(i) == "HLT_CaloMET250_HBHECleaned")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_CaloMET250_HBHECleaned_v_);
+    else if( metTriggers.at(i) == "HLT_PFHT250")fill2DCorrHistogramsWithLabels(hist, passHLT, eve->passHLT_PFHT250_v_);
     else if( metTriggers.at(i) == "HLT_allMET")fill2DCorrHistogramsWithLabels(hist, passHLT, jetMetTool.passAllMETTriggers);
 
   }
