@@ -26,6 +26,7 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
 {
   // initialization
   TH1D* h0 = new TH1D();
+  TH2D* h2 = new TH2D();
   if (stream !=  "")
     stream = ("_" + stream).c_str();
 
@@ -81,6 +82,12 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_nPV").c_str() );
   h0->Fill( jetMetTool.nPV, lepSF );
+
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str() );
+  h2->Fill( lepTool.leadPt_mu, lepTool.leadEta_mu, lepSF );
+
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str() );
+  h2->Fill( lepTool.leadPt_el, lepTool.leadEta_el, lepSF );
 
 }
 
@@ -196,6 +203,16 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_mu0_relIso->SetXTitle("Leading Muon Rel. Iso");
   h_mu0_relIso->SetYTitle("Entries / Bin");
 
+  // 2D leading electron pt vs eta
+  TH2D* h_el0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(), nbins_pt, edges_pt, nbins_eta, edges_eta );
+  h_el0_pt_vs_eta->SetXTitle("Leading Electron p_{T} [GeV]");
+  h_el0_pt_vs_eta->SetYTitle("Leading Electron #eta");
+
+  // 2D muon pt vs eta
+  TH2D* h_mu0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str(), nbins_pt, edges_pt, nbins_eta, edges_eta );
+  h_mu0_pt_vs_eta->SetXTitle("Leading Muon p_{T} [GeV]");
+  h_mu0_pt_vs_eta->SetYTitle("Leading Muon #eta");
+
   array->AddLast(h_el0_pt);
   array->AddLast(h_el1_pt);
   array->AddLast(h_el0_eta);
@@ -209,6 +226,10 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   array->AddLast(h_mll);
   array->AddLast(h_met);
   array->AddLast(h_nPV);
+
+  array->AddLast(h_el0_pt_vs_eta);
+  array->AddLast(h_mu0_pt_vs_eta);
+
 }
 
 
@@ -329,6 +350,30 @@ void addOverflow(TH1D*& histo)
 
 }
 
+void addOverflow2D(TH2D*& histo)
+{
+  // Purpose: Put overflow bin at end (sidenote... how is there not a native ROOT function for this?)
+
+  // *** 1. Loop over y axis
+  int maxBin = histo->GetNbinsX();
+  for (int bY=0; bY < histo->GetNbinsY()+1; bY++) {
+    histo->SetBinContent( maxBin, bY, histo->GetBinContent( maxBin, bY ) + histo->GetBinContent( maxBin+1, bY ) );
+    histo->SetBinError  ( maxBin, bY, sqrt( histo->GetBinError(maxBin, bY)*histo->GetBinError(maxBin, bY) + histo->GetBinError(maxBin+1, bY)*histo->GetBinError(maxBin+1, bY) ) );
+    histo->SetBinContent( maxBin + 1, bY, 0 );
+    histo->SetBinError( maxBin + 1, bY, 0 );
+  }
+  
+  // *** 2. Loop over x axis
+  maxBin = histo->GetNbinsY();
+  for (int bX=0; bX < histo->GetNbinsX()+1; bX++) {
+    histo->SetBinContent( bX, maxBin, histo->GetBinContent( bX, maxBin ) + histo->GetBinContent( bX, maxBin+1 ) );
+    histo->SetBinError  ( bX, maxBin, sqrt( histo->GetBinError(bX, maxBin)*histo->GetBinError(bX, maxBin) + histo->GetBinError(bX, maxBin+1)*histo->GetBinError(bX, maxBin+1) ) );
+    histo->SetBinContent( bX, maxBin + 1, 0 );
+    histo->SetBinError( bX, maxBin + 1, 0 );
+  }
+
+}
+
 void draw1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
 {
 
@@ -358,7 +403,39 @@ void draw1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
   //if (dumpFile)
   //  outfile->Write();
 }
-void plot1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
+
+
+void draw2DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
+{
+  TH2D *h0 = (TH2D*)array->FindObject( ("h_" + nameHLT + "_" + var).c_str() );
+  // *** 3. Do the drawing
+  c0->cd();
+  h0->Sumw2();
+  addOverflow2D(h0);
+  //h0->Draw("e");
+
+  // *** 4. Set CMS style
+  //CMS_lumi( canv, iPeriod, iPos ); // <-- notes
+  CMS_lumi( c0, 0, 33);
+    
+  // *** 5. Print plots
+  struct stat sb;
+  std::string tempDir = (topDir + nameHLT).c_str();
+  if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
+    cout << nameHLT << " subdirectory , " << tempDir << " , DNE. Creating now" << endl;
+    mkdir(tempDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+  }
+  if( printPlots) {
+    c0->Print( (tempDir + "/" + h0->GetName() + ".eps").c_str());
+    c0->Print( (tempDir + "/" + h0->GetName() + ".png").c_str());
+  }
+
+  //if (dumpFile)
+  //  outfile->Write();
+}
+
+
+void plot1Dand2DHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
 {
   draw1DHistograms(array, c0, nameHLT, "el0_pt");
   draw1DHistograms(array, c0, nameHLT, "el0_eta");
@@ -374,7 +451,10 @@ void plot1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT)
   draw1DHistograms(array, c0, nameHLT, "met");
   draw1DHistograms(array, c0, nameHLT, "nPV");
 
+  draw2DHistograms(array, c0, nameHLT, "el0_pt_vs_eta");
+  draw2DHistograms(array, c0, nameHLT, "mu0_pt_vs_eta");
 }
+
 
 void plot2Dcorrelations(TObjArray* array, TCanvas* c0, string nameHLT)
 {
@@ -584,12 +664,88 @@ void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nam
   a_Efficiencies->AddLast(tEff);
 }
 
+void draw2DEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nameHLT_num, TObjArray* a_denominator, string nameHLT_denom, string var)
+{
+
+  // *** 1. Get the histograms
+  TH2D* h_num   = (TH2D*)a_numerator->FindObject( ("h_" + nameHLT_num + "_" + var).c_str() );
+  TH2D* h_denom = (TH2D*)a_denominator->FindObject( ("h_" + nameHLT_denom + "_" + var).c_str() );
+  h_num->Sumw2();
+  h_denom->Sumw2();
+  addOverflow2D(h_num);
+  addOverflow2D(h_denom);
+
+  cout << h_num->GetName() << " has " << h_num->GetEntries() << " entries." << endl;
+  cout << h_denom->GetName() << " has " << h_denom->GetEntries() << " entries." << endl;
+
+  // *** 2. Divide to get efficiency
+  TH2D* h_eff = (TH2D*)h_num->Clone();
+  string s_eff = h_num->GetName();
+  s_eff = (s_eff + "_TH2").c_str();
+
+  //h_eff->Divide(h_denom);
+  h_eff->SetName( s_eff.c_str() );
+  h_eff->SetTitle( s_eff.c_str() );
+  h_eff->SetYTitle("Efficiency / Bin");
+  //h_eff->SetMaximum(1.1);
+  //h_eff->SetMinimum(0.0);
+
+  TEfficiency* tEff = new TEfficiency(*h_eff, *h_denom);
+  s_eff = h_num->GetName();
+  s_eff = (s_eff + "_TEff2D").c_str();
+  tEff->SetName( s_eff.c_str() );
+  tEff->SetTitle( s_eff.c_str() );
+
+  // *** 3. Do the drawing
+  //h_eff->Sumw2();
+  c0->cd();
+  tEff->Draw();
+  tEff->Paint("");
+  //TGraphAsymmErrors* gr = (TGraphAsymmErrors*)tEff->GetPaintedGraph();
+  //gr->SetMinimum(0);
+  //gr->SetMaximum(1.1);
+  //cout << s_eff << ", Min: " << h_eff->GetXaxis()->GetXmin()  << ", Max: " << h_eff->GetXaxis()->GetXmax() << endl;
+  //gr->GetXaxis()->SetRangeUser( h_eff->GetXaxis()->GetXmin(), h_eff->GetXaxis()->GetXmax() );
+ 
+  tEff->Draw();
+  //c0->Update();
+
+  // *** 4. Setup LaTeX for printing correlation factor on plot
+  TLatex ltx1;
+  ltx1.SetTextAlign(9);
+  ltx1.SetTextFont(62);
+  ltx1.SetTextSize(0.025);
+  ltx1.SetNDC();
+  ltx1.DrawLatex(0.25, 0.80, nameHLT_num.c_str() );
+
+  // *** 5. Set CMS style
+  //CMS_lumi( canv, iPeriod, iPos ); // <-- notes
+  CMS_lumi( c0, 0, 33);
+    
+  // *** 6. Print plots
+  struct stat sb;
+  std::string tempDir = (topDir + nameHLT_num ).c_str();
+  if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
+    cout << nameHLT_num << " subdirectory , " << tempDir << " , DNE. Creating now" << endl;
+    mkdir(tempDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+  }
+  tempDir = (tempDir + "/efficiency1D/").c_str();
+  if (!(stat(tempDir.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))){
+    cout << nameHLT_num << " subdirectory , " << tempDir << " , DNE. Creating now" << endl;
+    mkdir(tempDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+  }
+  if( printPlots) {
+    c0->Print( (tempDir + tEff->GetName() + ".eps").c_str());
+    c0->Print( (tempDir + tEff->GetName() + ".png").c_str());
+  }
+  
+  // add to efficiency for storing in outfile
+  a_Efficiencies->AddLast(tEff);
+}
+
 void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHLT_num, TObjArray* a_denominator, string nameHLT_denom)
 {
   /*drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_pt");
-  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_eta");
-  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_pt");
-  drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_eta");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "njets");
   drawEfficiencyHistograms(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
   */
@@ -606,6 +762,9 @@ void makeEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mll");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "met");
   drawEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "nPV");
+
+  draw2DEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "el0_pt_vs_eta");
+  draw2DEfficiencyHistograms_v2(c0, a_numerator, nameHLT_num, a_denominator, nameHLT_denom, "mu0_pt_vs_eta");
   
 }
 

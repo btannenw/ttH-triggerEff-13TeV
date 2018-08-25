@@ -302,20 +302,20 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   plot2Dcorrelations( a_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, c0, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
   
   // ** B. 1D distributions
-  plot1DHistograms( a_HLT_Ele35_WPTight_Gsf, c0, "HLT_Ele35_WPTight_Gsf");
-  plot1DHistograms( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
-  plot1DHistograms( a_HLT_SingleEl, c0, "HLT_SingleEl");
-  plot1DHistograms( a_HLT_SingleMu, c0, "HLT_SingleMu");
-  plot1DHistograms( a_HLT_DoubleEl, c0, "HLT_DoubleEl");
-  plot1DHistograms( a_HLT_DoubleMu, c0, "HLT_DoubleMu");
-  plot1DHistograms( a_HLT_EMu, c0, "HLT_EMu");
-  plot1DHistograms( a_HLT_DoubleEl_OR, c0, "HLT_DoubleEl_OR");
-  plot1DHistograms( a_HLT_DoubleMu_OR, c0, "HLT_DoubleMu_OR");
-  plot1DHistograms( a_HLT_EMu_OR, c0, "HLT_EMu_OR");
-  plot1DHistograms( a_HLT_PFMET120_PFMHT120_IDTight, c0, "HLT_PFMET120_PFMHT120_IDTight");
-  plot1DHistograms( a_HLT_PFHT250, c0, "HLT_PFHT250");
-  //plot1DHistograms( a_IsoMu27__X__PFMET120_PFMHT120_IDTight, c0, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
-  //plot1DHistograms( a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, c0, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
+  plot1Dand2DHistograms( a_HLT_Ele35_WPTight_Gsf, c0, "HLT_Ele35_WPTight_Gsf");
+  plot1Dand2DHistograms( a_HLT_IsoMu27, c0, "HLT_IsoMu27");
+  plot1Dand2DHistograms( a_HLT_SingleEl, c0, "HLT_SingleEl");
+  plot1Dand2DHistograms( a_HLT_SingleMu, c0, "HLT_SingleMu");
+  plot1Dand2DHistograms( a_HLT_DoubleEl, c0, "HLT_DoubleEl");
+  plot1Dand2DHistograms( a_HLT_DoubleMu, c0, "HLT_DoubleMu");
+  plot1Dand2DHistograms( a_HLT_EMu, c0, "HLT_EMu");
+  plot1Dand2DHistograms( a_HLT_DoubleEl_OR, c0, "HLT_DoubleEl_OR");
+  plot1Dand2DHistograms( a_HLT_DoubleMu_OR, c0, "HLT_DoubleMu_OR");
+  plot1Dand2DHistograms( a_HLT_EMu_OR, c0, "HLT_EMu_OR");
+  plot1Dand2DHistograms( a_HLT_PFMET120_PFMHT120_IDTight, c0, "HLT_PFMET120_PFMHT120_IDTight");
+  plot1Dand2DHistograms( a_HLT_PFHT250, c0, "HLT_PFHT250");
+  //plot1Dand2DHistograms( a_IsoMu27__X__PFMET120_PFMHT120_IDTight, c0, "IsoMu27__X__PFMET120_PFMHT120_IDTight");
+  //plot1Dand2DHistograms( a_Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight, c0, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight");
   
   // ** C. 1D efficiencies
   makeEfficiencyHistograms( c0, a_IsoMu27__X__PFMET120_PFMHT120_IDTight, "IsoMu27__X__PFMET120_PFMHT120_IDTight", a_HLT_PFMET120_PFMHT120_IDTight, "HLT_PFMET120_PFMHT120_IDTight_muStreamSL");
