@@ -115,12 +115,58 @@ void jetMetHandler::parseMETTriggerLogic_v2() // New version (07-01-18) loosely 
 }
 
 
+void jetMetHandler::parseMETTriggerLogic_v3() // New version (08-24-18) loosely following 5-trigger bit from 2016 à la Carmen's detective work + single HT trigger
+{
+
+  // *** FROM CARMEN *** 07-01-18 --> triggers used in 2016 efficiency calculations
+  //"HLT_PFHT300_PFMET110_v" "HLT_MET200_v" "HLT_PFMET300_v" "HLT_PFMET120_PFMHT120_IDTight_v" "HLT_PFMET170_HBHECleaned_v"
+
+  // store all trigger bits in single string
+
+  ev->passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_? metXTriggerBits.append("1") : metXTriggerBits.append("0");
+  ev->passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v_? metXTriggerBits.append("1") : metXTriggerBits.append("0");
+  ev->passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v_? metXTriggerBits.append("1") : metXTriggerBits.append("0");
+  ev->passHLT_PFMET120_PFMHT120_IDTight_v_ ? metXTriggerBits.append("1") : metXTriggerBits.append("0");
+  ev->passHLT_PFMET250_HBHECleaned_v_? metXTriggerBits.append("1") : metXTriggerBits.append("0");
+  ev->passHLT_PFHT250_v_? metXTriggerBits.append("1") : metXTriggerBits.append("0");
+  
+  // Fill plots
+  if ( metXTriggerBits.at(0) == '1' ) h_met_passXtriggers->Fill("PFHT500_PFMET100_PFMHT100_IDTight", 1);
+  if ( metXTriggerBits.at(1) == '1' ) h_met_passXtriggers->Fill("PFHT700_PFMET85_PFMHT85_IDTight", 1);
+  if ( metXTriggerBits.at(2) == '1' ) h_met_passXtriggers->Fill("PFHT800_PFMET75_PFMHT75_IDTight", 1);
+  if ( metXTriggerBits.at(3) == '1' ) h_met_passXtriggers->Fill("PFMET120_PFMHT120_IDTight", 1);
+  if ( metXTriggerBits.at(4) == '1' ) h_met_passXtriggers->Fill("PFMET250_HBHECleaned", 1);
+  if ( metXTriggerBits.at(5) == '1' ) h_met_passXtriggers->Fill("PFHT250", 1);
+
+  // Fill plots
+  if ( metXTriggerBits.find("100000") != string::npos ) h_met_passOnlyXtrigger->Fill("PFHT500_PFMET100_PFMHT100_IDTight", 1);
+  if ( metXTriggerBits.find("010000") != string::npos ) h_met_passOnlyXtrigger->Fill("PFHT700_PFMET85_PFMHT85_IDTight", 1);
+  if ( metXTriggerBits.find("001000") != string::npos ) h_met_passOnlyXtrigger->Fill("PFHT800_PFMET75_PFMHT75_IDTight", 1);
+  if ( metXTriggerBits.find("000100") != string::npos ) h_met_passOnlyXtrigger->Fill("PFMET120_PFMHT120_IDTight", 1);
+  if ( metXTriggerBits.find("000010") != string::npos ) h_met_passOnlyXtrigger->Fill("PFMET250_HBHECleaned", 1);
+  if ( metXTriggerBits.find("000001") != string::npos ) h_met_passOnlyXtrigger->Fill("PFH250", 1);
+
+  // set boolean of passing desired X triggers
+  passAllMETTriggers = metXTriggerBits.find('1') != string::npos ? true : false; // pass any X trigger
+  
+  passOneMETTrigger = metXTriggerBits.at(3) == '1' ? true : false; // pass PFMET120_PFMHT120_IDTight
+  
+  /*passMETTriggers = 
+    metXTriggerBits.at(0) == '1' || // pass PFMET120_PFMHT120_IDTight
+    metXTriggerBits.at(1) == '1'    // pass PFMETTypeOne120_PFMHT120_IDTight
+    ? true : false; 
+  */
+}
+
+
+
 void jetMetHandler::applyMETCuts()
 {
 
   // parse MET trigger logic --> store bits in string, fill inclusive/exclusive plots
   //parseMETTriggerLogic();
-  parseMETTriggerLogic_v2(); // new 07-01-18
+  //parseMETTriggerLogic_v2(); // new 07-01-18
+  parseMETTriggerLogic_v3(); // new 08-24-18
 
   // set MET publically accessible MET
   MET = ev->MET_[0];

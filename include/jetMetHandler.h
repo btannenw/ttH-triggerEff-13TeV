@@ -52,6 +52,7 @@ class jetMetHandler{
       void applyMETCuts();
       void parseMETTriggerLogic();
       void parseMETTriggerLogic_v2();
+      void parseMETTriggerLogic_v3();
       
       
       // === Variables === //
