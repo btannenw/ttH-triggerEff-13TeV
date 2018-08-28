@@ -4,6 +4,7 @@
 #include "TEfficiency.h"
 #include "TLegend.h"
 #include "TLatex.h"
+#include "TLine.h"
 
 #include "../cmsStyle/tdrStyle.C"
 #include "../cmsStyle/CMS_lumi.C"
@@ -19,6 +20,68 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+
+
+TH2D* get2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
+{
+  TEfficiency* t_ttbar = (TEfficiency*)ttbar->Get( ("h_" + triggerSet + "_" + variable + "_TEff2D").c_str() );
+  TEfficiency* t_data = (TEfficiency*)data->Get( ("h_" + triggerSet + "_" + variable + "_TEff2D").c_str() );
+  cout << "trying for " << ("h_" + triggerSet + "_" + variable ).c_str() << endl;
+  TH2D* h_sf = (TH2D*)data->Get( ("h_" + triggerSet + "_" + variable ).c_str() )->Clone();
+
+  double ratio = 0;
+  double err = 0;
+  for (int i =1; i < h_sf->GetNbinsX()+1; i++){
+    for (int j =1; j < h_sf->GetNbinsY()+1; j++){
+      // ** 1. Get central value of SF
+      ratio = t_ttbar->GetEfficiency( t_ttbar->GetTotalHistogram()->GetBin(i,j) ) != 0 ? t_data->GetEfficiency( t_ttbar->GetTotalHistogram()->GetBin(i,j) )/t_ttbar->GetEfficiency( t_ttbar->GetTotalHistogram()->GetBin(i,j) ) : 0;
+      
+      // ** 2. Get biggest error and take that as symmetric envelope --> conservative approach. probably a more intelligent way (https://www.jstor.org/stable/2531405)
+      err = t_data->GetEfficiencyErrorUp( t_ttbar->GetTotalHistogram()->GetBin(i,j) );
+      if (t_data->GetEfficiencyErrorLow( t_ttbar->GetTotalHistogram()->GetBin(i,j) ) > err)   err = t_data->GetEfficiencyErrorLow( t_ttbar->GetTotalHistogram()->GetBin(i,j) );
+      if (t_ttbar->GetEfficiencyErrorUp( t_ttbar->GetTotalHistogram()->GetBin(i,j) ) > err)   err = t_ttbar->GetEfficiencyErrorUp( t_ttbar->GetTotalHistogram()->GetBin(i,j) );
+      if (t_ttbar->GetEfficiencyErrorLow( t_ttbar->GetTotalHistogram()->GetBin(i,j) ) > err)  err = t_ttbar->GetEfficiencyErrorLow( t_ttbar->GetTotalHistogram()->GetBin(i,j) );
+      if (ratio == 0) err = 0;
+      
+      // ** 3. Set SF histogram content and error
+      h_sf->SetBinContent(i, j, ratio);
+      h_sf->SetBinError(i, j, err);
+    }
+  }
+
+  //h_sf->Print("all");
+  return h_sf;
+}
+
+void print2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
+{
+  gStyle->SetPaintTextFormat("1.2f");
+
+  c0->cd();
+  TH2D* h_sf = get2DScaleFactorHistogram(c0, ttbar, data, triggerSet, variable);
+  //h_sf->GetYaxis()->SetRangeUser(0, 1.1);
+  //h_sf->GetYaxis()->SetTitle("Scale Factor / Bin");
+  //h_sf->SetLineColor(kBlue);
+  //h_sf->SetMarkerStyle(0);
+  h_sf->Draw("colz TEXT e");
+
+  TLatex ltx1;
+  ltx1.SetTextAlign(9);
+  ltx1.SetTextFont(62);
+  ltx1.SetTextSize(0.025);
+  ltx1.SetNDC();
+  ltx1.DrawLatex(0.2, 0.57, triggerSet.c_str());
+  
+  CMS_lumi( c0, 0, 33);
+
+  c0->SetLeftMargin(0.15);
+  c0->SetRightMargin(0.05);
+  c0->SetBottomMargin(0.15);
+
+  c0->Print( (topDir + "/h_2DSF_" + triggerSet + "_" + variable + ".png").c_str() );
+
+}
 
 
 TH1D* getScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
@@ -50,7 +113,42 @@ TH1D* getScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string tri
   return h_sf;
 }
 
-void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable, bool addSF=true)
+void print1DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
+{
+  gStyle->SetPaintTextFormat("1.3f");
+
+  c0->cd();
+  TH1D* h_sf = getScaleFactorHistogram(c0, ttbar, data, triggerSet, variable);
+  h_sf->GetYaxis()->SetRangeUser(0, 1.1);
+  h_sf->GetYaxis()->SetTitle("Scale Factor / Bin");
+  h_sf->SetLineColor(kBlue);
+  h_sf->SetMarkerStyle(0);
+  h_sf->Draw("TEXT E");
+
+  TLatex ltx1;
+  ltx1.SetTextAlign(9);
+  ltx1.SetTextFont(62);
+  ltx1.SetTextSize(0.025);
+  ltx1.SetNDC();
+  ltx1.DrawLatex(0.2, 0.52, triggerSet.c_str());
+  
+  TLine *line1=new TLine(h_sf->GetXaxis()->GetXmin(),1,h_sf->GetXaxis()->GetXmax(),1);
+  line1->SetLineStyle(2);
+  line1->SetLineWidth(3);
+  line1->SetLineColor(kBlue+2);
+  line1->Draw("same");
+
+  CMS_lumi( c0, 0, 33);
+
+  c0->SetLeftMargin(0.15);
+  c0->SetRightMargin(0.05);
+  c0->SetBottomMargin(0.15);
+
+  c0->Print( (topDir + "/h_1DSF_" + triggerSet + "_" + variable + ".png").c_str() );
+
+}
+
+void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable, bool addSF=false)
 {
   TEfficiency* t_ttbar = (TEfficiency*)ttbar->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
   TEfficiency* t_data = (TEfficiency*)data->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
@@ -270,12 +368,12 @@ void dumpCorrelationNumbers(TFile* f0, string sample, string triggerSet)
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  topDir = "08-24-18_files/";
-  string recoVersion = "r3";
+  topDir = "08-27-18_files/";
+  string recoVersion = "r1";
   
   // *** 0. Input/output setup
   // ** I. Read files
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-24-18.root").c_str(), "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-27-18.root").c_str(), "READ");
   TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_" + recoVersion + ".root").c_str(), "READ");
 
 
@@ -338,6 +436,30 @@ void produceCombinedEff()
   drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "met" );
   drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "njets" );
   drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu__X__allMET", "nPV" );
+
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_pt");
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el1_pt");
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el1_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "nPV" );
+
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu1_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu1_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "nPV" );
+
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "el0_pt" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "el0_eta" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "met" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "njets" );
+  drawDoubleEfficiency( c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "nPV" );
 
   drawDoubleEfficiency( c1, mc_ttbar, data_MET, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_pt");
   drawDoubleEfficiency( c1, mc_ttbar, data_MET, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_eta" );
@@ -414,5 +536,26 @@ void produceCombinedEff()
   drawNomDenomHistSingleSample(c1, data_MET, "dataBCDEF", "DoubleEl__X__allMET", "HLT_allMET_elStreamDL", "el0_pt");
   drawNomDenomHistSingleSample(c1, data_MET, "dataBCDEF", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
 
+  // *** 6. Print 1D SF plots
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "el0_pt");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "el0_eta");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "SingleMu__X__allMET", "mu0_pt");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "SingleMu__X__allMET", "mu0_eta");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_pt");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_eta");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_pt");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_eta");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "el0_pt");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "el0_eta");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt");
+  print1DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_eta");
+
+  // *** 7. Print 2D SF plots
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "el0_pt_vs_eta");
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "SingleMu__X__allMET", "mu0_pt_vs_eta");
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_pt_vs_eta");
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta");
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "el0_pt_vs_eta");
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt_vs_eta");
 
 }
