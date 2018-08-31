@@ -288,6 +288,9 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   plot2Dcorrelations( a_HLT_DoubleEl, c0, "HLT_DoubleEl");
   plot2Dcorrelations( a_HLT_DoubleMu, c0, "HLT_DoubleMu");
   plot2Dcorrelations( a_HLT_EMu, c0, "HLT_EMu");
+  plot2Dcorrelations( a_HLT_DoubleEl_OR, c0, "HLT_DoubleEl_OR");
+  plot2Dcorrelations( a_HLT_DoubleMu_OR, c0, "HLT_DoubleMu_OR");
+  plot2Dcorrelations( a_HLT_EMu_OR, c0, "HLT_EMu_OR");
   plot2Dcorrelations( a_HLT_IsoMu24_eta2p1, c0, "HLT_IsoMu24_eta2p1");
   plot2Dcorrelations( a_HLT_PFMET120_PFMHT120_IDTight, c0, "HLT_PFMET120_PFMHT120_IDTight");
   plot2Dcorrelations( a_HLT_PFHT250, c0, "HLT_PFHT250");
