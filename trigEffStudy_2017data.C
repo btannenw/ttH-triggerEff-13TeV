@@ -48,8 +48,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   verbose = false;
   nJetsCutSL = 0;
   nJetsCutDL = 0;
-  metCutSL = 0;
-  metCutDL = 0;
+  metCutSL = 150;
+  metCutDL = 150;
 
   // ** B. Set input file
   TChain* fChain = new TChain("ttHTreeMaker/worldTree");
@@ -214,7 +214,7 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
     if (lepTool.passDLCuts_mu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8, "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8", eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_, jetMetTool );
     if (lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL, "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL", eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v_, jetMetTool);
     if (lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ", eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_, jetMetTool);
-    if (lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL", eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_, jetMetTool);
+    if (lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL", eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_, jetMetTool);
     if (lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ", eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_, jetMetTool);
     if (lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ", eve->passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_, jetMetTool);
     if (lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fill2DCorrHistograms(eve, a_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ", eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_, jetMetTool);
