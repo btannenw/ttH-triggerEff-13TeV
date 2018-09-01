@@ -368,13 +368,26 @@ void dumpCorrelationNumbers(TFile* f0, string sample, string triggerSet)
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  topDir = "08-27-18_files/";
-  string recoVersion = "r1";
+  topDir = "08-31-18_files/";
+  string recoVersion = "r0";
   
   // *** 0. Input/output setup
   // ** I. Read files
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-27-18.root").c_str(), "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-29-18.root").c_str(), "READ");
+  //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_met150_08-29-18.root").c_str(), "READ");
   TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_" + recoVersion + ".root").c_str(), "READ");
+
+  // TEMPORARY FOR CORRELATION STUDY
+  /*// ttbar incl (v7)
+  TFile* mc_ttbar_r1     = new TFile( (topDir + "/outfile_ttbarMC_v7_r1_met150_08-29-18.root").c_str(), "READ"); // met 150, no HT250 in allMET
+  TFile* mc_ttbar_r2     = new TFile( (topDir + "/outfile_ttbarMC_v7_r2_08-29-18.root").c_str(), "READ");        // met 0, no HT250 in allMET
+  TFile* mc_ttbar_r3     = new TFile( (topDir + "/outfile_ttbarMC_v7_r3_08-29-18.root").c_str(), "READ");        // met 0, HT250 in allMET
+  TFile* mc_ttbar_r4     = new TFile( (topDir + "/outfile_ttbarMC_v7_r4_met150_08-29-18.root").c_str(), "READ"); // met 150, HT250 in allMET*/
+  // ttbar DL (v9)
+  TFile* mc_ttbar_r1     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_r0_08-31-18.root").c_str(), "READ");        // met 0, no HT250 in allMET
+  TFile* mc_ttbar_r2     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_r1_met150_08-31-18.root").c_str(), "READ"); // met 150, no HT250 in allMET
+  TFile* mc_ttbar_r3     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_r2_met150_08-31-18.root").c_str(), "READ"); // met 150, HT250 in allMET
+  TFile* mc_ttbar_r4     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_r3_08-31-18.root").c_str(), "READ");        // met 0, HT250 in allMET
 
 
 
@@ -399,7 +412,7 @@ void produceCombinedEff()
   cmsTextSize = 0.3;
   lumiTextSize = 0.3;
   
-  
+  /*
   // *** 2. Draw efficiencies and Scale Factors (sometimes)
   drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "el0_pt");
   drawDoubleEfficiency( c1, mc_ttbar, data_MET, "SingleEl__X__allMET", "el0_eta" );
@@ -508,25 +521,61 @@ void produceCombinedEff()
   drawSingleTriggerTwoSamples( c1, mc_ttbar, data_MET, "HLT_EMu", "met" );
   drawSingleTriggerTwoSamples( c1, mc_ttbar, data_MET, "HLT_EMu", "njets" );
   drawSingleTriggerTwoSamples( c1, mc_ttbar, data_MET, "HLT_EMu", "nPV" );
-
+  */
   // *** 4. Dump some correlation madness
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Ele35_WPTight_Gsf");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_IsoMu27");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_IsoMu24_eta2p1");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Ele35_WPTight_Gsf");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_IsoMu27");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_IsoMu24_eta2p1");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_EMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_DoubleMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_DoubleEl_OR");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_EMu");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_DoubleMu");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_r4", "HLT_DoubleEl");
+  
+  // TEMPORARY FOR CORRELATION STUDY
+  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_EMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_DoubleMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_DoubleEl_OR");
+  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_EMu");
+  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_DoubleMu");
+  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_DoubleEl");
+
+  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_EMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_DoubleMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_DoubleEl_OR");
+  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_EMu");
+  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_DoubleMu");
+  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_DoubleEl");
+
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_EMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_DoubleMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_DoubleEl_OR");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_EMu");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_DoubleMu");
+  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_DoubleEl");
+
+  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_EMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_DoubleMu_OR");
+  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_DoubleEl_OR");
+  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_EMu");
+  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_DoubleMu");
+  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_DoubleEl");
+  /*
   //dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_PFMET120_PFMHT120_IDTight");
   //dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_PFHT250");
-  dumpCorrelationNumbers(data_MET, "dataBCDEF", "HLT_Ele35_WPTight_Gsf");
-  dumpCorrelationNumbers(data_MET, "dataBCDEF",  "HLT_IsoMu27");
-  dumpCorrelationNumbers(data_MET, "dataBCDEF",  "HLT_IsoMu24_eta2p1");
+  //dumpCorrelationNumbers(data_MET, "dataBCDEF", "HLT_Ele35_WPTight_Gsf");
+  //dumpCorrelationNumbers(data_MET, "dataBCDEF",  "HLT_IsoMu27");
+  //dumpCorrelationNumbers(data_MET, "dataBCDEF",  "HLT_IsoMu24_eta2p1");
 
   // *** 5. Produce nominator + denominator plots
   drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "DoubleEl__X__allMET", "HLT_allMET_elStreamDL", "met");
@@ -557,5 +606,5 @@ void produceCombinedEff()
   print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta");
   print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "el0_pt_vs_eta");
   print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt_vs_eta");
-
+  */
 }
