@@ -165,8 +165,8 @@ void jetMetHandler::applyMETCuts()
 
   // parse MET trigger logic --> store bits in string, fill inclusive/exclusive plots
   //parseMETTriggerLogic();
-  //parseMETTriggerLogic_v2(); // new 07-01-18
-  parseMETTriggerLogic_v3(); // new 08-24-18
+  parseMETTriggerLogic_v2(); // new 07-01-18
+  //parseMETTriggerLogic_v3(); // new 08-24-18 // add HLT_PFHT250 to allMET collection
 
   // set MET publically accessible MET
   MET = ev->MET_[0];
