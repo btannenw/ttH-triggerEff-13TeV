@@ -223,6 +223,7 @@ void leptonHandler::applyElectronCuts()
   if (leadIndex_el != -99){
     leadPt_el = ev->lepton_pt_[leadIndex_el];
     leadEta_el = ev->lepton_eta_[leadIndex_el];
+    leadRelIso_el = ev->lepton_relIso_[leadIndex_el];
   }
   if (subIndex_el != -99){
     subPt_el = ev->lepton_pt_[subIndex_el];

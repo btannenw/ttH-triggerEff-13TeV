@@ -148,6 +148,32 @@ void print1DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string 
 
 }
 
+void print1DScaleFactorHistogramCollection(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet)
+{
+  if (triggerSet.find("DoubleEl") != string::npos || triggerSet.find("EMu") != string::npos){
+    print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "el0_pt");
+    print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "el0_eta");
+    print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "el0_relIso");
+    if (triggerSet.find("DoubleEl") != string::npos){
+      print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "el1_pt");
+      print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "el1_eta");
+    }
+  }
+  if (triggerSet.find("DoubleMu") != string::npos || triggerSet.find("EMu") != string::npos){
+    print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "mu0_pt");
+    print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "mu0_eta");
+    print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "mu0_relIso");
+    if (triggerSet.find("DoubleMu") != string::npos){
+      print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "mu1_pt");
+      print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "mu1_eta");
+    }
+  }
+  print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "met");
+  print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "njets");
+  print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "nPV");
+
+}
+
 void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable, bool addSF=false)
 {
   TEfficiency* t_ttbar = (TEfficiency*)ttbar->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
@@ -205,6 +231,30 @@ void drawDoubleEfficiency(TCanvas* c0, TFile* ttbar, TFile* data, string trigger
   //c0->Print( (topDir + "/h_" + triggerSet + "_" + variable + ".C").c_str() );
 }
 
+void drawDoubleEfficiencyCollection(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, bool addSF=false)
+{
+  if (triggerSet.find("DoubleEl") != string::npos || triggerSet.find("EMu") != string::npos || triggerSet.find("SingleEl") != string::npos){
+    drawDoubleEfficiency( c0, ttbar, data, triggerSet, "el0_pt", addSF);
+    drawDoubleEfficiency( c0, ttbar, data, triggerSet, "el0_eta", addSF );
+    if (triggerSet.find("DoubleEl") != string::npos){
+      drawDoubleEfficiency( c0, ttbar, data, triggerSet, "el1_pt", addSF);
+      drawDoubleEfficiency( c0, ttbar, data, triggerSet, "el1_eta", addSF );
+    }
+  }
+  if (triggerSet.find("DoubleMu") != string::npos || triggerSet.find("EMu") != string::npos || triggerSet.find("SingleMu") != string::npos){
+    drawDoubleEfficiency( c0, ttbar, data, triggerSet, "mu0_pt", addSF);
+    drawDoubleEfficiency( c0, ttbar, data, triggerSet, "mu0_eta", addSF );
+    if (triggerSet.find("DoubleMu") != string::npos){
+      drawDoubleEfficiency( c0, ttbar, data, triggerSet, "mu1_pt", addSF);
+      drawDoubleEfficiency( c0, ttbar, data, triggerSet, "mu1_eta", addSF );
+    }
+  }
+  drawDoubleEfficiency( c0, ttbar, data, triggerSet, "met", addSF );
+  drawDoubleEfficiency( c0, ttbar, data, triggerSet, "njets", addSF );
+  drawDoubleEfficiency( c0, ttbar, data, triggerSet, "nPV", addSF );
+
+}
+
 void drawSingleTriggerTwoSamples(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
 {
   TH1D* t_ttbar = (TH1D*)ttbar->Get( ("h_" + triggerSet + "_" + variable).c_str() );
@@ -253,6 +303,31 @@ void drawSingleTriggerTwoSamples(TCanvas* c0, TFile* ttbar, TFile* data, string 
   //c0->SetTopMargin(0.05);
 
   c0->Print( (topDir + "/h_" + triggerSet + "_" + variable + "_TH1.png").c_str() );
+}
+
+void drawSingleTriggerTwoSamplesCollection(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet)
+{
+  if (triggerSet.find("DoubleEl") != string::npos || triggerSet.find("EMu") != string::npos){
+    drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "el0_pt" );
+    drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "el0_eta" );
+    drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "el0_relIso" );
+    if (triggerSet.find("DoubleEl") != string::npos){
+      drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "el1_pt" );
+      drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "el1_eta" );
+    }
+  }
+  if (triggerSet.find("DoubleMu") != string::npos || triggerSet.find("EMu") != string::npos){
+    drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "mu0_pt" );
+    drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "mu0_eta" );
+    drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "mu0_relIso" );
+    if (triggerSet.find("DoubleMu") != string::npos){
+      drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "mu1_pt" );
+      drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "mu1_eta" );
+    }
+  }
+  drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "met" );
+  drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "njets" );
+  drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "nPV" );
 }
 
 void drawNomDenomHistSingleSample(TCanvas* c0, TFile* f0, string sample, string triggerNom, string triggerDenom, string variable)
@@ -428,29 +503,16 @@ void dumpCorrelationNumbers(TFile* f0, string sample, string triggerSet)
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  topDir = "09-04-18_files/";
+  topDir = "09-11-18_files/";
   string recoVersion = "r1";
   
   // *** 0. Input/output setup
   // ** I. Read files
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-29-18.root").c_str(), "READ");
   //TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_" + recoVersion + ".root").c_str(), "READ");
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_09-04-18.root").c_str(), "READ");
-  TFile* data_jetHT = new TFile( (topDir + "/outfile_jetHT_RunBCDEF_v9_" + recoVersion + ".root").c_str(), "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_09-11-18.root").c_str(), "READ");
+  TFile* data_jetHT = new TFile( (topDir + "/outfile_MET_RunBCDEF_v9_" + recoVersion + ".root").c_str(), "READ");
 
-  // TEMPORARY FOR CORRELATION STUDY
-  /*// ttbar incl (v7)
-  TFile* mc_ttbar_r1     = new TFile( (topDir + "/outfile_ttbarMC_v7_r1_met150_08-29-18.root").c_str(), "READ"); // met 150, no HT250 in allMET
-  TFile* mc_ttbar_r2     = new TFile( (topDir + "/outfile_ttbarMC_v7_r2_08-29-18.root").c_str(), "READ");        // met 0, no HT250 in allMET
-  TFile* mc_ttbar_r3     = new TFile( (topDir + "/outfile_ttbarMC_v7_r3_08-29-18.root").c_str(), "READ");        // met 0, HT250 in allMET
-  TFile* mc_ttbar_r4     = new TFile( (topDir + "/outfile_ttbarMC_v7_r4_met150_08-29-18.root").c_str(), "READ"); // met 150, HT250 in allMET
-  // ttbar DL (v9)
-  TFile* mc_ttbar_r1     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_r0_08-31-18.root").c_str(), "READ");        // met 0, no HT250 in allMET
-  TFile* mc_ttbar_r2     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_r1_met150_08-31-18.root").c_str(), "READ"); // met 150, no HT250 in allMET
-  TFile* mc_ttbar_r3     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_r2_met150_08-31-18.root").c_str(), "READ"); // met 150, HT250 in allMET
-  TFile* mc_ttbar_r4     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_r3_08-31-18.root").c_str(), "READ");        // met 0, HT250 in allMET
-  */
-  
 
   // ** II. Check subdirectory structure for requested options and create directories if necessary
   topDir = (topDir + "/" + recoVersion + "/").c_str(); 
@@ -475,116 +537,34 @@ void produceCombinedEff()
   
   
   // *** 2. Draw efficiencies and Scale Factors (sometimes)
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "el0_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "nPV" );
+  //drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_pt");
+  //drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "mu0_pt" );
+  //drawDoubleEfficiencyCollection(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET");
+  //drawDoubleEfficiencyCollection(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET");
+  //drawDoubleEfficiencyCollection(c1, mc_ttbar, data_jetHT, "DoubleEl__X__allMET");
+  //drawDoubleEfficiencyCollection(c1, mc_ttbar, data_jetHT, "DoubleMu__X__allMET");
+  //drawDoubleEfficiencyCollection(c1, mc_ttbar, data_jetHT, "EMu__X__allMET");
+  drawDoubleEfficiencyCollection(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET");
+  drawDoubleEfficiencyCollection(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET");
+  drawDoubleEfficiencyCollection(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET");
 
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "nPV" );
-
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl__X__allMET", "el0_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl__X__allMET", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl__X__allMET", "el1_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl__X__allMET", "el1_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl__X__allMET", "nPV" );
-
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu__X__allMET", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu__X__allMET", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu__X__allMET", "mu1_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu__X__allMET", "mu1_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu__X__allMET", "nPV" );
-
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu__X__allMET", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu__X__allMET", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu__X__allMET", "el0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu__X__allMET", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu__X__allMET", "nPV" );
-
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el0_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el1_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el1_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "nPV" );
-
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu1_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu1_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "nPV" );
-
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "el0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "nPV" );
-
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_pt");
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "el0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "njets" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "Ele35_WPTight_Gsf__X__PFMET120_PFMHT120_IDTight", "met" );
-
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "mu0_pt" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "mu0_eta" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "met" );
-  drawDoubleEfficiency( c1, mc_ttbar, data_jetHT, "IsoMu27__X__PFMET120_PFMHT120_IDTight", "njets" );
-  
 
   // *** 3. Compare trigger yields between two samples
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_Ele35_WPTight_Gsf", "el0_pt");
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_Ele35_WPTight_Gsf", "el0_eta" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_Ele35_WPTight_Gsf", "njets" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_Ele35_WPTight_Gsf", "met" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_Ele35_WPTight_Gsf", "nPV" );
+  /*//drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_Ele35_WPTight_Gsf", "el0_pt");
+  //drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_IsoMu27", "mu0_pt" );
+  drawSingleTriggerTwoSamplesCollection(c1, mc_ttbar, data_jetHT, "HLT_DoubleMu_OR");
+  drawSingleTriggerTwoSamplesCollection(c1, mc_ttbar, data_jetHT, "HLT_DoubleEl_OR");
+  drawSingleTriggerTwoSamplesCollection(c1, mc_ttbar, data_jetHT, "HLT_EMu_OR");
+  */
 
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_IsoMu27", "mu0_pt" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_IsoMu27", "mu0_eta" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_IsoMu27", "met" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_IsoMu27", "njets" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_IsoMu27", "nPV" );
-
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleMu", "mu0_pt" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleMu", "mu0_eta" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleMu", "mu1_pt" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleMu", "mu1_eta" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleMu", "met" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleMu", "njets" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleMu", "nPV" );
-
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleEl", "el0_pt" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleEl", "el0_eta" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleEl", "el1_pt" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleEl", "el1_eta" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleEl", "met" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleEl", "njets" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_DoubleEl", "nPV" );
-
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_EMu", "el0_pt" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_EMu", "el0_eta" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_EMu", "mu0_pt" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_EMu", "mu0_eta" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_EMu", "met" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_EMu", "njets" );
-  drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_EMu", "nPV" );
-  
   // *** 4. Dump some correlation madness
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Ele35_WPTight_Gsf");
+  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_EMu_OR");
+  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_DoubleMu_OR");
+  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_DoubleEl_OR");
+  dumpCorrelationNumbers(data_jetHT, "dataBCDEF",  "HLT_DoubleMu_OR");
+  dumpCorrelationNumbers(data_jetHT, "dataBCDEF",  "HLT_DoubleEl_OR");
+  dumpCorrelationNumbers(data_jetHT, "dataBCDEF",  "HLT_EMu_OR");
+  /*dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Ele35_WPTight_Gsf");
   dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_IsoMu27");
   dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_IsoMu24_eta2p1");
   dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ");
@@ -596,74 +576,30 @@ void produceCombinedEff()
   dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ");
   dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
   dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_EMu_OR");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_DoubleMu_OR");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_DoubleEl_OR");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_EMu");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_DoubleMu");
-  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_DoubleEl");
-  /*
-  // TEMPORARY FOR CORRELATION STUDY
-  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_EMu_OR");
-  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_DoubleMu_OR");
-  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_DoubleEl_OR");
-  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_EMu");
-  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_DoubleMu");
-  dumpCorrelationNumbers(mc_ttbar_r2, "ttbar_met150_noHT", "HLT_DoubleEl");
+  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_PFMET120_PFMHT120_IDTight");
+  dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_PFHT250");
+  dumpCorrelationNumbers(data_jetHT, "dataBCDEF", "HLT_Ele35_WPTight_Gsf");  */
 
-  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_EMu_OR");
-  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_DoubleMu_OR");
-  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_DoubleEl_OR");
-  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_EMu");
-  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_DoubleMu");
-  dumpCorrelationNumbers(mc_ttbar_r1, "ttbar_met0_noHT", "HLT_DoubleEl");
-
-  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_EMu_OR");
-  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_DoubleMu_OR");
-  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_DoubleEl_OR");
-  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_EMu");
-  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_DoubleMu");
-  dumpCorrelationNumbers(mc_ttbar_r4, "ttbar_met0_withHT", "HLT_DoubleEl");
-
-  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_EMu_OR");
-  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_DoubleMu_OR");
-  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_DoubleEl_OR");
-  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_EMu");
-  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_DoubleMu");
-  dumpCorrelationNumbers(mc_ttbar_r3, "ttbar_met150_withHT", "HLT_DoubleEl");
-  */
-  //dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_PFMET120_PFMHT120_IDTight");
-  //dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_PFHT250");
-  //dumpCorrelationNumbers(data_jetHT, "dataBCDEF", "HLT_Ele35_WPTight_Gsf");
-  dumpCorrelationNumbers(data_jetHT, "dataBCDEF",  "HLT_DoubleMu_OR");
-  dumpCorrelationNumbers(data_jetHT, "dataBCDEF",  "HLT_DoubleEl_OR");
-  dumpCorrelationNumbers(data_jetHT, "dataBCDEF",  "HLT_EMu_OR");
   
   // *** 5. Produce nominator + denominator plots
-  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "DoubleEl__X__allMET", "HLT_allMET_elStreamDL", "met");
-  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "DoubleEl__X__allMET", "HLT_allMET_elStreamDL", "el0_pt");
+  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "met");
+  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "el0_pt");
   drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
-  drawNomDenomHistSingleSample(c1, data_jetHT, "dataBCDEF", "DoubleEl__X__allMET", "HLT_allMET_elStreamDL", "met");
-  drawNomDenomHistSingleSample(c1, data_jetHT, "dataBCDEF", "DoubleEl__X__allMET", "HLT_allMET_elStreamDL", "el0_pt");
+  drawNomDenomHistSingleSample(c1, data_jetHT, "dataBCDEF", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "met");
+  drawNomDenomHistSingleSample(c1, data_jetHT, "dataBCDEF", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "el0_pt");
   drawNomDenomHistSingleSample(c1, data_jetHT, "dataBCDEF", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
 
+
   // *** 6. Print 1D SF plots
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "el0_pt");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "el0_eta");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "mu0_pt");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "mu0_eta");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el0_pt");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el0_eta");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu0_pt");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu0_eta");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "el0_pt");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "el0_eta");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "mu0_pt");
-  print1DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "mu0_eta");
+  //print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET");
+  //print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET");
+  print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET");
+  print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET");
+  print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET");
 
   // *** 7. Print 2D SF plots
-  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "el0_pt_vs_eta");
-  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "mu0_pt_vs_eta");
+  //print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "el0_pt_vs_eta");
+  //print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "mu0_pt_vs_eta");
   print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el0_pt_vs_eta");
   print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta");
   print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "el0_pt_vs_eta");
