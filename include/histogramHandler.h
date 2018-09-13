@@ -134,9 +134,12 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
 {
   // Leading electron pT
 
+  // === 09-13-18 (bin optimization) ===
+  const Int_t nbins_pt = 4; 
+  Double_t edges_pt[nbins_pt + 1] = {20.0, 50.0, 80.0, 120.0, 200.0}; 
   // === 09-11-18 (matching AN2016_392) ===
-  const Int_t nbins_pt = 6; 
-  Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0}; 
+  //const Int_t nbins_pt = 6; 
+  //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0}; 
   // === pre 09-11-18 ===
   //const Int_t nbins_pt = 7; 
   //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0}; 
@@ -158,13 +161,16 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_mu1_pt->SetYTitle("Entries / Bin");
 
   // Leading electron eta
+  // === 09-13-18 (bin optimization) ===
+  const Int_t nbins_eta_2D = 5;
+  Double_t edges_eta_2D[nbins_eta_2D + 1] = {0, 0.4, 0.9, 1.2, 1.8, 2.4};
   // === 09-11-18 (matching AN2016_392) ===
   const Int_t nbins_eta_el = 15;
   Double_t edges_eta_el[nbins_eta_el + 1] = {-2.4, -2.1, -1.566, -1.4442, -1.0, -0.6, -0.3, -0.1, 0.1, 0.3, 0.6, 1.0, 1.4442, 1.5666, 2.1, 2.4};
   const Int_t nbins_eta_mu = 16;
   Double_t edges_eta_mu[nbins_eta_mu + 1] = {-2.4, -2.1, -1.8, -1.5, -1.2, -0.9, -0.5, -0.2, 0.0, 0.2, 0.5, 0.9, 1.2, 1.5, 1.8, 2.1, 2.4};
-  const Int_t nbins_eta_2D = 5;
-  Double_t edges_eta_2D[nbins_eta_2D + 1] = {0, 0.4, 0.9, 1.2, 2.1, 2.4};
+  //const Int_t nbins_eta_2D = 5;
+  //Double_t edges_eta_2D[nbins_eta_2D + 1] = {0, 0.4, 0.9, 1.2, 2.1, 2.4};
   // === pre 09-11-18 ===
   //const Int_t nbins_eta = 5;
   //Double_t edges_eta[nbins_eta + 1] = {-2.5, -1.5, -0.75, 0.75, 1.5, 2.5};
@@ -188,7 +194,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
 
   // N_jets
   // === 09-11-18 (matching AN2016_392) ===
-  TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 8, 0, 8);  
+  TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 12, 0, 12);  
   //TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 8, 4, 12);
   //TH1D* h_njets = new TH1D( ("h_" + nameHLT + stream + "_njets").c_str(),  ("h_" + nameHLT + stream + "_njets").c_str(), 12, 0, 12);  
   h_njets->SetXTitle("N_{jets}");
@@ -222,7 +228,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_met->SetYTitle("Entries / Bin");
 
   // N_vtx
-  TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), 25, 0, 50);
+  TH1D* h_nPV = new TH1D( ("h_" + nameHLT + stream + "_nPV").c_str(),  ("h_" + nameHLT + stream + "_nPV").c_str(), 20, 0, 60);
   h_nPV->SetXTitle("N_{PV}");
   h_nPV->SetYTitle("Entries / Bin");
 
@@ -387,7 +393,15 @@ void addOverflow(TH1D*& histo)
   histo->SetBinError  ( maxBin, sqrt( histo->GetBinError(maxBin)*histo->GetBinError(maxBin) + histo->GetBinError(maxBin+1)*histo->GetBinError(maxBin+1) ) );
   histo->SetBinContent( maxBin + 1, 0 );
   histo->SetBinError( maxBin + 1, 0 );
+}
 
+void addUnderflow(TH1D*& histo)
+{
+  // add underflow bin to first bin
+  histo->SetBinContent( 1, histo->GetBinContent( 0 ) + histo->GetBinContent( 1 ) );
+  histo->SetBinError  ( 1, sqrt( histo->GetBinError(0)*histo->GetBinError(0) + histo->GetBinError(1)*histo->GetBinError(1) ) );
+  histo->SetBinContent( 0, 0 );
+  histo->SetBinError( 0, 0 );
 }
 
 void addOverflow2D(TH2D*& histo)
@@ -414,6 +428,28 @@ void addOverflow2D(TH2D*& histo)
 
 }
 
+void addUnderflow2D(TH2D*& histo)
+{
+  // Purpose: add underflow bin to first bin (sidenote... how is there not a native ROOT function for this?)
+
+  // *** 1. Loop over y axis
+  for (int bY=0; bY < histo->GetNbinsY()+1; bY++) {
+    histo->SetBinContent( 1, bY, histo->GetBinContent( 0, bY ) + histo->GetBinContent( 1, bY ) );
+    histo->SetBinError  ( 1, bY, sqrt( histo->GetBinError( 0, bY)*histo->GetBinError( 0, bY) + histo->GetBinError( 1, bY)*histo->GetBinError( 1, bY) ) );
+    histo->SetBinContent( 0, bY, 0 );
+    histo->SetBinError( 0, bY, 0 );
+  }
+  
+  // *** 2. Loop over x axis
+  for (int bX=0; bX < histo->GetNbinsX()+1; bX++) {
+    histo->SetBinContent( bX, 1, histo->GetBinContent( bX, 0 ) + histo->GetBinContent( bX, 1 ) );
+    histo->SetBinError  ( bX, 1, sqrt( histo->GetBinError(bX, 0 )*histo->GetBinError(bX, 0) + histo->GetBinError(bX, 1)*histo->GetBinError(bX, 1) ) );
+    histo->SetBinContent( bX, 0, 0 );
+    histo->SetBinError( bX, 0, 0 );
+  }
+
+}
+
 void draw1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
 {
 
@@ -422,6 +458,7 @@ void draw1DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
   c0->cd();
   h0->Sumw2();
   addOverflow(h0);
+  addUnderflow(h0);
   h0->Draw("e");
 
   // *** 4. Set CMS style
@@ -452,6 +489,7 @@ void draw2DHistograms(TObjArray* array, TCanvas* c0, string nameHLT, string var)
   c0->cd();
   h0->Sumw2();
   addOverflow2D(h0);
+  addUnderflow2D(h0);
   //h0->Draw("e");
 
   // *** 4. Set CMS style
@@ -571,6 +609,8 @@ void drawEfficiencyHistograms(TCanvas* c0, TObjArray* a_numerator, string nameHL
   h_denom->Sumw2();
   addOverflow(h_num);
   addOverflow(h_denom);
+  addUnderflow(h_num);
+  addUnderflow(h_denom);
 
 
   cout << h_num->GetName() << " has " << h_num->GetEntries() << " entries." << endl;
@@ -636,6 +676,8 @@ void drawEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string nam
   h_denom->Sumw2();
   addOverflow(h_num);
   addOverflow(h_denom);
+  addUnderflow(h_num);
+  addUnderflow(h_denom);
 
   cout << h_num->GetName() << " has " << h_num->GetEntries() << " entries." << endl;
   cout << h_denom->GetName() << " has " << h_denom->GetEntries() << " entries." << endl;
@@ -715,6 +757,8 @@ void draw2DEfficiencyHistograms_v2(TCanvas* c0, TObjArray* a_numerator, string n
   h_denom->Sumw2();
   addOverflow2D(h_num);
   addOverflow2D(h_denom);
+  addUnderflow2D(h_num);
+  addUnderflow2D(h_denom);
 
   cout << h_num->GetName() << " has " << h_num->GetEntries() << " entries." << endl;
   cout << h_denom->GetName() << " has " << h_denom->GetEntries() << " entries." << endl;
