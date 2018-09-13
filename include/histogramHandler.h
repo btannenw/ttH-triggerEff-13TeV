@@ -160,11 +160,11 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   // Leading electron eta
   // === 09-11-18 (matching AN2016_392) ===
   const Int_t nbins_eta_el = 15;
-  Double_t edges_eta_el[nbins_eta + 1] = {-2.4, -2.1, -1.566, -1.4442, -1.0, -0.6, -0.3, -0.1, 0.1, 0.3, 0.6, 1.0, 1.4442, 1.5666, 2.1, 2.4};
+  Double_t edges_eta_el[nbins_eta_el + 1] = {-2.4, -2.1, -1.566, -1.4442, -1.0, -0.6, -0.3, -0.1, 0.1, 0.3, 0.6, 1.0, 1.4442, 1.5666, 2.1, 2.4};
   const Int_t nbins_eta_mu = 16;
-  Double_t edges_eta_mu[nbins_eta + 1] = {-2.4, -2.1, -1.8, -1.5, -1.2, -0.9, -0.5, -0.2, 0.0, 0.2, 0.5, 0.9, 1.2, 1.5, 1.8, 2.1, 2.4};
+  Double_t edges_eta_mu[nbins_eta_mu + 1] = {-2.4, -2.1, -1.8, -1.5, -1.2, -0.9, -0.5, -0.2, 0.0, 0.2, 0.5, 0.9, 1.2, 1.5, 1.8, 2.1, 2.4};
   const Int_t nbins_eta_2D = 5;
-  Double_t edges_eta_2D[nbins_eta + 1] = {0, 0.4, 0.9, 1.2, 2.1, 2.4};
+  Double_t edges_eta_2D[nbins_eta_2D + 1] = {0, 0.4, 0.9, 1.2, 2.1, 2.4};
   // === pre 09-11-18 ===
   //const Int_t nbins_eta = 5;
   //Double_t edges_eta[nbins_eta + 1] = {-2.5, -1.5, -0.75, 0.75, 1.5, 2.5};
@@ -181,7 +181,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_mu0_eta->SetMinimum(0.0);
   h_mu0_eta->SetXTitle("Leading Muon #eta");
   h_mu0_eta->SetYTitle("Entries / Bin");
-  TH1D* h_mu1_eta = new TH1D( ("h_" + nameHLT + stream + "_mu1_eta").c_str(),  ("h_" + nameHLT + stream + "_mu1_eta").c_str(), nbins_eta_mux, edges_eta_mu );
+  TH1D* h_mu1_eta = new TH1D( ("h_" + nameHLT + stream + "_mu1_eta").c_str(),  ("h_" + nameHLT + stream + "_mu1_eta").c_str(), nbins_eta_mu, edges_eta_mu );
   h_mu1_eta->SetMinimum(0.0);
   h_mu1_eta->SetXTitle("Sub-Leading Muon #eta");
   h_mu1_eta->SetYTitle("Entries / Bin");
