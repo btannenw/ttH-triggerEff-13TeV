@@ -503,14 +503,14 @@ void dumpCorrelationNumbers(TFile* f0, string sample, string triggerSet)
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  topDir = "09-11-18_files/";
+  topDir = "09-12-18_files/";
   string recoVersion = "r1";
   
   // *** 0. Input/output setup
   // ** I. Read files
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-29-18.root").c_str(), "READ");
   //TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_" + recoVersion + ".root").c_str(), "READ");
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_09-11-18.root").c_str(), "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_09-12-18.root").c_str(), "READ");
   TFile* data_jetHT = new TFile( (topDir + "/outfile_MET_RunBCDEF_v9_" + recoVersion + ".root").c_str(), "READ");
 
 
@@ -550,12 +550,12 @@ void produceCombinedEff()
 
 
   // *** 3. Compare trigger yields between two samples
-  /*//drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_Ele35_WPTight_Gsf", "el0_pt");
+  //drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_Ele35_WPTight_Gsf", "el0_pt");
   //drawSingleTriggerTwoSamples( c1, mc_ttbar, data_jetHT, "HLT_IsoMu27", "mu0_pt" );
   drawSingleTriggerTwoSamplesCollection(c1, mc_ttbar, data_jetHT, "HLT_DoubleMu_OR");
   drawSingleTriggerTwoSamplesCollection(c1, mc_ttbar, data_jetHT, "HLT_DoubleEl_OR");
   drawSingleTriggerTwoSamplesCollection(c1, mc_ttbar, data_jetHT, "HLT_EMu_OR");
-  */
+  
 
   // *** 4. Dump some correlation madness
   dumpCorrelationNumbers(mc_ttbar, "ttbar", "HLT_EMu_OR");
@@ -591,11 +591,11 @@ void produceCombinedEff()
 
 
   // *** 6. Print 1D SF plots
-  //print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET");
-  //print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET");
-  print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET");
-  print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET");
-  print1DScaleFactorHistograCollection(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET");
+  //print1DScaleFactorHistogramCollection(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET");
+  //print1DScaleFactorHistogramCollection(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET");
+  print1DScaleFactorHistogramCollection(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET");
+  print1DScaleFactorHistogramCollection(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET");
+  print1DScaleFactorHistogramCollection(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET");
 
   // *** 7. Print 2D SF plots
   //print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "el0_pt_vs_eta");
