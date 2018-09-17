@@ -22,6 +22,16 @@
 #include <sys/types.h>
 
 
+void addOverflow(TH1D*& histo)
+{
+  // put overflow bin at end
+  int maxBin = histo->GetNbinsX();
+  histo->SetBinContent( maxBin, histo->GetBinContent( maxBin ) + histo->GetBinContent( maxBin+1 ) );
+  histo->SetBinError  ( maxBin, sqrt( histo->GetBinError(maxBin)*histo->GetBinError(maxBin) + histo->GetBinError(maxBin+1)*histo->GetBinError(maxBin+1) ) );
+  histo->SetBinContent( maxBin + 1, 0 );
+  histo->SetBinError( maxBin + 1, 0 );
+
+}
 
 TH2D* get2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
 {
@@ -54,7 +64,7 @@ TH2D* get2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string t
   return h_sf;
 }
 
-void print2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
+void print2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable, bool dumpErrorHisto=false)
 {
   gStyle->SetPaintTextFormat("1.2f");
 
@@ -81,6 +91,31 @@ void print2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string 
 
   c0->Print( (topDir + "/h_2DSF_" + triggerSet + "_" + variable + ".png").c_str() );
 
+  // print out 1D histogram of errors of 2D SFs
+  if (dumpErrorHisto){
+    TH1D* h_histErr = new TH1D( ("h_histErrs2D_" + triggerSet + "_" + variable).c_str(), ("h_histErrs2D_" + triggerSet + "_" + variable).c_str(), 10, 0, 20);
+    for (int x = 1; x < h_sf->GetNbinsX()+1; x++) {
+      for (int y = 1; y < h_sf->GetNbinsY()+1; y++) {
+	h_histErr->Fill( h_sf->GetBinError(x, y)*100 );
+      }
+    }
+    h_histErr->GetYaxis()->SetTitle("Bins / 2% Error");
+    h_histErr->GetXaxis()->SetTitle("% Error");
+    //h_histErr->Fit("gaus");
+    addOverflow(h_histErr);
+    c0->cd();
+    h_histErr->Draw("HIST");
+    ltx1.DrawLatex(0.6, 0.57, triggerSet.c_str());
+    ltx1.DrawLatex(0.6, 0.52, variable.c_str());
+    string s_mean;          // string which will contain the result
+    ostringstream os_mean;   // stream used for the conversion
+    os_mean << std::fixed;
+    os_mean << setprecision(2) << h_histErr->GetMean() ;      
+    s_mean = os_mean.str(); // set 'Result' to the contents of the stream
+
+    ltx1.DrawLatex(0.6, 0.47, ("Mean Bin Err. = " + s_mean +"%").c_str() );
+    c0->Print( (topDir + "/h_2DSF_" + triggerSet + "_" + variable + "_errorHisto.png").c_str() );
+  }
 }
 
 
@@ -113,7 +148,7 @@ TH1D* getScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string tri
   return h_sf;
 }
 
-void print1DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
+void print1DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable, bool dumpErrorHisto=true)
 {
   gStyle->SetPaintTextFormat("1.3f");
 
@@ -145,6 +180,29 @@ void print1DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string 
   c0->SetBottomMargin(0.15);
 
   c0->Print( (topDir + "/h_1DSF_" + triggerSet + "_" + variable + ".png").c_str() );
+
+  // print out 1D histogram of errors of 2D SFs
+  if (dumpErrorHisto){
+    TH1D* h_histErr = new TH1D( ("h_histErrs1D_" + triggerSet + "_" + variable).c_str(), ("h_histErrs1D_" + triggerSet + "_" + variable).c_str(), 10, 0, 20);
+    for (int x = 1; x < h_sf->GetNbinsX()+1; x++) {
+      h_histErr->Fill( h_sf->GetBinError(x)*100 );
+    }
+    h_histErr->GetYaxis()->SetTitle("Bins / 2% Error");
+    h_histErr->GetXaxis()->SetTitle("% Error");
+    //h_histErr->Fit("gaus");
+    addOverflow(h_histErr);
+    c0->cd();
+    h_histErr->Draw("HIST");
+    ltx1.DrawLatex(0.6, 0.57, triggerSet.c_str());
+    ltx1.DrawLatex(0.6, 0.52, variable.c_str());
+    string s_mean;          // string which will contain the result
+    ostringstream os_mean;   // stream used for the conversion
+    os_mean << std::fixed;
+    os_mean << setprecision(2) << h_histErr->GetMean() ;      
+    s_mean = os_mean.str(); // set 'Result' to the contents of the stream
+    ltx1.DrawLatex(0.6, 0.47, ("Mean Bin Err. = " + s_mean +"%").c_str() );
+    c0->Print( (topDir + "/h_1DSF_" + triggerSet + "_" + variable + "_errorHisto.png").c_str() );
+  }
 
 }
 
@@ -503,14 +561,15 @@ void dumpCorrelationNumbers(TFile* f0, string sample, string triggerSet)
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  topDir = "09-12-18_files/";
-  string recoVersion = "r1";
+  string date = "09-13-18";
+  topDir = (date + "_files/").c_str();
+  string recoVersion = "r2";
   
   // *** 0. Input/output setup
   // ** I. Read files
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-29-18.root").c_str(), "READ");
   //TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_" + recoVersion + ".root").c_str(), "READ");
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_09-12-18.root").c_str(), "READ");
+  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
   TFile* data_jetHT = new TFile( (topDir + "/outfile_MET_RunBCDEF_v9_" + recoVersion + ".root").c_str(), "READ");
 
 
@@ -584,7 +643,11 @@ void produceCombinedEff()
   // *** 5. Produce nominator + denominator plots
   drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "met");
   drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "el0_pt");
-  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
+  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "met");
+  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "el0_pt");
+  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "njets");
+  drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "mu0_pt");
+  //drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
   drawNomDenomHistSingleSample(c1, data_jetHT, "dataBCDEF", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "met");
   drawNomDenomHistSingleSample(c1, data_jetHT, "dataBCDEF", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "el0_pt");
   drawNomDenomHistSingleSample(c1, data_jetHT, "dataBCDEF", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
@@ -600,9 +663,9 @@ void produceCombinedEff()
   // *** 7. Print 2D SF plots
   //print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleEl__X__allMET", "el0_pt_vs_eta");
   //print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "SingleMu__X__allMET", "mu0_pt_vs_eta");
-  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el0_pt_vs_eta");
-  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta");
-  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "el0_pt_vs_eta");
-  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "mu0_pt_vs_eta");
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleEl_OR__X__allMET", "el0_pt_vs_eta", true);
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta", true);
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "el0_pt_vs_eta", true);
+  print2DScaleFactorHistogram(c1, mc_ttbar, data_jetHT, "EMu_OR__X__allMET", "mu0_pt_vs_eta", true);
   
 }
