@@ -48,8 +48,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   verbose = false;
   nJetsCutSL = 0;
   nJetsCutDL = 0;
-  metCutSL = 0;
-  metCutDL = 0;
+  metCutSL = 40;
+  metCutDL = 40;
 
   // ** B. Set input file
   TChain* fChain = new TChain("ttHTreeMaker/worldTree");

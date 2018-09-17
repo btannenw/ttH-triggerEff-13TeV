@@ -86,17 +86,39 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_nPV").c_str() );
   h0->Fill( jetMetTool.nPV, lepSF );
 
+  // di-muon (and e+mu)
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str() );
   h2->Fill( lepTool.leadPt_mu, abs(lepTool.leadEta_mu), lepSF );
-
-  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str() );
-  h2->Fill( lepTool.leadPt_el, abs(lepTool.leadEta_el), lepSF );
 
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu1_pt_vs_eta").c_str() );
   h2->Fill( lepTool.subPt_mu, abs(lepTool.subEta_mu), lepSF );
 
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt_vs_mu1_pt").c_str() );
+  h2->Fill( lepTool.leadPt_mu, lepTool.subPt_mu, lepSF );
+
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta_vs_mu1_eta").c_str() );
+  h2->Fill( abs(lepTool.leadEta_mu), abs(lepTool.subEta_mu), lepSF );
+
+  // di-electron (and e+mu)
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str() );
+  h2->Fill( lepTool.leadPt_el, abs(lepTool.leadEta_el), lepSF );
+
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el1_pt_vs_eta").c_str() );
   h2->Fill( lepTool.subPt_el, abs(lepTool.subEta_el), lepSF );
+
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt_vs_el1_pt").c_str() );
+  h2->Fill( lepTool.leadPt_el, lepTool.subPt_el, lepSF );
+
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_eta_vs_el1_eta").c_str() );
+  h2->Fill( abs(lepTool.leadEta_el), abs(lepTool.subEta_el), lepSF );
+
+  // e+mu only
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt_vs_el0_pt").c_str() );
+  h2->Fill( lepTool.leadPt_mu, lepTool.leadPt_el, lepSF );
+
+  h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta_vs_el0_eta").c_str() );
+  h2->Fill( abs(lepTool.leadEta_mu), abs(lepTool.leadEta_el), lepSF );
+
 
 }
 
@@ -232,7 +254,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_nPV->SetXTitle("N_{PV}");
   h_nPV->SetYTitle("Entries / Bin");
 
-  // relIso
+  // leading relIso
   TH1D* h_mu0_relIso = new TH1D( ("h_" + nameHLT + stream + "_mu0_relIso").c_str(),  ("h_" + nameHLT + stream + "_mu0_relIso").c_str(), 13, 0, 0.13);
   h_mu0_relIso->SetXTitle("Leading Muon Rel. Iso");
   h_mu0_relIso->SetYTitle("Entries / Bin");
@@ -240,21 +262,41 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_el0_relIso->SetXTitle("Leading Electron Rel. Iso");
   h_el0_relIso->SetYTitle("Entries / Bin");
 
-  // 2D leading electron pt vs eta
+  // 2D di-electron (and e+mu) 
   TH2D* h_el0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_el0_pt_vs_eta->SetXTitle("Leading Electron p_{T} [GeV]");
   h_el0_pt_vs_eta->SetYTitle("Leading Electron |#eta|");
   TH2D* h_el1_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_el1_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_el1_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_el1_pt_vs_eta->SetXTitle("Sub-Leading Electron p_{T} [GeV]");
   h_el1_pt_vs_eta->SetYTitle("Sub-Leading Electron |#eta|");
+  TH2D* h_el0_eta_vs_el1_eta = new TH2D( ("h_" + nameHLT + stream + "_el0_eta_vs_el1_eta").c_str(),  ("h_" + nameHLT + stream + "_el0_eta_vs_el1_eta").c_str(), nbins_eta_2D, edges_eta_2D, nbins_eta_2D, edges_eta_2D );
+  h_el0_eta_vs_el1_eta->SetXTitle("Leading Electron |#eta|");
+  h_el0_eta_vs_el1_eta->SetYTitle("Sub-Leading Electron |#eta|");
+  TH2D* h_el0_pt_vs_el1_pt = new TH2D( ("h_" + nameHLT + stream + "_el0_pt_vs_el1_pt").c_str(),  ("h_" + nameHLT + stream + "_el0_pt_vs_el1_pt").c_str(), nbins_pt_2D, edges_pt_2D, nbins_pt_2D, edges_pt_2D );
+  h_el0_pt_vs_el1_pt->SetXTitle("Leading Electron p_{T} [GeV]");
+  h_el0_pt_vs_el1_pt->SetYTitle("Sub-Leading Electron p_{T} [GeV]");
 
-  // 2D muon pt vs eta
+  // 2D muon dimon (and e+mu)
   TH2D* h_mu0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_mu0_pt_vs_eta->SetXTitle("Leading Muon p_{T} [GeV]");
   h_mu0_pt_vs_eta->SetYTitle("Leading Muon |#eta|");
   TH2D* h_mu1_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_mu1_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_mu1_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_mu1_pt_vs_eta->SetXTitle("Sub-Leading Muon p_{T} [GeV]");
   h_mu1_pt_vs_eta->SetYTitle("Sub-Leading Muon |#eta|");
+  TH2D* h_mu0_eta_vs_mu1_eta = new TH2D( ("h_" + nameHLT + stream + "_mu0_eta_vs_mu1_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_eta_vs_mu1_eta").c_str(), nbins_eta_2D, edges_eta_2D, nbins_eta_2D, edges_eta_2D );
+  h_mu0_eta_vs_mu1_eta->SetXTitle("Leading Muon |#eta|");
+  h_mu0_eta_vs_mu1_eta->SetYTitle("Sub-Leading Muon |#eta|");
+  TH2D* h_mu0_pt_vs_mu1_pt = new TH2D( ("h_" + nameHLT + stream + "_mu0_pt_vs_mu1_pt").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt_vs_mu1_pt").c_str(), nbins_pt_2D, edges_pt_2D, nbins_pt_2D, edges_pt_2D );
+  h_mu0_pt_vs_mu1_pt->SetXTitle("Leading Muon p_{T} [GeV]");
+  h_mu0_pt_vs_mu1_pt->SetYTitle("Sub-Leading Muon p_{T} [GeV]");
+
+  // 2D e+mu
+  TH2D* h_mu0_eta_vs_el0_eta = new TH2D( ("h_" + nameHLT + stream + "_mu0_eta_vs_el0_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_eta_vs_el0_eta").c_str(), nbins_eta_2D, edges_eta_2D, nbins_eta_2D, edges_eta_2D );
+  h_mu0_eta_vs_el0_eta->SetXTitle("Leading Muon |#eta|");
+  h_mu0_eta_vs_el0_eta->SetYTitle("Leading Electron |#eta|");
+  TH2D* h_mu0_pt_vs_el0_pt = new TH2D( ("h_" + nameHLT + stream + "_mu0_pt_vs_el0_pt").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt_vs_el0_pt").c_str(), nbins_pt_2D, edges_pt_2D, nbins_pt_2D, edges_pt_2D );
+  h_mu0_pt_vs_el0_pt->SetXTitle("Leading Muon p_{T} [GeV]");
+  h_mu0_pt_vs_el0_pt->SetYTitle("Leading Electron p_{T} [GeV]");
 
   array->AddLast(h_el0_pt);
   array->AddLast(h_el1_pt);
@@ -272,9 +314,17 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   array->AddLast(h_nPV);
 
   array->AddLast(h_el0_pt_vs_eta);
-  array->AddLast(h_mu0_pt_vs_eta);
   array->AddLast(h_el1_pt_vs_eta);
+  array->AddLast(h_el0_eta_vs_el1_eta);
+  array->AddLast(h_el0_pt_vs_el1_pt);
+
+  array->AddLast(h_mu0_pt_vs_eta);
   array->AddLast(h_mu1_pt_vs_eta);
+  array->AddLast(h_mu0_eta_vs_mu1_eta);
+  array->AddLast(h_mu0_pt_vs_mu1_pt);
+
+  array->AddLast(h_mu0_pt_vs_el0_pt);
+  array->AddLast(h_mu0_eta_vs_el0_eta);
 
 }
 
