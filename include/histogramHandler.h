@@ -135,11 +135,11 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   // Leading electron pT
 
   // === 09-13-18 (bin optimization) ===
-  const Int_t nbins_pt = 4; 
-  Double_t edges_pt[nbins_pt + 1] = {20.0, 50.0, 80.0, 120.0, 200.0}; 
+  const Int_t nbins_pt_2D = 4; 
+  Double_t edges_pt_2D[nbins_pt_2D + 1] = {20.0, 50.0, 80.0, 120.0, 200.0}; 
   // === 09-11-18 (matching AN2016_392) ===
-  //const Int_t nbins_pt = 6; 
-  //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0}; 
+  const Int_t nbins_pt = 6; 
+  Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0}; 
   // === pre 09-11-18 ===
   //const Int_t nbins_pt = 7; 
   //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 60.0, 80.0, 100.0, 200.0, 300.0}; 
@@ -241,18 +241,18 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_el0_relIso->SetYTitle("Entries / Bin");
 
   // 2D leading electron pt vs eta
-  TH2D* h_el0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(), nbins_pt, edges_pt, nbins_eta_2D, edges_eta_2D );
+  TH2D* h_el0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_el0_pt_vs_eta->SetXTitle("Leading Electron p_{T} [GeV]");
   h_el0_pt_vs_eta->SetYTitle("Leading Electron |#eta|");
-  TH2D* h_el1_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_el1_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_el1_pt_vs_eta").c_str(), nbins_pt, edges_pt, nbins_eta_2D, edges_eta_2D );
+  TH2D* h_el1_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_el1_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_el1_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_el1_pt_vs_eta->SetXTitle("Sub-Leading Electron p_{T} [GeV]");
   h_el1_pt_vs_eta->SetYTitle("Sub-Leading Electron |#eta|");
 
   // 2D muon pt vs eta
-  TH2D* h_mu0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str(), nbins_pt, edges_pt, nbins_eta_2D, edges_eta_2D );
+  TH2D* h_mu0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_mu0_pt_vs_eta->SetXTitle("Leading Muon p_{T} [GeV]");
   h_mu0_pt_vs_eta->SetYTitle("Leading Muon |#eta|");
-  TH2D* h_mu1_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_mu1_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_mu1_pt_vs_eta").c_str(), nbins_pt, edges_pt, nbins_eta_2D, edges_eta_2D );
+  TH2D* h_mu1_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_mu1_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_mu1_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_mu1_pt_vs_eta->SetXTitle("Sub-Leading Muon p_{T} [GeV]");
   h_mu1_pt_vs_eta->SetYTitle("Sub-Leading Muon |#eta|");
 
