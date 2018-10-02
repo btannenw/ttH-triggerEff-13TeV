@@ -21,6 +21,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+void makePeriodComparison(TFile* periodB, TFile* periodC, TFile* periodD, TFile* periodE, TFile* periodF)
+{
+
+}
 
 void addOverflow(TH1D*& histo)
 {
@@ -569,8 +573,13 @@ void produceCombinedEff()
   // ** I. Read files
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-29-18.root").c_str(), "READ");
   //TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_" + recoVersion + ".root").c_str(), "READ");
-  TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* mc_ttbar = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
   TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v9_" + recoVersion + ".root").c_str(), "READ");
+  TFile* data_B   = new TFile( (topDir + "/outfile_MET_RunB_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_C   = new TFile( (topDir + "/outfile_MET_RunC_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_D   = new TFile( (topDir + "/outfile_MET_RunD_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_E   = new TFile( (topDir + "/outfile_MET_RunE_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_F   = new TFile( (topDir + "/outfile_MET_RunF_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
 
 
   // ** II. Check subdirectory structure for requested options and create directories if necessary
