@@ -7,6 +7,8 @@
 #include <iostream>
 #include <vector>
 #include "YggdrasilEventVars.h"
+#include "TLorentzVector.h"
+//#include "leptonHandler.h"
 
 
 #ifdef __MAKECINT__
@@ -27,15 +29,23 @@ class jetMetHandler{
 
       // === Functions === //
       void test();
-      void Event(yggdrasilEventVars* eve);
+      //void Event(yggdrasilEventVars* eve, leptonHandler lep);
 
       // === Variables === //
       bool passCuts;
       int nPreCutJets;
       int nJets;
+      int nBTags;
       double leadPt;
       double leadEta;
+      double leadPhi;
+      double leadDeepCSV;
+      double subPt;
+      double subEta;
+      double subPhi;
+      double subDeepCSV;
       double MET;
+      double phi;
       double nPV;
       bool passOneMETTrigger;
       bool passAllMETTriggers;
@@ -43,6 +53,7 @@ class jetMetHandler{
       // === Variables === //
       TH1D* h_jet_cutflow;
       TH1D* h_jet_n;
+      TH1D* h_btags_n;
       TH1D* h_met_passXtriggers;
       TH1D* h_met_passOnlyXtrigger;
 
@@ -53,11 +64,15 @@ class jetMetHandler{
       void parseMETTriggerLogic();
       void parseMETTriggerLogic_v2();
       void parseMETTriggerLogic_v3();
+      void setLeadSubleadIndices(int l, int& lead, int& sub);
+      bool vetoLeptonJetOverlapRemoval(int j);
       
       
       // === Variables === //
       yggdrasilEventVars* ev;
+      //leptonHandler lTool;
       int leadIndex;
+      int subIndex;
       string metXTriggerBits;
 
 }; // End of class prototype
