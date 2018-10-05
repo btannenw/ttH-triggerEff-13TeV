@@ -21,11 +21,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-void makePeriodComparison(TFile* periodB, TFile* periodC, TFile* periodD, TFile* periodE, TFile* periodF)
-{
-
-}
-
 void addOverflow(TH1D*& histo)
 {
   // put overflow bin at end
@@ -562,13 +557,127 @@ void dumpCorrelationNumbers(TFile* f0, string sample, string triggerSet)
   corrTXT.close();
 }
 
+void drawPeriodComparison(TCanvas* c0, TFile* allPeriod, TFile* periodB, TFile* periodC, TFile* periodD, TFile* periodE, TFile* periodF, TFile* ttbar, string triggerSet, string variable)
+{
+  //cout << " +++ histo name: " << ("h_" + triggerSet + "_" + variable + "_TEff").c_str() << endl;
+  
+  TEfficiency* t_ttbar = (TEfficiency*)ttbar->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
+  TEfficiency* t_all   = (TEfficiency*)allPeriod->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
+  TEfficiency* t_B     = (TEfficiency*)periodB->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
+  TEfficiency* t_C     = (TEfficiency*)periodC->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
+  TEfficiency* t_D     = (TEfficiency*)periodD->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
+  TEfficiency* t_E     = (TEfficiency*)periodE->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
+  TEfficiency* t_F     = (TEfficiency*)periodF->Get( ("h_" + triggerSet + "_" + variable + "_TEff").c_str() );
+
+  c0->cd();
+  // *** 1. Draw ttbar as reference and set ranges appropriately
+  t_ttbar->SetMarkerStyle(0);
+  t_ttbar->SetLineWidth(2);
+  t_ttbar->Draw();
+  t_ttbar->Paint("");
+  TGraphAsymmErrors* gr = (TGraphAsymmErrors*)t_ttbar->GetPaintedGraph();
+  gr->Draw("ep");
+  gr->SetMinimum(0);
+  gr->SetMaximum(1.1);
+  TH1D* temp = (TH1D*)t_ttbar->GetCopyTotalHisto();
+  gr->GetXaxis()->SetRangeUser( temp->GetXaxis()->GetXmin(), temp->GetXaxis()->GetXmax() );
+  gr->GetYaxis()->SetTitle("Efficiency / Bin");
+  gr->Draw("ep");
+
+  // *** 2. Now draw data efficiencies
+  t_all->SetLineColor(kRed);
+  t_all->SetMarkerStyle(0);
+  t_all->SetLineWidth(2);
+  t_all->Draw("same");
+
+  t_B->SetLineColor(kBlue);
+  t_B->SetLineWidth(2);
+  t_B->SetMarkerStyle(0);
+  t_B->Draw("same");
+
+  t_C->SetLineColor(kGreen+3);
+  t_C->SetLineWidth(2);
+  t_C->SetMarkerStyle(0);
+  t_C->Draw("same");
+
+  t_D->SetLineColor(kMagenta);
+  t_D->SetLineWidth(2);
+  t_D->SetMarkerStyle(0);
+  t_D->Draw("same");
+
+  t_E->SetLineColor(kOrange);
+  t_E->SetLineWidth(2);
+  t_E->SetMarkerStyle(0);
+  t_E->Draw("same");
+
+  t_F->SetLineColor(kGray);
+  t_F->SetLineWidth(2);
+  t_F->SetMarkerStyle(0);
+  t_F->Draw("same");
+
+  TLegend* leg = new TLegend(0.7, 0.4, .85, .5);
+  leg->AddEntry(t_all, "All Data Periods", "el");
+  leg->AddEntry(t_B, "Period B", "el");
+  leg->AddEntry(t_C, "Period C", "el");
+  leg->AddEntry(t_D, "Period D", "el");
+  leg->AddEntry(t_E, "Period E", "el");
+  leg->AddEntry(t_F, "Period F", "el");
+  leg->AddEntry(t_ttbar, "t#bar{t} MC", "el");
+
+  
+  TLatex ltx1;
+  ltx1.SetTextAlign(9);
+  ltx1.SetTextFont(62);
+  ltx1.SetTextSize(0.025);
+  ltx1.SetNDC();
+  ltx1.DrawLatex(0.2, 0.52, triggerSet.c_str());
+
+  leg->Draw("same");
+  CMS_lumi( c0, 0, 33);
+
+  c0->SetLeftMargin(0.15);
+  c0->SetRightMargin(0.05);
+  c0->SetBottomMargin(0.15);
+
+  c0->Print( (topDir + "/h_periodCompare_" + triggerSet + "_" + variable + ".png").c_str() );
+
+}
+
+void makePeriodComparison(TCanvas* c0, TFile* allPeriod, TFile* periodB, TFile* periodC, TFile* periodD, TFile* periodE, TFile* periodF, TFile* ttbar, string triggerSet)
+{
+
+  if (triggerSet.find("DoubleEl") != string::npos || triggerSet.find("EMu") != string::npos){
+    drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "el0_pt");
+    drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "el0_eta");
+    drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "el0_relIso");
+    if (triggerSet.find("DoubleEl") != string::npos){
+      drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "el1_pt");
+      drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "el1_eta");
+    }
+  }
+  if (triggerSet.find("DoubleMu") != string::npos || triggerSet.find("EMu") != string::npos){
+    drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "mu0_pt");
+    drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "mu0_eta");
+    drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "mu0_relIso");
+    if (triggerSet.find("DoubleMu") != string::npos){
+      drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "mu1_pt");
+      drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "mu1_eta");
+    }
+  }
+  drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "met");
+  drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "njets");
+  drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "nPV");
+  
+}
+
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  string date = "09-18-18";
+  string date = "10-05-18";
   topDir = (date + "_files/").c_str();
-  string recoVersion = "r3";
-  
+  string recoVersion = "r0";
+  bool dumpSFfile = true;
+
   // *** 0. Input/output setup
   // ** I. Read files
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-29-18.root").c_str(), "READ");
@@ -686,5 +795,33 @@ void produceCombinedEff()
   print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt_vs_eta", true);
   print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt_vs_el0_pt", true);
   print2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_eta_vs_el0_eta", true);
-  
+
+  // *** 8. Print plots with period breakdown
+  makePeriodComparison(c1, data_MET, data_B, data_C, data_D, data_E, data_F, mc_ttbar, "DoubleEl_OR__X__allMET");
+  makePeriodComparison(c1, data_MET, data_B, data_C, data_D, data_E, data_F, mc_ttbar, "DoubleMu_OR__X__allMET");
+  makePeriodComparison(c1, data_MET, data_B, data_C, data_D, data_E, data_F, mc_ttbar, "EMu_OR__X__allMET");
+
+  // *** 9. Dump SF file for analyzers 
+  if (dumpSFfile) {
+    TFile* f_outfileSF = new TFile( (topDir + "/tth_dileptonic_2DscaleFactors_" + date + ".root").c_str(), "RECREATE");
+    f_outfileSF->cd();
+    
+    TH2D* h_mu0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta");
+    TH2D* h_mu1_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu1_pt_vs_eta");
+    TH2D* h_mu0_eta_mu1_eta = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_eta_vs_mu1_eta");
+    TH2D* h_mu0_pt_mu1_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_pt_vs_mu1_pt");
+    TH2D* h_el0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_pt_vs_eta");
+    TH2D* h_el1_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el1_pt_vs_eta");
+    TH2D* h_el0_eta_el1_eta = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_eta_vs_el1_eta");
+    TH2D* h_el0_pt_el1_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_pt_vs_el1_pt");
+    TH2D* h_emu_mu0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt_vs_eta");
+    TH2D* h_emu_el0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "el0_pt_vs_eta");
+    TH2D* h_emu_mu0_eta_el0_eta = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_eta_vs_el0_eta");
+    TH2D* h_emu_mu0_pt_el0_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt_vs_el0_pt");
+
+    f_outfileSF->Write();
+    f_outfileSF->Close();
+    
+  }
+
 }
