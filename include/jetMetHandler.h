@@ -29,7 +29,8 @@ class jetMetHandler{
 
       // === Functions === //
       void test();
-      //void Event(yggdrasilEventVars* eve, leptonHandler lep);
+      void Event(yggdrasilEventVars* eve, leptonHandler lep);
+      
 
       // === Variables === //
       bool passCuts;
@@ -45,7 +46,7 @@ class jetMetHandler{
       double subPhi;
       double subDeepCSV;
       double MET;
-      double phi;
+      double MET_phi;
       double nPV;
       bool passOneMETTrigger;
       bool passAllMETTriggers;
@@ -70,7 +71,7 @@ class jetMetHandler{
       
       // === Variables === //
       yggdrasilEventVars* ev;
-      //leptonHandler lTool;
+      leptonHandler lTool;
       int leadIndex;
       int subIndex;
       string metXTriggerBits;

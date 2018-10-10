@@ -21,6 +21,7 @@ leptonHandler::leptonHandler()
   leadIndex_mu = -99;
   subPt_mu = -99;
   subEta_mu = -99;
+  subRelIso_mu = -99;
   subIndex_mu = -99;
   nElectrons = 0;
   leadPt_el = -99;
@@ -28,6 +29,7 @@ leptonHandler::leptonHandler()
   leadIndex_el = -99;
   subPt_el = -99;
   subEta_el = -99;
+  subRelIso_el = -99;
   subIndex_el = -99;
   mll = -99;
 
@@ -132,6 +134,7 @@ void leptonHandler::applyMuonCuts()
   if (subIndex_mu != -99){
     subPt_mu = ev->lepton_pt_[subIndex_mu];
     subEta_mu = ev->lepton_eta_[subIndex_mu];
+    subRelIso_mu = ev->lepton_relIso_[subIndex_mu];
   }
 
   if (nMuons > 0 && leadIndex_mu == -99)
@@ -228,6 +231,7 @@ void leptonHandler::applyElectronCuts()
   if (subIndex_el != -99){
     subPt_el = ev->lepton_pt_[subIndex_el];
     subEta_el = ev->lepton_eta_[subIndex_el];
+    subRelIso_el = ev->lepton_relIso_[subIndex_el];
   }
 
   if (nElectrons > 0 && leadIndex_el == -99)
@@ -363,6 +367,7 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
   leadIndex_mu = -99;
   subPt_mu = -99;
   subEta_mu = -99;
+  subRelIso_mu = -99;
   subIndex_mu = -99;
   nElectrons = 0;
   leadPt_el = -99;
@@ -370,6 +375,7 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
   leadIndex_el = -99;
   subPt_el = -99;
   subEta_el = -99;
+  subRelIso_el = -99;
   subIndex_el = -99;
   mll = -99;
   b_periodDep__HLT_IsoMu24_eta2p1 = false;

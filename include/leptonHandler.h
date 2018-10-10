@@ -54,6 +54,8 @@ class leptonHandler{
       double leadEta_mu;
       double leadRelIso_mu;
       double leadRelIso_el;
+      double subRelIso_mu;
+      double subRelIso_el;
       double subPt_mu;
       double subEta_mu;
       double mll;
@@ -63,6 +65,10 @@ class leptonHandler{
       bool b_periodDep__HLT_IsoMu24_eta2p1;
       bool b_periodDep__doubleMu_noMass;
       bool b_periodDep__doubleMu_withMass;
+      int leadIndex_el;
+      int subIndex_el;
+      int leadIndex_mu;
+      int subIndex_mu;
 
       // === Variables === //
       TH1D* h_mu_cutflow;
@@ -83,10 +89,6 @@ class leptonHandler{
 
       // === Variables === //
       yggdrasilEventVars* ev;
-      int leadIndex_el;
-      int subIndex_el;
-      int leadIndex_mu;
-      int subIndex_mu;
       bool passMC;
 
 }; // End of class prototype

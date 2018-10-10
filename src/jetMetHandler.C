@@ -180,23 +180,30 @@ void jetMetHandler::applyMETCuts()
 
   // set MET publically accessible MET
   MET = ev->MET_[0];
+  MET_phi = ev->MET_phi_[0];
       
 }
 
 void jetMetHandler::applyJetCuts()
 {
+  //if (ev->evt_ == 7985514) 
+  //  cout << "\n njets = " << ev->jet_pt_[0].size() << endl;
+
   for (unsigned int j = 0; j < ev->jet_pt_[0].size() + 1; j++){ 
+    //if (ev->evt_ == 7985514) 
+    //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << ", eta " << ev->jet_eta_[0][j] << ", puid " << ev->jet_puid_[0][j] << endl;
+    
     h_jet_cutflow->Fill("Jet", 1);
     // Cut 1: pT > 25 GeV
     if( !(ev->jet_pt_[0][j] > 25) ) continue;
     h_jet_cutflow->Fill("p_{T} > 25", 1);
     
-    // Cut 2: |ETA| < 3.0
-    if( !(abs(ev->jet_eta_[0][j]) < 2.5) ) continue;
-    h_jet_cutflow->Fill("|#eta| < 2.5", 1);
+    // Cut 2: |ETA| < 2.4
+    if( !(abs(ev->jet_eta_[0][j]) < 2.4) ) continue;
+    h_jet_cutflow->Fill("|#eta| < 2.4", 1);
     
     // Cut 3: Lepton overlap removal (R=0.4)
-    //if ( vetoLeptonJetOverlapRemoval(j) ) continue;
+    if ( vetoLeptonJetOverlapRemoval(j) ) continue;
     h_jet_cutflow->Fill("dR(l, j) > 0.4", 1);
     
     // Cut 4: PU JetID
@@ -206,11 +213,14 @@ void jetMetHandler::applyJetCuts()
     passCuts = true;
     nJets++;
 
+    //if (ev->evt_ == 7985514) 
+    //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " made it with pt " << ev->jet_pt_[0][j] << endl;
+
     // set leading/subleading indices if appropriate
     setLeadSubleadIndices(j, leadIndex, subIndex);
     
     // Cut 5. DeepCSV > 0.491 (medium WP)
-    if( !(ev->jet_DeepCSV_b_[j] + ev->jet_DeepCSV_bb_[j]) ) continue;
+    if( !((ev->jet_DeepCSV_b_[0][j] + ev->jet_DeepCSV_bb_[0][j])>0.4941) ) continue;
     nBTags++;
     
   }
@@ -219,26 +229,25 @@ void jetMetHandler::applyJetCuts()
   h_jet_n->Fill( nJets );
   h_btags_n->Fill( nBTags );
   if (leadIndex != -99){
-    leadPt      = ev->jet_pt_[leadIndex];
-    leadEta     = ev->jet_eta_[leadIndex];
-    leadPhi     = ev->jet_relIso_[leadIndex];
-    leadDeepCSV = ( ev->jet_DeepCSV_b_[leadIndex] + ev->jet_DeepCSV_bb_[leadIndex] );
+    leadPt      = ev->jet_pt_[0][leadIndex];
+    leadEta     = ev->jet_eta_[0][leadIndex];
+    leadPhi     = ev->jet_phi_[0][leadIndex];
+    leadDeepCSV = ( ev->jet_DeepCSV_b_[0][leadIndex] + ev->jet_DeepCSV_bb_[0][leadIndex] );
   }
   if (subIndex != -99){
-    subPt      = ev->jet_pt_[subIndex];
-    subEta     = ev->jet_eta_[subIndex];
-    subPhi     = ev->jet_relIso_[subIndex];
-    subDeepCSV = ( ev->jet_DeepCSV_b_[subIndex] + ev->jet_DeepCSV_bb_[subIndex] );
+    subPt      = ev->jet_pt_[0][subIndex];
+    subEta     = ev->jet_eta_[0][subIndex];
+    subPhi     = ev->jet_phi_[0][subIndex];
+    subDeepCSV = ( ev->jet_DeepCSV_b_[0][subIndex] + ev->jet_DeepCSV_bb_[0][subIndex] );
   }
 
 }
 
-void jetMetHandler::Event(yggdrasilEventVars* eve)
-//void jetMetHandler::Event(yggdrasilEventVars* eve, leptonHandler lep)
+void jetMetHandler::Event(yggdrasilEventVars* eve, leptonHandler lep)
 {
   // *** 1. Intialize some things
   ev = eve;
-  //lTool = lep;
+  lTool = lep;
   passCuts = false;
   nPreCutJets = ev->jet_pt_[0].size();
   nJets = 0;
@@ -269,14 +278,14 @@ void jetMetHandler::Event(yggdrasilEventVars* eve)
 
 }
 
-void jetHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
+void jetMetHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
 {
   // *** 0. Temporary variables
-  double d_leadPt = (lead == -99) ? -99 : ev->jet_pt_[lead];
-  double d_subPt  = (sub == -99) ? -99  : ev->jet_pt_[sub];
+  double d_leadPt = (lead == -99) ? -99 : ev->jet_pt_[0][lead];
+  double d_subPt  = (sub == -99) ? -99  : ev->jet_pt_[0][sub];
 
   // *** 1. Set leading lepton if appropriate
-  if (ev->jet_pt_[l] > d_leadPt) {
+  if (ev->jet_pt_[0][l] > d_leadPt) {
     // ** A. If already have first good jet, set old lead lepton to sub
     if (d_leadPt != -99){ 
       sub = lead;
@@ -284,14 +293,14 @@ void jetHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
     // ** B. set new leading jet to leading
     lead = l;
   }
-  else if (ev->jet_pt_[l] < d_leadPt && ev->jet_pt_[l] > d_subPt) { 
+  else if (ev->jet_pt_[0][l] < d_leadPt && ev->jet_pt_[0][l] > d_subPt) { 
     // ** C. New lepton not greater than leading but greater than sub
     sub = l;
   }
   
 } 
 
-bool jetHandler::vetoLeptonJetOverlapRemoval(int j)
+bool jetMetHandler::vetoLeptonJetOverlapRemoval(int j)
 {
   double OverlapCut = 0.4;
 
@@ -301,31 +310,31 @@ bool jetHandler::vetoLeptonJetOverlapRemoval(int j)
 
   int i_lead = -99;
   int i_sub = -99;
-  /*
-  if (lTool.passDLcuts_mu) {
+  
+  if (lTool.passDLCuts_mu) {
     i_lead = lTool.leadIndex_mu;
     i_sub  = lTool.subIndex_mu;
   }
-  if (lTool.passDLcuts_el) {
+  if (lTool.passDLCuts_el) {
     i_lead = lTool.leadIndex_el;
     i_sub  = lTool.subIndex_el;
   }
-  if (lTool.passDLcuts_emu) { // take leading index from each lepton category, internal i_* name misleading in this case for i_sub
-    i_lead = lTool.leadIndex_e;
+  if (lTool.passDLCuts_emu) { // take leading index from each lepton category, internal i_* name misleading in this case for i_sub
+    i_lead = lTool.leadIndex_el;
     i_sub  = lTool.leadIndex_mu;
   }
 
-  v_lead->SetPtEtaPhiE( ev->lepton_pt_[lTool.i_lead], ev->lepton_eta_[lTool.i_lead], ev->lepton_phi_[lTool.i_lead], ev->lepton_e_[lTool.i_lead] );
-  v_sub->SetPtEtaPhiE( ev->lepton_pt_[lTool.i_sub], ev->lepton_eta_[lTool.i_sub], ev->lepton_phi_[lTool.i_sub], ev->lepton_e_[lTool.i_sub] );
-  v_jet->SetPtEtaPhiE( ev->jet_pt_[j], ev->jet_eta_[j], ev->jet_phi_[j], ev->jet_e_[j] );
+  v_lead->SetPtEtaPhiE( ev->lepton_pt_[i_lead], ev->lepton_eta_[i_lead], ev->lepton_phi_[i_lead], ev->lepton_e_[i_lead] );
+  v_sub->SetPtEtaPhiE( ev->lepton_pt_[i_sub], ev->lepton_eta_[i_sub], ev->lepton_phi_[i_sub], ev->lepton_e_[i_sub] );
+  v_jet->SetPtEtaPhiM( ev->jet_pt_[0][j], ev->jet_eta_[0][j], ev->jet_phi_[0][j], ev->jet_m_[0][j] );
 
-  double deltaR_j_lead = v_lead.DeltaR(v_jet);
-  double deltaR_j_sub  = v_sub.DeltaR(v_jet);
+  double deltaR_j_lead = v_lead->DeltaR(*v_jet);
+  double deltaR_j_sub  = v_sub->DeltaR(*v_jet);
 
   if( deltaR_j_lead < OverlapCut || deltaR_j_sub < OverlapCut)
     return true;
   else
     return false;
-*/
+
   return false;
 }
