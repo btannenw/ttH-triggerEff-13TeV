@@ -179,8 +179,12 @@ void jetMetHandler::applyMETCuts()
   //parseMETTriggerLogic_v3(); // new 08-24-18 // add HLT_PFHT250 to allMET collection
 
   // set MET publically accessible MET
-  MET = ev->MET_[0];
-  MET_phi = ev->MET_phi_[0];
+  //MET = ev->MET_[0];
+  //MET_phi = ev->MET_phi_[0];
+  //MET = ev->MET_Type1xy_[0];
+  //MET_phi = ev->MET_Type1xy_phi_[0];
+  MET = ev->MET_Type1xy_sync_[0];
+  MET_phi = ev->MET_Type1xy_phi_sync_[0];
       
 }
 
@@ -189,7 +193,7 @@ void jetMetHandler::applyJetCuts()
   //if (ev->evt_ == 7985514) 
   //  cout << "\n njets = " << ev->jet_pt_[0].size() << endl;
 
-  for (unsigned int j = 0; j < ev->jet_pt_[0].size() + 1; j++){ 
+  for (unsigned int j = 0; j < ev->jet_pt_[0].size(); j++){ 
     //if (ev->evt_ == 7985514) 
     //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << ", eta " << ev->jet_eta_[0][j] << ", puid " << ev->jet_puid_[0][j] << endl;
     

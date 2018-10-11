@@ -252,6 +252,9 @@ struct yggdrasilEventVars{
   Float_t MET_Type1xy_[rNumSys];
   Float_t MET_Type1xy_phi_[rNumSys];
 
+  Float_t MET_Type1xy_sync_[rNumSys];
+  Float_t MET_Type1xy_phi_sync_[rNumSys];
+
   Float_t PUPPIMET_[rNumSys];
   Float_t PUPPIMET_phi_[rNumSys];
 
