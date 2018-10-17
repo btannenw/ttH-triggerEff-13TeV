@@ -12,7 +12,7 @@
 
 // top level vars
 std::string topDir, fileList;
-bool printPlots, dumpFile, verbose, isMC, singleFile, printCSV;
+bool printPlots, dumpFile, verbose, isMC, singleFile, printCSV, isDebug;
 int nJetsCutSL;
 int nJetsCutDL;
 int metCutSL;

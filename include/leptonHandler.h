@@ -30,7 +30,7 @@ class leptonHandler{
       // === Functions === //
       void test();
       void setFlags(bool passMC, string inputFile);
-      void Event(yggdrasilEventVars* eve);
+      void Event(yggdrasilEventVars* eve, bool passDebug);
 
       // === Variables === //
       bool passSLCuts_el;
@@ -65,6 +65,7 @@ class leptonHandler{
       double mll;
       double lepSF;
       bool isMC;
+      bool isDebug;
       string dataPeriod;
       bool b_periodDep__HLT_IsoMu24_eta2p1;
       bool b_periodDep__doubleMu_noMass;
@@ -94,6 +95,7 @@ class leptonHandler{
       // === Variables === //
       yggdrasilEventVars* ev;
       bool passMC;
+      bool passDebug;
 
 }; // End of class prototype
 

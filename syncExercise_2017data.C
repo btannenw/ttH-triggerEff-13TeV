@@ -38,10 +38,11 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_10-15-18/";
+  topDir = "plots_10-17-18/";
   if (p_topDir != "") topDir = p_topDir;
   isMC = true;
   if (p_isMC != "") isMC = p_isMC=="true" ? true : false;
+  isDebug = false;
   singleFile = true;
   printCSV = true;
   ofstream csvFile, missingEventsTXT;
@@ -61,7 +62,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
     if (p_passFile==""){ // basically a local test
       if (isMC){
 	//fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-10-18_v10_full.root");
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-12-18_v14_full.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-17-18_v16_full.root");
       }
       else{ // data!
 	fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
@@ -137,7 +138,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
 
   // ** E. Print header for csv file if requested
   if (printCSV) {
-    missingEventsTXT.open( (topDir + "/missingEvents_v14_ismumu_fileV14.txt").c_str() );
+    missingEventsTXT.open( (topDir + "/missingEvents_v16_isemu_file.txt").c_str() );
     //missingEventsTXT << "run,lumi,event,passDLtriggers_el,passDLtriggers_mu,passDLtriggers_emu,passDLCuts_el,passDLCuts_mu,passDLCuts_emu,n_jets,n_btags,lep1_pt,lep1_iso,jet1_pt,jet2_pt,jet1_csv,jet2_csv,MET_pt,mll,nElectrons,nMuons" << endl;
     missingEventsTXT << "run,lumi,event,passDLtriggers_el,passDLtriggers_mu,passDLtriggers_emu,passDLCuts_el,passDLCuts_mu,passDLCuts_emu,n_jets,n_btags,el1_pt,el1_iso,el2_pt,el2_iso,mu1_pt,mu1_iso,mu2_pt,mu2_iso,jet1_pt,jet2_pt,jet1_csv,jet2_csv,MET_pt,mll,nElectrons,nMuons,MET_Type1xy,MET_Type1xy_sync" << endl;
 
@@ -161,15 +162,10 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
   // *** 2. Set tree structure and variables to read
   eve=0;
   fChain->SetBranchAddress("eve.", &eve );
-  //elTool = electronHandler();
-  //elTool.setMCflag(isMC);
-  //muTool = muonHandler();
-  //muTool.setMCflag(isMC);
   lepTool = leptonHandler();
   lepTool.setFlags(isMC, p_passFile.c_str());
-  
   jetMetTool = jetMetHandler();
- 
+  //jetMetTool.setFlags(isDebug);
  
   // *** 3. Start looping! 
   long t_entries = fChain->GetEntries();
@@ -183,9 +179,18 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
     
     fChain->GetEntry(i);
 
+    // ** 0. Set debug flags per event
+    if (eve->evt_ == 7646842 || eve->evt_ == 3287322 // is_emu: RWTH - UVA
+	|| eve->evt_ == 2896330 || eve->evt_ == 7247661 || eve->evt_ == 7247661 // is_emu: UVA - RWTH
+	|| eve->evt_ == 7886713// is_mumu: UVA - RWTH 
+	) 
+      isDebug = true;
+    else
+      isDebug = false;
+    
     // ** I. Get objects 
-    lepTool.Event(eve);
-    jetMetTool.Event(eve, lepTool);
+    lepTool.Event(eve, isDebug);
+    jetMetTool.Event(eve, lepTool, isDebug);
         
     // ** II. 2D Correlations comparing SL triggers to MET triggers
     // * A. specific triggers
@@ -225,9 +230,12 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
       //if (eve->evt_ == 7984834 || eve->evt_ == 7774040 || eve->evt_ == 7772038 || eve->evt_ == 3280722 || eve->evt_ == 7771371) {
       //v14: mumu only
       //if (eve->evt_ == 7772466 || eve->evt_ == 2896667 || eve->evt_ == 7773247 || eve->evt_ == 7248309 || eve->evt_ == 7857647 || eve->evt_ == 3287802 || eve->evt_ == 3689760 || eve->evt_ == 7983010) {
-      if (eve->evt_ == 7857647 || eve->evt_ == 7925373 || eve->evt_ == 2896907 || eve->evt_ == 7872747 || eve->evt_ == 7985715 || eve->evt_ == 6771965 || eve->evt_ == 7886713)  {
+      //if (eve->evt_ == 7857647 || eve->evt_ == 7925373 || eve->evt_ == 2896907 || eve->evt_ == 7872747 || eve->evt_ == 7985715 || eve->evt_ == 6771965 || eve->evt_ == 7886713)  {
       //v14: emu only
       //if (eve->evt_ == 7925484 || eve->evt_ == 3691737 || eve->evt_ == 7872745 || eve->evt_ == 3280379 || eve->evt_ == 7982363 || eve->evt_ == 2896987) {
+      
+      // v14, passed
+      if (isDebug) {
 	missingEventsTXT << eve->run_ << "," << eve->lumi_ << "," <<eve->evt_ << ","
 			 << (lepTool.passSLtriggers_el || lepTool.passDLtriggers_el)  << "," << (lepTool.passSLtriggers_mu || lepTool.passDLtriggers_mu) << "," << (lepTool.passSLtriggers_mu || lepTool.passSLtriggers_el || lepTool.passDLtriggers_emu) << "," << lepTool.passDLCuts_el << "," << lepTool.passDLCuts_mu << "," << lepTool.passDLCuts_emu << ","
 			 << jetMetTool.nJets << "," << jetMetTool.nBTags << ",";
