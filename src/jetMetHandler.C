@@ -186,26 +186,35 @@ void jetMetHandler::applyMETCuts()
   MET = ev->MET_Type1xy_sync_[0];
   MET_phi = ev->MET_Type1xy_phi_sync_[0];
       
+
 }
 
 void jetMetHandler::applyJetCuts()
 {
-  //if (ev->evt_ == 7985514) 
-  //  cout << "\n njets = " << ev->jet_pt_[0].size() << endl;
-
+  if (ev->evt_ == 3691737) {
+    cout << "\n ev->evt = " << ev->evt_ << " and el1 has pt " << ev->lepton_pt_[lTool.leadIndex_el] << " , eta " << ev->lepton_eta_[lTool.leadIndex_el] << " , phi " << ev->lepton_phi_[lTool.leadIndex_el] << " , iso " << ev->lepton_relIso_[lTool.leadIndex_el] << endl;
+    cout << "\n ev->evt = " << ev->evt_ << " and mu1 has pt " << ev->lepton_pt_[lTool.leadIndex_mu] << " , eta " << ev->lepton_eta_[lTool.leadIndex_mu] << " , phi " << ev->lepton_phi_[lTool.leadIndex_mu] << " , iso " << ev->lepton_relIso_[lTool.leadIndex_mu] << endl;
+  }
+  
   for (unsigned int j = 0; j < ev->jet_pt_[0].size(); j++){ 
-    //if (ev->evt_ == 7985514) 
-    //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << ", eta " << ev->jet_eta_[0][j] << ", puid " << ev->jet_puid_[0][j] << endl;
+    if (ev->evt_ == 7857647 || ev->evt_ == 7925373 || ev->evt_ == 2896907 || ev->evt_ == 7872747 || ev->evt_ == 7985715 || ev->evt_ == 6771965 || ev->evt_ == 7886713) 
+      //if (ev->evt_ == 3691737) 
+      cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << " , eta " << ev->jet_eta_[0][j] << " , phi " << ev->jet_phi_[0][j] << " , csv " << (ev->jet_DeepCSV_b_[0][j]+ev->jet_DeepCSV_bb_[0][j]) << " , puid " << ev->jet_puid_[0][j] << endl;
     
     h_jet_cutflow->Fill("Jet", 1);
     // Cut 1: pT > 25 GeV
-    if( !(ev->jet_pt_[0][j] > 25) ) continue;
-    h_jet_cutflow->Fill("p_{T} > 25", 1);
+    //if( !(ev->jet_pt_[0][j] > 25) ) continue;
+    //h_jet_cutflow->Fill("p_{T} > 25", 1);
+    if( !(ev->jet_pt_[0][j] > 20) ) continue;
+    h_jet_cutflow->Fill("p_{T} > 20", 1);
     
     // Cut 2: |ETA| < 2.4
     if( !(abs(ev->jet_eta_[0][j]) < 2.4) ) continue;
     h_jet_cutflow->Fill("|#eta| < 2.4", 1);
     
+    //if (ev->evt_ == 3691737) 
+    //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << " , eta " << ev->jet_eta_[0][j] << " , phi " << ev->jet_phi_[0][j] << " , csv " << (ev->jet_DeepCSV_b_[0][j]+ev->jet_DeepCSV_bb_[0][j]) << " , puid " << ev->jet_puid_[0][j] << endl;
+
     // Cut 3: Lepton overlap removal (R=0.4)
     if ( vetoLeptonJetOverlapRemoval(j) ) continue;
     h_jet_cutflow->Fill("dR(l, j) > 0.4", 1);
@@ -217,8 +226,8 @@ void jetMetHandler::applyJetCuts()
     passCuts = true;
     nJets++;
 
-    //if (ev->evt_ == 7985514) 
-    //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " made it with pt " << ev->jet_pt_[0][j] << endl;
+    //if (ev->evt_ == 3691737) 
+    //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << " , eta " << ev->jet_eta_[0][j] << " , phi " << ev->jet_phi_[0][j] << " , csv " << (ev->jet_DeepCSV_b_[0][j]+ev->jet_DeepCSV_bb_[0][j]) << endl;
 
     // set leading/subleading indices if appropriate
     setLeadSubleadIndices(j, leadIndex, subIndex);

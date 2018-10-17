@@ -31,6 +31,11 @@ leptonHandler::leptonHandler()
   subEta_el = -99;
   subRelIso_el = -99;
   subIndex_el = -99;
+  leadCharge_el = -99;
+  subCharge_el = -99;
+  leadCharge_mu = -99;
+  subCharge_mu = -99;
+
   mll = -99;
 
   lepSF = 1.;
@@ -85,6 +90,10 @@ void leptonHandler::applyMuonCuts()
     // Cut 0: is muon
     if ( !(ev->lepton_isMuon_[l] == 1) ) continue;
     h_mu_cutflow->Fill("Total Muons", 1);
+    if (ev->evt_ == 7857647 || ev->evt_ == 7925373 || ev->evt_ == 2896907 || ev->evt_ == 7872747 || ev->evt_ == 7985715 || ev->evt_ == 6771965 || ev->evt_ == 7886713) 
+      cout << "\n ev->evt = " << ev->evt_ << " and muon " << l << " has pt " << ev->lepton_pt_[l] << " , eta " << ev->lepton_eta_[l] << " , phi " << ev->lepton_phi_[l] << " , iso " << ev->lepton_relIso_[l] << " , isTight " << ev->lepton_isTight_[l] << " , isMuon " << ev->lepton_isMuon_[l] << endl;
+
+
     if (leadIndex_mu == -99)     h_mu_event_cutflow->Fill("Total Muons", 1);
     
     // Cut 1: pT > 15 GeV --> use SL veto as threshold for counting muons. Apply higher pT cut later
@@ -130,11 +139,13 @@ void leptonHandler::applyMuonCuts()
     leadPt_mu = ev->lepton_pt_[leadIndex_mu];
     leadEta_mu = ev->lepton_eta_[leadIndex_mu];
     leadRelIso_mu = ev->lepton_relIso_[leadIndex_mu];
+    leadCharge_mu = ev->lepton_charge_[leadIndex_mu];
   }
   if (subIndex_mu != -99){
     subPt_mu = ev->lepton_pt_[subIndex_mu];
     subEta_mu = ev->lepton_eta_[subIndex_mu];
     subRelIso_mu = ev->lepton_relIso_[subIndex_mu];
+    subCharge_mu = ev->lepton_charge_[subIndex_mu];
   }
 
   if (nMuons > 0 && leadIndex_mu == -99)
@@ -167,6 +178,9 @@ void leptonHandler::applyElectronCuts()
     h_el_cutflow->Fill("Total Electrons", 1);
     if (!pass0) h_el_event_cutflow->Fill("Total Electrons", 1);
     pass0 = true;
+
+    //if (ev->evt_ == 3280379) 
+    //  cout << "\n ev->evt = " << ev->evt_ << " and electron " << l << " has pt " << ev->lepton_pt_[l] << " , eta " << ev->lepton_eta_[l] << " , phi " << ev->lepton_phi_[l] << " , scEta " << ev->lepton_scEta_[l] << " , iso " << ev->lepton_relIso_[l] << " , isTight " << ev->lepton_isTight_[l] << " , isMuon " << ev->lepton_isMuon_[l] << endl;
         
     // Cut 1: pT > 15 GeV
     if ( !(ev->lepton_pt_[l] > 15) ) continue;
@@ -227,11 +241,14 @@ void leptonHandler::applyElectronCuts()
     leadPt_el = ev->lepton_pt_[leadIndex_el];
     leadEta_el = ev->lepton_eta_[leadIndex_el];
     leadRelIso_el = ev->lepton_relIso_[leadIndex_el];
+    leadCharge_el = ev->lepton_charge_[leadIndex_mu];
+
   }
   if (subIndex_el != -99){
     subPt_el = ev->lepton_pt_[subIndex_el];
     subEta_el = ev->lepton_eta_[subIndex_el];
     subRelIso_el = ev->lepton_relIso_[subIndex_el];
+    subCharge_el = ev->lepton_charge_[subIndex_el];
   }
 
   if (nElectrons > 0 && leadIndex_el == -99)
@@ -268,27 +285,32 @@ void leptonHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
 
 void leptonHandler::checkCategoryCuts()
 {
+  // ###   SL mu   ###
   if (nMuons == 1 && nElectrons==0 && leadPt_mu >= 30 && leadRelIso_mu < 0.15){
     passSLCuts_mu = true;
     //cout << "IT'S HAPPENING!!!!!!" << endl;
   }
-  if (nMuons >= 2 && leadPt_mu >= 25 && subPt_mu >= 15){
+  // ###   SL el   ###
+  if (nElectrons == 1 && nMuons == 0 && leadPt_el >= 40)
+    passSLCuts_el = true;
+  
+  // ###   DL mumu   ###
+  if (nMuons >= 2 && leadPt_mu >= 25 && subPt_mu >= 15 && leadCharge_mu*subCharge_mu == -1){
     mll = calculateDileptonMass(leadIndex_mu, subIndex_mu);
     if (mll > 20)
       passDLCuts_mu = true;
   }
 
-  if (nElectrons == 1 && nMuons == 0 && leadPt_el >= 40)
-    passSLCuts_el = true;
-
-  if (nElectrons >= 2 && leadPt_el >= 25 && subPt_el >= 15){
+  // ###   DL ee   ###
+  if (nElectrons >= 2 && leadPt_el >= 25 && subPt_el >= 15 && leadCharge_el*subCharge_el == -1){
     mll = calculateDileptonMass(leadIndex_el, subIndex_el);
     if (mll > 20)
       passDLCuts_el = true;
     //cout << "HEY! You're part of it!! (passDLCuts_el)" << endl;
   }
 
-  if ( (nMuons>=1 && nElectrons>=1) && ((leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)) ){
+  // ###   DL emu   ###
+  if ( (nMuons>=1 && nElectrons>=1) && ((leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15) && leadCharge_mu*leadCharge_el == -1) ){
     //if ( (leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)){
     mll = calculateDileptonMass(leadIndex_mu, leadIndex_el);
     if (mll > 20)
@@ -377,6 +399,10 @@ void leptonHandler::Event(yggdrasilEventVars* eve)
   subEta_el = -99;
   subRelIso_el = -99;
   subIndex_el = -99;
+  leadCharge_el = -99;
+  subCharge_el = -99;
+  leadCharge_mu = -99;
+  subCharge_mu = -99;
   mll = -99;
   b_periodDep__HLT_IsoMu24_eta2p1 = false;
   b_periodDep__doubleMu_noMass = false;

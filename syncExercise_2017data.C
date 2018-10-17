@@ -38,7 +38,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_10-10-18/";
+  topDir = "plots_10-15-18/";
   if (p_topDir != "") topDir = p_topDir;
   isMC = true;
   if (p_isMC != "") isMC = p_isMC=="true" ? true : false;
@@ -60,8 +60,8 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
   if(singleFile) { // single file
     if (p_passFile==""){ // basically a local test
       if (isMC){
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-10-18_v9_full.root");
-	//fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-04-18_v5_crabNewFile.root");
+	//fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-10-18_v10_full.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-12-18_v14_full.root");
       }
       else{ // data!
 	fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
@@ -137,7 +137,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
 
   // ** E. Print header for csv file if requested
   if (printCSV) {
-    missingEventsTXT.open( (topDir + "/missingEvents_v14_isemu_fileV10.txt").c_str() );
+    missingEventsTXT.open( (topDir + "/missingEvents_v14_ismumu_fileV14.txt").c_str() );
     //missingEventsTXT << "run,lumi,event,passDLtriggers_el,passDLtriggers_mu,passDLtriggers_emu,passDLCuts_el,passDLCuts_mu,passDLCuts_emu,n_jets,n_btags,lep1_pt,lep1_iso,jet1_pt,jet2_pt,jet1_csv,jet2_csv,MET_pt,mll,nElectrons,nMuons" << endl;
     missingEventsTXT << "run,lumi,event,passDLtriggers_el,passDLtriggers_mu,passDLtriggers_emu,passDLCuts_el,passDLCuts_mu,passDLCuts_emu,n_jets,n_btags,el1_pt,el1_iso,el2_pt,el2_iso,mu1_pt,mu1_iso,mu2_pt,mu2_iso,jet1_pt,jet2_pt,jet1_csv,jet2_csv,MET_pt,mll,nElectrons,nMuons,MET_Type1xy,MET_Type1xy_sync" << endl;
 
@@ -225,8 +225,9 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
       //if (eve->evt_ == 7984834 || eve->evt_ == 7774040 || eve->evt_ == 7772038 || eve->evt_ == 3280722 || eve->evt_ == 7771371) {
       //v14: mumu only
       //if (eve->evt_ == 7772466 || eve->evt_ == 2896667 || eve->evt_ == 7773247 || eve->evt_ == 7248309 || eve->evt_ == 7857647 || eve->evt_ == 3287802 || eve->evt_ == 3689760 || eve->evt_ == 7983010) {
+      if (eve->evt_ == 7857647 || eve->evt_ == 7925373 || eve->evt_ == 2896907 || eve->evt_ == 7872747 || eve->evt_ == 7985715 || eve->evt_ == 6771965 || eve->evt_ == 7886713)  {
       //v14: emu only
-      if (eve->evt_ == 7925484 || eve->evt_ == 3691737 || eve->evt_ == 7872745 || eve->evt_ == 3280379 || eve->evt_ == 7982363) {
+      //if (eve->evt_ == 7925484 || eve->evt_ == 3691737 || eve->evt_ == 7872745 || eve->evt_ == 3280379 || eve->evt_ == 7982363 || eve->evt_ == 2896987) {
 	missingEventsTXT << eve->run_ << "," << eve->lumi_ << "," <<eve->evt_ << ","
 			 << (lepTool.passSLtriggers_el || lepTool.passDLtriggers_el)  << "," << (lepTool.passSLtriggers_mu || lepTool.passDLtriggers_mu) << "," << (lepTool.passSLtriggers_mu || lepTool.passSLtriggers_el || lepTool.passDLtriggers_emu) << "," << lepTool.passDLCuts_el << "," << lepTool.passDLCuts_mu << "," << lepTool.passDLCuts_emu << ","
 			 << jetMetTool.nJets << "," << jetMetTool.nBTags << ",";
@@ -249,7 +250,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
       }
 
       // * a. dilepton mumu
-      if ((lepTool.passSLtriggers_mu || lepTool.passDLtriggers_mu) && lepTool.passDLCuts_mu && (lepTool.nElectrons + lepTool.nMuons) == 2 && (lepTool.mll < 76 || lepTool.mll > 106) && jetMetTool.MET > metCutDL && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1) {
+      if ((lepTool.passSLtriggers_mu || lepTool.passDLtriggers_mu) && lepTool.passDLCuts_mu && (lepTool.nElectrons + lepTool.nMuons) == 2 && (lepTool.mll < 76 || lepTool.mll > 106) && jetMetTool.MET > metCutDL && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1 && jetMetTool.leadPt >=30 && jetMetTool.subPt >=30) {
 	csvFile << eve->run_ << "," << eve->lumi_ << "," <<eve->evt_ << ",0,0,0,0,1," << jetMetTool.nJets << "," << jetMetTool.nBTags << "," << setprecision(4) << 
 	  lepTool.leadPt_mu << "," << lepTool.leadEta_mu << "," << lepTool.leadRelIso_mu << ",lep1_pdgId,lep1_idSF,lep1_isoSF,lep1_seed," <<
 	  lepTool.subPt_mu << "," << lepTool.subEta_mu << "," << lepTool.subRelIso_mu << ",lep2_pdgId,lep2_idSF,lep2_isoSF,lep2_seed," <<
@@ -259,7 +260,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
 	  lepTool.mll << ",ttHFCategory,ttHFGenFilterTag,n_interactions,puWeight,csvSF,csvSF_lf_up,csvSF_hf_down,csvSF_cErr1_down,pdf_up,pdf_down,me_up,me_down,triggerSF,top_pt_weight,bdt_output,dnn_ttH_output,dnn_ttbb_output" << endl;
       } // end mumu
       // * a. dilepton ee
-      else if ((lepTool.passSLtriggers_el || lepTool.passDLtriggers_el) && lepTool.passDLCuts_el && (lepTool.nElectrons + lepTool.nMuons) == 2 && (lepTool.mll < 76 || lepTool.mll > 106) && jetMetTool.MET > metCutDL && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1) {
+      else if ((lepTool.passSLtriggers_el || lepTool.passDLtriggers_el) && lepTool.passDLCuts_el && (lepTool.nElectrons + lepTool.nMuons) == 2 && (lepTool.mll < 76 || lepTool.mll > 106) && jetMetTool.MET > metCutDL && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1 && jetMetTool.leadPt >=30  && jetMetTool.subPt >=30) {
 	csvFile << eve->run_ << "," << eve->lumi_ << "," <<eve->evt_ << ",0,0,1,0,0," << jetMetTool.nJets << "," << jetMetTool.nBTags << "," << setprecision(4) << 
 	  lepTool.leadPt_el << "," << lepTool.leadEta_el << "," << lepTool.leadRelIso_el << ",lep1_pdgId,lep1_idSF,lep1_isoSF,lep1_seed," <<
 	  lepTool.subPt_el << "," << lepTool.subEta_el << "," << lepTool.subRelIso_el << ",lep2_pdgId,lep2_idSF,lep2_isoSF,lep2_seed," <<
@@ -269,7 +270,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
 	  lepTool.mll << ",ttHFCategory,ttHFGenFilterTag,n_interactions,puWeight,csvSF,csvSF_lf_up,csvSF_hf_down,csvSF_cErr1_down,pdf_up,pdf_down,me_up,me_down,triggerSF,top_pt_weight,bdt_output,dnn_ttH_output,dnn_ttbb_output" << endl;
       }
       // * c. dilepton emu
-      else if ((lepTool.passSLtriggers_el || lepTool.passSLtriggers_mu || lepTool.passDLtriggers_emu) && lepTool.passDLCuts_emu && (lepTool.nElectrons + lepTool.nMuons) == 2 && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1) {
+      else if ((lepTool.passSLtriggers_el || lepTool.passSLtriggers_mu || lepTool.passDLtriggers_emu) && lepTool.passDLCuts_emu && (lepTool.nElectrons + lepTool.nMuons) == 2 && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1 && jetMetTool.leadPt >=30  && jetMetTool.subPt >=30) {
 	csvFile << eve->run_ << "," << eve->lumi_ << "," <<eve->evt_ << ",0,0,0,1,0," << jetMetTool.nJets << "," << jetMetTool.nBTags << "," << setprecision(4);
 	if(lepTool.leadPt_el > lepTool.leadPt_mu) { // electron is leading lepton
 	  csvFile << lepTool.leadPt_el << "," << lepTool.leadEta_el << "," << lepTool.leadRelIso_el << ",lep1_pdgId,lep1_idSF,lep1_isoSF,lep1_seed,";
