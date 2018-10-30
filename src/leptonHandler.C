@@ -292,11 +292,11 @@ void leptonHandler::setLeadSubleadIndices(int l, int& lead, int& sub)
 void leptonHandler::checkCategoryCuts()
 {
   // ###   SL mu   ###
-  if (nMuons == 1 && nElectrons==0 && leadPt_mu >= 30 && leadRelIso_mu < 0.15){
+  if (nMuons == 1 && nElectrons==0 && leadPt_mu >= 26 && leadRelIso_mu < 0.15){
     passSLCuts_mu = true;
   }
   // ###   SL el   ###
-  if (nElectrons == 1 && nMuons == 0 && leadPt_el >= 40)
+  if (nElectrons == 1 && nMuons == 0 && leadPt_el >= 30)
     passSLCuts_el = true;
   
   // ###   DL mumu   ###

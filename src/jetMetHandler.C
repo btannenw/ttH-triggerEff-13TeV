@@ -3,7 +3,7 @@
 
 jetMetHandler::jetMetHandler()
 {
-  passCuts = false;
+  passLeadingJetCuts = false;
   leadPt = -99;
   leadEta = -99;
   leadPhi = -99;
@@ -198,8 +198,8 @@ void jetMetHandler::applyJetCuts()
 
   for (unsigned int j = 0; j < ev->jet_pt_[0].size(); j++){ 
     
-    //if (isDebug) 
-    //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << " , eta " << ev->jet_eta_[0][j] << " , phi " << ev->jet_phi_[0][j] << " , csv " << (ev->jet_DeepCSV_b_[0][j]+ev->jet_DeepCSV_bb_[0][j]) << " , puid " << ev->jet_puid_[0][j] << endl;
+    if (isDebug) 
+      cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << " , eta " << ev->jet_eta_[0][j] << " , phi " << ev->jet_phi_[0][j] << " , csv " << (ev->jet_DeepCSV_b_[0][j]+ev->jet_DeepCSV_bb_[0][j]) << " , puid " << ev->jet_puid_[0][j] << endl;
     
     h_jet_cutflow->Fill("Jet", 1);
     // Cut 1: pT > 25 GeV
@@ -218,11 +218,10 @@ void jetMetHandler::applyJetCuts()
     if( !(ev->jet_puid_[0][j] == 7) ) continue;
     h_jet_cutflow->Fill("PUID Tight", 1);
   
-    passCuts = true;
     nJets++;
 
-    if (isDebug) 
-      cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << " , eta " << ev->jet_eta_[0][j] << " , phi " << ev->jet_phi_[0][j] << " , csv " << (ev->jet_DeepCSV_b_[0][j]+ev->jet_DeepCSV_bb_[0][j]) << " , puid " << ev->jet_puid_[0][j] << endl;
+    //if (isDebug) 
+    //  cout << "\n ev->evt = " << ev->evt_ << " and jet " << j << " has pt " << ev->jet_pt_[0][j] << " , eta " << ev->jet_eta_[0][j] << " , phi " << ev->jet_phi_[0][j] << " , csv " << (ev->jet_DeepCSV_b_[0][j]+ev->jet_DeepCSV_bb_[0][j]) << " , puid " << ev->jet_puid_[0][j] << endl;
     
     // set leading/subleading indices if appropriate
     setLeadSubleadIndices(j, leadIndex, subIndex);
@@ -249,6 +248,8 @@ void jetMetHandler::applyJetCuts()
     subDeepCSV = ( ev->jet_DeepCSV_b_[0][subIndex] + ev->jet_DeepCSV_bb_[0][subIndex] );
   }
 
+  if (leadPt >= 30 && subPt >= 30)
+    passLeadingJetCuts = true;
 }
 
 void jetMetHandler::Event(yggdrasilEventVars* eve, leptonHandler lep, bool passDebug)
@@ -257,7 +258,7 @@ void jetMetHandler::Event(yggdrasilEventVars* eve, leptonHandler lep, bool passD
   ev = eve;
   lTool = lep;
   isDebug = passDebug;
-  passCuts = false;
+  passLeadingJetCuts = false;
   nPreCutJets = ev->jet_pt_[0].size();
   nJets = 0;
   nBTags = 0;

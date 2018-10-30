@@ -32,7 +32,7 @@ class jetMetHandler{
       void Event(yggdrasilEventVars* eve, leptonHandler lep, bool passDebug);
 
       // === Variables === //
-      bool passCuts;
+      bool passLeadingJetCuts;
       int nPreCutJets;
       int nJets;
       int nBTags;
