@@ -63,7 +63,6 @@ class leptonHandler{
       double subEta_mu;
       double subCharge_mu;
       double mll;
-      double lepSF;
       bool isMC;
       bool isDebug;
       string dataPeriod;
@@ -74,6 +73,14 @@ class leptonHandler{
       int subIndex_el;
       int leadIndex_mu;
       int subIndex_mu;
+      double leadIDSF_el;
+      double leadRecoIsoSF_el;
+      double subIDSF_el;
+      double subRecoIsoSF_el;
+      double leadIDSF_mu;
+      double leadRecoIsoSF_mu;
+      double subIDSF_mu;
+      double subRecoIsoSF_mu;
 
       // === Variables === //
       TH1D* h_mu_cutflow;

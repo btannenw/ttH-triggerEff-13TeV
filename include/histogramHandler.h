@@ -31,17 +31,16 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
     stream = ("_" + stream).c_str();
 
 
-  double lepSF = lepTool.lepSF;
+  double lepSF = 1.;
   /*double lepSF = 1.;
   if (stream == "elStream")
     lepSF = lepTool.lepSF;
   else if (stream == "muStream")
     lepSF = lepTool.lepSF;
-  */
-
+  
   if (lepSF!=1)
     std::cout << "lepSF = " << lepSF << std::endl;
-
+  */
   // ===  Method B: FAST  ===
   //cout << ("h_" + nameHLT + stream + "_el0_pt").c_str() << endl;
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt").c_str() );

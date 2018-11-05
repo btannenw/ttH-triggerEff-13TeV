@@ -38,9 +38,9 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_10-30-18/";
+  topDir = "plots_11-05-18/";
   if (p_topDir != "") topDir = p_topDir;
-  isMC = false;
+  isMC = true;
   if (p_isMC != "") isMC = p_isMC=="true" ? true : false;
   isDebug = false;
   singleFile = true;
@@ -62,11 +62,11 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
     if (p_passFile==""){ // basically a local test
       if (isMC){
 	//fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-10-18_v10_full.root");
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-29-18_v20.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_11-05-18_v23_full.root");
       }
       else{ // data!
 	//fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-29-18_v20_data_BCDEF.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_11-05-18_v23_singleData_Emu_PeriodB_full.root");
       }
     }
     else // pass name of analysis file --> this probably means Condor submission
@@ -261,8 +261,8 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
       // * a. dilepton mumu
       if ((lepTool.passSLtriggers_mu || lepTool.passDLtriggers_mu) && lepTool.passDLCuts_mu && (lepTool.nElectrons + lepTool.nMuons) == 2 && (lepTool.mll < 76 || lepTool.mll > 106) && jetMetTool.MET > metCutDL && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1 && jetMetTool.passLeadingJetCuts) {
 	csvFile << eve->run_ << "," << eve->lumi_ << "," <<eve->evt_ << ",0,0,0,0,1," << jetMetTool.nJets << "," << jetMetTool.nBTags << "," << setprecision(4) << 
-	  lepTool.leadPt_mu << "," << lepTool.leadEta_mu << "," << lepTool.leadRelIso_mu << ",lep1_pdgId,lep1_idSF,lep1_isoSF,lep1_seed," <<
-	  lepTool.subPt_mu << "," << lepTool.subEta_mu << "," << lepTool.subRelIso_mu << ",lep2_pdgId,lep2_idSF,lep2_isoSF,lep2_seed," <<
+	  lepTool.leadPt_mu << "," << lepTool.leadEta_mu << "," << lepTool.leadRelIso_mu << ",lep1_pdgId,"<< lepTool.leadIDSF_mu << "," << lepTool.leadRecoIsoSF_mu <<",lep1_seed," <<
+	  lepTool.subPt_mu << "," << lepTool.subEta_mu << "," << lepTool.subRelIso_mu << ",lep2_pdgId,"<< lepTool.subIDSF_mu << "," << lepTool.subRecoIsoSF_mu <<",lep2_seed," <<
 	  jetMetTool.leadPt << "," << jetMetTool.leadEta << "," << jetMetTool.leadPhi << ",jet1_jesSF,jet1_jesSF_up,jet1_jesSF_down,jet1_jesSF_PileUpDataMC_down,jet1_jesSF_RelativeFSR_up,jet1_jerSF_nominal," << jetMetTool.leadDeepCSV << ",jet1_PUJetId,jet1_PUJetDiscriminant,jet1_seed," <<
 	  jetMetTool.subPt << "," << jetMetTool.subEta << "," << jetMetTool.subPhi << ",jet2_jesSF,jet2_jesSF_up,jet2_jesSF_down,jet2_jesSF_PileUpDataMC_down,jet2_jesSF_RelativeFSR_up,jet2_jerSF_nominal," << jetMetTool.subDeepCSV << ",jet2_PUJetId,jet2_PUJetDiscriminant,jet2_seed," <<
 	  jetMetTool.MET << "," << jetMetTool.MET_phi << ",MET_pt_phiCor,MET_phi_phiCor," <<
@@ -271,8 +271,8 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
       // * a. dilepton ee
       else if ((lepTool.passSLtriggers_el || lepTool.passDLtriggers_el) && lepTool.passDLCuts_el && (lepTool.nElectrons + lepTool.nMuons) == 2 && (lepTool.mll < 76 || lepTool.mll > 106) && jetMetTool.MET > metCutDL && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1 && jetMetTool.passLeadingJetCuts) {
 	csvFile << eve->run_ << "," << eve->lumi_ << "," <<eve->evt_ << ",0,0,1,0,0," << jetMetTool.nJets << "," << jetMetTool.nBTags << "," << setprecision(4) << 
-	  lepTool.leadPt_el << "," << lepTool.leadEta_el << "," << lepTool.leadRelIso_el << ",lep1_pdgId,lep1_idSF,lep1_isoSF,lep1_seed," <<
-	  lepTool.subPt_el << "," << lepTool.subEta_el << "," << lepTool.subRelIso_el << ",lep2_pdgId,lep2_idSF,lep2_isoSF,lep2_seed," <<
+	  lepTool.leadPt_el << "," << lepTool.leadEta_el << "," << lepTool.leadRelIso_el << ",lep1_pdgId,"<< lepTool.leadIDSF_el << "," << lepTool.leadRecoIsoSF_el <<",lep1_seed," <<
+	  lepTool.subPt_el << "," << lepTool.subEta_el << "," << lepTool.subRelIso_el << ",lep2_pdgId,"<< lepTool.subIDSF_el << "," << lepTool.subRecoIsoSF_el <<",lep2_seed," <<
 	  jetMetTool.leadPt << "," << jetMetTool.leadEta << "," << jetMetTool.leadPhi << ",jet1_jesSF,jet1_jesSF_up,jet1_jesSF_down,jet1_jesSF_PileUpDataMC_down,jet1_jesSF_RelativeFSR_up,jet1_jerSF_nominal," << jetMetTool.leadDeepCSV << ",jet1_PUJetId,jet1_PUJetDiscriminant,jet1_seed," <<
 	  jetMetTool.subPt << "," << jetMetTool.subEta << "," << jetMetTool.subPhi << ",jet2_jesSF,jet2_jesSF_up,jet2_jesSF_down,jet2_jesSF_PileUpDataMC_down,jet2_jesSF_RelativeFSR_up,jet2_jerSF_nominal," << jetMetTool.subDeepCSV << ",jet2_PUJetId,jet2_PUJetDiscriminant,jet2_seed," <<
 	  jetMetTool.MET << "," << jetMetTool.MET_phi << ",MET_pt_phiCor,MET_phi_phiCor," <<
@@ -282,12 +282,12 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
       else if ((lepTool.passSLtriggers_el || lepTool.passSLtriggers_mu || lepTool.passDLtriggers_emu) && lepTool.passDLCuts_emu && (lepTool.nElectrons + lepTool.nMuons) == 2 && jetMetTool.nJets >=2 && jetMetTool.nBTags >= 1 && jetMetTool.passLeadingJetCuts) {
 	csvFile << eve->run_ << "," << eve->lumi_ << "," <<eve->evt_ << ",0,0,0,1,0," << jetMetTool.nJets << "," << jetMetTool.nBTags << "," << setprecision(4);
 	if(lepTool.leadPt_el > lepTool.leadPt_mu) { // electron is leading lepton
-	  csvFile << lepTool.leadPt_el << "," << lepTool.leadEta_el << "," << lepTool.leadRelIso_el << ",lep1_pdgId,lep1_idSF,lep1_isoSF,lep1_seed,";
-	  csvFile << lepTool.leadPt_mu << "," << lepTool.leadEta_mu << "," << lepTool.leadRelIso_mu << ",lep2_pdgId,lep2_idSF,lep2_isoSF,lep2_seed,";
+	  csvFile << lepTool.leadPt_el << "," << lepTool.leadEta_el << "," << lepTool.leadRelIso_el << ",lep1_pdgId,"<< lepTool.leadIDSF_el << "," << lepTool.leadRecoIsoSF_el <<",lep1_seed,";
+	  csvFile << lepTool.leadPt_mu << "," << lepTool.leadEta_mu << "," << lepTool.leadRelIso_mu << ",lep2_pdgId,"<< lepTool.subIDSF_mu << "," << lepTool.subRecoIsoSF_mu <<",lep2_seed,";
 	}
 	else { // muon is leading lepton
-	  csvFile << lepTool.leadPt_mu << "," << lepTool.leadEta_mu << "," << lepTool.leadRelIso_mu << ",lep1_pdgId,lep1_idSF,lep1_isoSF,lep1_seed,";
-	  csvFile << lepTool.leadPt_el << "," << lepTool.leadEta_el << "," << lepTool.leadRelIso_el << ",lep2_pdgId,lep2_idSF,lep2_isoSF,lep2_seed,";
+	  csvFile << lepTool.leadPt_mu << "," << lepTool.leadEta_mu << "," << lepTool.leadRelIso_mu << ",lep1_pdgId,"<< lepTool.leadIDSF_mu << "," << lepTool.leadRecoIsoSF_mu <<",lep1_seed,";
+	  csvFile << lepTool.leadPt_el << "," << lepTool.leadEta_el << "," << lepTool.leadRelIso_el << ",lep2_pdgId,"<< lepTool.subIDSF_el << "," << lepTool.subRecoIsoSF_el <<",lep2_seed,";
 	}
 	csvFile << jetMetTool.leadPt << "," << jetMetTool.leadEta << "," << jetMetTool.leadPhi << ",jet1_jesSF,jet1_jesSF_up,jet1_jesSF_down,jet1_jesSF_PileUpDataMC_down,jet1_jesSF_RelativeFSR_up,jet1_jerSF_nominal," << jetMetTool.leadDeepCSV << ",jet1_PUJetId,jet1_PUJetDiscriminant,jet1_seed," <<
 	  jetMetTool.subPt << "," << jetMetTool.subEta << "," << jetMetTool.subPhi << ",jet2_jesSF,jet2_jesSF_up,jet2_jesSF_down,jet2_jesSF_PileUpDataMC_down,jet2_jesSF_RelativeFSR_up,jet2_jerSF_nominal," << jetMetTool.subDeepCSV << ",jet2_PUJetId,jet2_PUJetDiscriminant,jet2_seed," <<

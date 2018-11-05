@@ -103,6 +103,17 @@ struct yggdrasilEventVars{
   int passHLT_PFHT430_SixJet40_BTagCSV_p080_v_                       ;  
   int passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_                    ;  
 
+  /*// MET Filters, BBT 10-19-18
+  int passMETFilter_Flag_goodVertices_v_ ; 
+  int passMETFilter_Flag_globalTightHalo2016Filter_v_ ; 
+  int passMETFilter_Flag_HBHENoiseFilter_v_ ;
+  int passMETFilter_Flag_HBHENoiseIsoFilter_v_ ; 
+  int passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v_ ;
+  int passMETFilter_Flag_BadPFMuonFilter_v_ ; 
+  int passMETFilter_Flag_BadChargedCandidateFilter_v_ ;  
+  int passMETFilter_Flag_ecalBadCalibFilter_v_ ;
+  */
+
   // 5-15-18: unprescaled known... just gonna keep them all for sanity's sake [BBT]
   // 2017 MET triggers
   int passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ ;
@@ -148,31 +159,9 @@ struct yggdrasilEventVars{
   int passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_ ;
   int passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v_ ;
   int passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v_ ;
-  
-  // 5-16-18: adding jet triggers for Abhisek [BBT]
-  int passHLT_PFHT180_v_ ;
   int passHLT_PFHT250_v_ ;
-  int passHLT_PFHT350_v_ ;
-  int passHLT_PFHT370_v_ ;
-  int passHLT_PFHT430_v_ ;
-  int passHLT_PFHT510_v_ ;
-  int passHLT_PFHT590_v_ ;
-  int passHLT_PFHT680_v_ ;
-  int passHLT_PFHT780_v_ ;
-  int passHLT_PFHT890_v_ ;
-  int passHLT_PFHT1050_v_ ;
-  int passHLT_PFJet40_v_ ;
-  int passHLT_PFJet60_v_ ;
-  int passHLT_PFJet80_v_ ;
-  int passHLT_PFJet140_v_ ;
-  int passHLT_PFJet200_v_ ;
-  int passHLT_PFJet260_v_ ;
-  int passHLT_PFJet320_v_ ;
-  int passHLT_PFJet400_v_ ;
-  int passHLT_PFJet450_v_ ;
-  int passHLT_PFJet500_v_ ;
-  int passHLT_PFJet550_v_ ;
-  
+
+  // normal run stuff
   int run_;
   int lumi_;
   long evt_;
@@ -189,6 +178,7 @@ struct yggdrasilEventVars{
 
   vint lepton_isMuon_;
   vint lepton_charge_;
+  vint lepton_trkCharge_;
   vint lepton_isTight_;
   vint lepton_isLoose_;
   vint lepton_isLooseAlt_;
@@ -211,13 +201,9 @@ struct yggdrasilEventVars{
   vdouble lepton_scEta_;
   vdouble lepton_dRSingleLepTrig_;
   vdouble lepton_dRDiLepTrig_;
-
-  Float_t lepton_IDSF_;
-  Float_t lepton_IsoRecoSF_;
-  //vdouble lepton_mu_IDSF_;
-  //vdouble lepton_mu_IsoSF_;
-  //vdouble lepton_el_IDSF_;
-  //vdouble lepton_el_RecoSF_;
+  vdouble lepton_seed_; // BBT 10-12-18
+  vdouble lepton_IDSF_; // BBT 11-02-18
+  vdouble lepton_recoIsoSF_; // BBT 11-02-18
 
   vfloat truth_pt_;
   vfloat truth_eta_;
@@ -244,6 +230,8 @@ struct yggdrasilEventVars{
 
   double weight_topPt_ ; 
 
+  vdouble mcWeight_value ;
+
   Float_t MET_[rNumSys];
   Float_t uMET_[rNumSys];
   Float_t MET_phi_[rNumSys];
@@ -252,6 +240,7 @@ struct yggdrasilEventVars{
   Float_t MET_Type1xy_[rNumSys];
   Float_t MET_Type1xy_phi_[rNumSys];
 
+  // BBT, 10-04-18
   Float_t MET_Type1xy_sync_[rNumSys];
   Float_t MET_Type1xy_phi_sync_[rNumSys];
 
@@ -281,6 +270,8 @@ struct yggdrasilEventVars{
   vdouble jet_m_[rNumSys];
 
   vint    jet_puid_[rNumSys];
+  vint    jet_seed_[rNumSys]; // BBT 10-12-18
+  vdouble jet_DeepCSV_SF_[rNumSys]; // BBT 11-02-18
 
 
   vdouble  jet_precorr_pt_  [rNumSys];
@@ -297,11 +288,16 @@ struct yggdrasilEventVars{
   vint jet_genParentId_[rNumSys];
   vint jet_genGrandParentId_[rNumSys];
 
-  vdouble genjet_pt_[rNumSys];
-  vdouble genjet_eta_[rNumSys];
-  vdouble genjet_phi_[rNumSys];
-  vdouble genjet_m_[rNumSys];
-  vint    genjet_BhadronMatch_[rNumSys];
+  vdouble genjet_pt_;
+  vdouble genjet_eta_;
+  vdouble genjet_phi_;
+  vdouble genjet_m_;
+  vint    genjet_BhadronMatch_;
+
+  vdouble fatgenjet_pt_ ;
+  vdouble fatgenjet_eta_;
+  vdouble fatgenjet_phi_;
+  vdouble fatgenjet_m_  ;
 
 
   vdouble puppijet_pt_  [rNumSys]                ;
@@ -325,6 +321,7 @@ struct yggdrasilEventVars{
     std::vector<double>  fatjet_eta	      [rNumSys];
     std::vector<double>  fatjet_phi	      [rNumSys];
     std::vector<double>  fatjet_m  	      [rNumSys];
+    std::vector<double>  fatjet_doublebtagging[rNumSys];
     std::vector<int>     fatjet_nSubjet 	      [rNumSys];
     std::vector<double>  fatjet_sdmass_miniaod [rNumSys];
     std::vector<double>  fatjet_sdmass_uncorr  [rNumSys];
@@ -348,6 +345,14 @@ struct yggdrasilEventVars{
   std::vector<std::vector<double>>  fatjet_subjet_beepcsv  [rNumSys];
   std::vector<std::vector<double>>  fatjet_subjet_csvv2  [rNumSys];
 
+
+  std::vector<double>  re_fatjet_pt             [rNumSys];
+  std::vector<double>  re_fatjet_eta	        [rNumSys];
+  std::vector<double>  re_fatjet_phi	        [rNumSys];
+  std::vector<double>  re_fatjet_tau21          [rNumSys];
+  std::vector<double>  re_fatjet_tau32          [rNumSys];
+  std::vector<double>  re_fatjet_sdmass_miniaod [rNumSys];
+  std::vector<double>  re_fatjet_sdmass_uncorr  [rNumSys];
 
   ///boosted jets
   vvdouble topfatJet_vect_TLV_;
@@ -419,26 +424,6 @@ void yggdrasilEventVars::initialize(){
   passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = -99 ;
   passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ = -99 ;
 
-  // 5-15-18: add 2017 single lepton
-  passHLT_Ele28_eta2p1_WPTight_Gsf_HT150_v_ = -99 ;
-  passHLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned_v_ = -99 ;
-  passHLT_Ele32_WPTight_Gsf_L1DoubleEG_v_ = -99 ;
-  passHLT_Ele32_WPTight_Gsf_v_ = -99 ;
-  passHLT_Ele35_WPTight_Gsf_v_ = -99 ;
-  passHLT_Ele38_WPTight_Gsf_v_ = -99 ;
-  passHLT_Ele40_WPTight_Gsf_v_ = -99 ;
-  passHLT_IsoMu24_2p1_v_       = -99 ;                            
-  passHLT_IsoMu27_v_           = -99 ;                             
-  passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_ = -99 ;   
-  passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ;
-  passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ = -99 ;      
-  passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ = -99 ;    
-  passHLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v_ = -99 ;        
-  passHLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2_v_  = -99 ;    
-  passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v_ = -99 ; 
-  passHLT_PFHT430_SixJet40_BTagCSV_p080_v_  = -99 ;   
-  passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_  = -99 ;
-
   // 5-15-18 [BBT]: add 2017 MET branhces
   passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ = -99 ;
   passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_ = -99 ;
@@ -483,31 +468,8 @@ void yggdrasilEventVars::initialize(){
   passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_ = -99 ;
   passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v_ = -99 ;
   passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v_ = -99 ;
-  
-  // 05-16-18: adding jet triggers for Abhisek [BBT]
-  passHLT_PFHT180_v_ = -99 ;
   passHLT_PFHT250_v_ = -99 ;
-  passHLT_PFHT350_v_ = -99 ;
-  passHLT_PFHT370_v_ = -99 ;
-  passHLT_PFHT430_v_ = -99 ;
-  passHLT_PFHT510_v_ = -99 ;
-  passHLT_PFHT590_v_ = -99 ;
-  passHLT_PFHT680_v_ = -99 ;
-  passHLT_PFHT780_v_ = -99 ;
-  passHLT_PFHT890_v_ = -99 ;
-  passHLT_PFHT1050_v_ = -99 ;
-  passHLT_PFJet40_v_ = -99 ;
-  passHLT_PFJet60_v_ = -99 ;
-  passHLT_PFJet80_v_ = -99 ;
-  passHLT_PFJet140_v_ = -99 ;
-  passHLT_PFJet200_v_ = -99 ;
-  passHLT_PFJet260_v_ = -99 ;
-  passHLT_PFJet320_v_ = -99 ;
-  passHLT_PFJet400_v_ = -99 ;
-  passHLT_PFJet450_v_ = -99 ;
-  passHLT_PFJet500_v_ = -99 ;
-  passHLT_PFJet550_v_ = -99 ;
-  
+
   run_  = -99;
   lumi_ = -99;
   evt_ = -99;
@@ -529,8 +491,11 @@ void yggdrasilEventVars::initialize(){
   truth_pdgid_.clear();
   truth_parentIdx_.clear();
 
+  mcWeight_value.clear();
+
   lepton_isMuon_.clear();
   lepton_charge_.clear();
+  lepton_trkCharge_.clear();
   lepton_isTight_.clear();
   lepton_isLoose_.clear();
   lepton_isLooseAlt_.clear();
@@ -540,13 +505,6 @@ void yggdrasilEventVars::initialize(){
   lepton_e_.clear();
   lepton_relIso_.clear();
   lepton_puppirelIso_.clear();
-
-  lepton_IDSF_        = -99.9;
-  lepton_IsoRecoSF_   = -99.9;
-  //lepton_mu_IDSF_.clear();
-  //lepton_mu_IsoSF_.clear();
-  //lepton_el_IDSF_.clear();
-  //lepton_el_RecoSF_.clear();
 
   lepton_dbiso_CH_ .clear();
   lepton_dbiso_NH_ .clear();
@@ -562,6 +520,9 @@ void yggdrasilEventVars::initialize(){
   lepton_scEta_.clear();
   lepton_dRSingleLepTrig_.clear();
   lepton_dRDiLepTrig_.clear();
+  lepton_seed_.clear(); // BBT 10-12-18
+  lepton_IDSF_.clear(); // BBT 11-02-18
+  lepton_recoIsoSF_.clear(); // BBT 11-02-18
 
   wgt_generator_        = -99.9;
   wgt_lumi_             = -99.9;
@@ -593,6 +554,10 @@ void yggdrasilEventVars::initialize(){
     MET_Type1xy_[iSys]                        = -99.9;
     MET_Type1xy_phi_[iSys]                        = -99.9;
 
+    // BBT, 10-04-18
+    MET_Type1xy_sync_[iSys]                        = -99.9;
+    MET_Type1xy_phi_sync_[iSys]                        = -99.9;
+
     PUPPIMET_Type1xy_[iSys]                            = -99.9;
     PUPPIMET_Type1xy_phi_[iSys]                        = -99.9;
 
@@ -611,6 +576,8 @@ void yggdrasilEventVars::initialize(){
     jet_m_  [iSys].clear();
 
     jet_puid_ [iSys].clear();
+    jet_seed_ [iSys].clear(); // BBT 10-12-18
+    jet_DeepCSV_SF_ [iSys].clear(); // BBT 11-02-18
 
     jet_precorr_pt_  [iSys].clear();
     jet_precorr_phi_  [iSys].clear();
@@ -620,11 +587,6 @@ void yggdrasilEventVars::initialize(){
     jet_AssociatedGenJet_phi_[iSys].clear();
     jet_AssociatedGenJet_m_[iSys].clear();
     
-    genjet_pt_ [iSys].clear();
-    genjet_phi_[iSys].clear();
-    genjet_eta_[iSys].clear();
-    genjet_m_  [iSys].clear();
-    genjet_BhadronMatch_[iSys].clear();
 
     jet_partonflavour_[iSys].clear();
     jet_flavour_[iSys].clear();
@@ -652,6 +614,7 @@ void yggdrasilEventVars::initialize(){
     fatjet_eta	      [iSys] .clear() ;
     fatjet_phi	      [iSys] .clear() ;
     fatjet_m  	      [iSys] .clear() ;
+    fatjet_doublebtagging [iSys] .clear() ;
     fatjet_nSubjet 	      [iSys] .clear() ;
     fatjet_sdmass_miniaod [iSys] .clear() ;
     fatjet_sdmass_uncorr  [iSys] .clear() ;
@@ -675,7 +638,28 @@ void yggdrasilEventVars::initialize(){
     fatjet_subjet_beepcsv [iSys] .clear() ;
     fatjet_subjet_csvv2  [iSys] .clear() ;
 
+
+    re_fatjet_pt              [iSys] .clear() ;
+    re_fatjet_eta	      [iSys] .clear() ;
+    re_fatjet_phi	      [iSys] .clear() ;
+    re_fatjet_tau21           [iSys] .clear() ;
+    re_fatjet_tau32           [iSys] .clear() ;
+    re_fatjet_sdmass_miniaod  [iSys] .clear() ;
+    re_fatjet_sdmass_uncorr   [iSys] .clear() ;
+
   }
+
+  genjet_pt_ . clear();
+  genjet_phi_. clear();
+  genjet_eta_. clear();
+  genjet_m_  . clear();
+  genjet_BhadronMatch_ . clear();
+  
+  fatgenjet_pt_ .clear();
+  fatgenjet_phi_.clear();
+  fatgenjet_eta_.clear();
+  fatgenjet_m_  .clear();
+
 
   //boosted jets
   topfatJet_vect_TLV_.clear();
