@@ -148,16 +148,16 @@ void leptonHandler::applyMuonCuts()
     leadEta_mu = ev->lepton_eta_[leadIndex_mu];
     leadRelIso_mu = ev->lepton_relIso_[leadIndex_mu];
     leadCharge_mu = ev->lepton_charge_[leadIndex_mu];
-    leadIDSF_mu = ev->lepton_recoIsoSF_[leadIndex_mu] ;
-    leadRecoIsoSF_mu = ev->lepton_IDSF_[leadIndex_mu] ;
+    leadIDSF_mu = ev->lepton_IDSF_[leadIndex_mu] ;
+    leadRecoIsoSF_mu = ev->lepton_recoIsoSF_[leadIndex_mu] ;
   }
   if (subIndex_mu != -99){
     subPt_mu = ev->lepton_pt_[subIndex_mu];
     subEta_mu = ev->lepton_eta_[subIndex_mu];
     subRelIso_mu = ev->lepton_relIso_[subIndex_mu];
     subCharge_mu = ev->lepton_charge_[subIndex_mu];
-    subIDSF_mu = ev->lepton_recoIsoSF_[subIndex_mu] ;
-    subRecoIsoSF_mu = ev->lepton_IDSF_[subIndex_mu] ;
+    subIDSF_mu = ev->lepton_IDSF_[subIndex_mu] ;
+    subRecoIsoSF_mu = ev->lepton_recoIsoSF_[subIndex_mu] ;
   }
 
   if (nMuons > 0 && leadIndex_mu == -99)
@@ -261,16 +261,16 @@ void leptonHandler::applyElectronCuts()
     leadEta_el = ev->lepton_eta_[leadIndex_el];
     leadRelIso_el = ev->lepton_relIso_[leadIndex_el];
     leadCharge_el = ev->lepton_charge_[leadIndex_el];
-    leadIDSF_el = ev->lepton_recoIsoSF_[leadIndex_el] ;
-    leadRecoIsoSF_el = ev->lepton_IDSF_[leadIndex_el] ;
+    leadIDSF_el = ev->lepton_IDSF_[leadIndex_el] ;
+    leadRecoIsoSF_el = ev->lepton_recoIsoSF_[leadIndex_el] ;
   }
   if (subIndex_el != -99){
     subPt_el = ev->lepton_pt_[subIndex_el];
     subEta_el = ev->lepton_eta_[subIndex_el];
     subRelIso_el = ev->lepton_relIso_[subIndex_el];
     subCharge_el = ev->lepton_charge_[subIndex_el];
-    subIDSF_el = ev->lepton_recoIsoSF_[subIndex_el] ;
-    subRecoIsoSF_el = ev->lepton_IDSF_[subIndex_el] ;
+    subIDSF_el = ev->lepton_IDSF_[subIndex_el] ;
+    subRecoIsoSF_el = ev->lepton_recoIsoSF_[subIndex_el] ;
   }
 
   if (nElectrons > 0 && leadIndex_el == -99)

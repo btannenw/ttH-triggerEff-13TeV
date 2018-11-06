@@ -62,11 +62,11 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
     if (p_passFile==""){ // basically a local test
       if (isMC){
 	//fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-10-18_v10_full.root");
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_11-05-18_v23_full.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_11-05-18_v24_full.root");
       }
       else{ // data!
 	//fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_11-05-18_v23_singleData_Emu_PeriodB_full.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_11-05-18_v24_singleData_Emu_PeriodB_full.root");
       }
     }
     else // pass name of analysis file --> this probably means Condor submission
@@ -181,7 +181,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
     fChain->GetEntry(i);
 
     // ** 0. Set debug flags per event
-    if ( eve->evt_ == 2244510 || eve->evt_ == 3339961192 || eve->evt_ == 262235533 || eve->evt_ == 8032242 || eve->evt_ == 369335743 || eve->evt_ == 220173411
+    if ( eve->evt_ == 34837976 || eve->evt_ == 227079011 || eve->evt_ == 4511372
 	//eve->evt_ == 7893371 || eve->evt_ == 3690607 || eve->evt_ == 7773934 || eve->evt_ ==7646645 || eve->evt_ == 7774148 || eve->evt_ == 7772809 // n_jets and n_btags mismatch in MC [FIXED]
 	 ) 
 
