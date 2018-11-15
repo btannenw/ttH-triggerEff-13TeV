@@ -32,15 +32,23 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
 
 
   double lepSF = 1.;
-  /*double lepSF = 1.;
-  if (stream == "elStream")
-    lepSF = lepTool.lepSF;
-  else if (stream == "muStream")
-    lepSF = lepTool.lepSF;
+  double muonSF = 1.;
+  double electronSF = 1.;
+  if (lepTool.isMC) {
+    electronSF = lepTool.leadIDSF_el*lepTool.subIDSF_el * lepTool.leadRecoIsoSF_el*lepTool.subRecoIsoSF_el;
+    muonSF = lepTool.leadIDSF_mu*lepTool.subIDSF_mu * lepTool.leadRecoIsoSF_mu*lepTool.subRecoIsoSF_mu;
+    electronSF = (electronSF==0) ? 1 : electronSF; // FIXME [11-15-18], these 0 values of SFs need to be handled more intelligently
+    muonSF = (muonSF==0) ? 1 : muonSF; // FIXME [11-15-18], these 0 values of SFs need to be handled more intelligently
+    lepSF = electronSF * muonSF;
+  }
   
-  if (lepSF!=1)
-    std::cout << "lepSF = " << lepSF << std::endl;
-  */
+  if (lepSF!=1 && lepTool.passDLCuts_el)
+    std::cout << "DL(ee): lepSF = " << lepSF << "\telectronSF = " << electronSF << "\tmuonSF = " << muonSF << std::endl;
+  if (lepSF!=1 && lepTool.passDLCuts_mu)
+    std::cout << "DL(mumu): lepSF = " << lepSF << "\telectronSF = " << electronSF << "\tmuonSF = " << muonSF << std::endl;
+  if (lepSF!=1 && lepTool.passDLCuts_emu)
+    std::cout << "DL(emu): lepSF = " << lepSF << "\telectronSF = " << electronSF << "\tmuonSF = " << muonSF << std::endl;
+
   // ===  Method B: FAST  ===
   //cout << ("h_" + nameHLT + stream + "_el0_pt").c_str() << endl;
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt").c_str() );
