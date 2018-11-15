@@ -128,11 +128,11 @@ void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, T
 
   // fill histograms separated by stream if necessary --> should be needed for denominator in efficiency calculations
   if (splitStreams) {
-    if ( lepTool.passSLCuts_el && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamSL");
-    if ( lepTool.passSLCuts_mu && jetMetTool.nJets >= nJetsCutSL && jetMetTool.MET > metCutSL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamSL");
-    if ( lepTool.passDLCuts_el && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamDL");
-    if ( lepTool.passDLCuts_mu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamDL");
-    if ( lepTool.passDLCuts_emu && jetMetTool.nJets >= nJetsCutDL && jetMetTool.MET > metCutDL) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "emuStreamDL");
+    if ( lepTool.passSLCuts_el && jetMetTool.passSLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamSL");
+    if ( lepTool.passSLCuts_mu && jetMetTool.passSLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamSL");
+    if ( lepTool.passDLCuts_el && jetMetTool.passDLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamDL");
+    if ( lepTool.passDLCuts_mu && jetMetTool.passDLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamDL");
+    if ( lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "emuStreamDL");
   }
 
 }
