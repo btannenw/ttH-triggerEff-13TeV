@@ -33,6 +33,8 @@ class jetMetHandler{
 
       // === Variables === //
       bool passLeadingJetCuts;
+      bool passDLJetMetCuts;
+      bool passSLJetMetCuts;
       int nPreCutJets;
       int nJets;
       int nBTags;

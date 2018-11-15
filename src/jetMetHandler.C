@@ -4,6 +4,8 @@
 jetMetHandler::jetMetHandler()
 {
   passLeadingJetCuts = false;
+  passDLJetMetCuts = false;
+  passSLJetMetCuts = false;
   leadPt = -99;
   leadEta = -99;
   leadPhi = -99;
@@ -248,8 +250,12 @@ void jetMetHandler::applyJetCuts()
     subDeepCSV = ( ev->jet_DeepCSV_b_[0][subIndex] + ev->jet_DeepCSV_bb_[0][subIndex] );
   }
 
-  if (leadPt >= 30 && subPt >= 30)
+  if (leadPt >= 30 && subPt >= 30) {
     passLeadingJetCuts = true;
+    if (nJets >= 2 && nBTags >= 1 && ( ((lTool.passDLCuts_mu || lTool.passDLCuts_el) && MET>40) || (lTool.passDLCuts_emu) )) passDLJetMetCuts = true;
+    if (nJets >= 4 && nBTags >= 2 && MET > 20) passSLJetMetCuts = true;
+  }
+ 
 }
 
 void jetMetHandler::Event(yggdrasilEventVars* eve, leptonHandler lep, bool passDebug)
@@ -259,6 +265,8 @@ void jetMetHandler::Event(yggdrasilEventVars* eve, leptonHandler lep, bool passD
   lTool = lep;
   isDebug = passDebug;
   passLeadingJetCuts = false;
+  passDLJetMetCuts = false;
+  passSLJetMetCuts = false;
   nPreCutJets = ev->jet_pt_[0].size();
   nJets = 0;
   nBTags = 0;

@@ -316,21 +316,23 @@ void leptonHandler::checkCategoryCuts()
     passSLCuts_el = true;
   
   // ###   DL mumu   ###
-  if (nMuons >= 2 && leadPt_mu >= 25 && subPt_mu >= 15){
+  if ( (nMuons==2 && nElectrons==0) && leadPt_mu >= 25 && subPt_mu >= 15){
     mll = calculateDileptonMass(leadIndex_mu, subIndex_mu);
-    if (mll > 20 && leadCharge_mu*subCharge_mu == -1)
+    if (mll > 20 && (mll < 76 || mll > 106) &&
+	leadCharge_mu*subCharge_mu == -1)
       passDLCuts_mu = true;
   }
 
   // ###   DL ee   ###
-  if (nElectrons >= 2 && leadPt_el >= 25 && subPt_el >= 15){
+  if ( (nMuons==0 && nElectrons==2) && leadPt_el >= 25 && subPt_el >= 15){
     mll = calculateDileptonMass(leadIndex_el, subIndex_el);
-    if (mll > 20 && leadCharge_el*subCharge_el == -1)
+    if (mll > 20 && (mll < 76 || mll > 106) &&
+	leadCharge_el*subCharge_el == -1)
       passDLCuts_el = true;
   }
 
   // ###   DL emu   ###
-  if ( (nMuons>=1 && nElectrons>=1) && ((leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)) ){
+  if ( (nMuons==1 && nElectrons==1) && ((leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)) ){
     mll = calculateDileptonMass(leadIndex_mu, leadIndex_el);
     if(isDebug)
       cout << "Event " << ev->evt_ << " , leadCharge_mu " << leadCharge_mu << " , leadCharge_el " << leadCharge_el << endl;
