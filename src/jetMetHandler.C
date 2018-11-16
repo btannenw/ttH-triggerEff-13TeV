@@ -257,7 +257,8 @@ void jetMetHandler::applyJetCuts()
   }
   
   //if( MET<75) passDLJetMetCuts = true; // FIXME, only for trig study systematic [11-15-18]
- 
+  passDLJetMetCuts = true;
+
 }
 
 void jetMetHandler::Event(yggdrasilEventVars* eve, leptonHandler lep, bool passDebug)
