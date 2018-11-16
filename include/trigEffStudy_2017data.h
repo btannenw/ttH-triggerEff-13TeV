@@ -11,7 +11,7 @@
 #include "jetMetHandler.h"
 
 // top level vars
-std::string topDir, fileList;
+std::string topDir, fileList, date;
 bool printPlots, dumpFile, verbose, isMC, singleFile, printCSV, isDebug;
 int nJetsCutSL;
 int nJetsCutDL;

@@ -5,6 +5,7 @@
 #include "TLegend.h"
 #include "TLatex.h"
 #include "TLine.h"
+#include "TObjArray.h"
 
 #include "../cmsStyle/tdrStyle.C"
 #include "../cmsStyle/CMS_lumi.C"
@@ -29,6 +30,30 @@ void addOverflow(TH1D*& histo)
   histo->SetBinError  ( maxBin, sqrt( histo->GetBinError(maxBin)*histo->GetBinError(maxBin) + histo->GetBinError(maxBin+1)*histo->GetBinError(maxBin+1) ) );
   histo->SetBinContent( maxBin + 1, 0 );
   histo->SetBinError( maxBin + 1, 0 );
+
+}
+
+void print2DScaleFactorHistogramSimple(TCanvas* c0, TH2D* h2, string triggerSet, string variable)
+{
+  gStyle->SetPaintTextFormat("1.2f");
+
+  c0->cd();
+  h2->Draw("colz TEXT");
+
+  TLatex ltx1;
+  ltx1.SetTextAlign(9);
+  ltx1.SetTextFont(62);
+  ltx1.SetTextSize(0.025);
+  ltx1.SetNDC();
+  ltx1.DrawLatex(0.2, 0.57, triggerSet.c_str());
+  
+  CMS_lumi( c0, 0, 33);
+
+  c0->SetLeftMargin(0.15);
+  c0->SetRightMargin(0.05);
+  c0->SetBottomMargin(0.15);
+
+  c0->Print( (topDir + "/h_2DSF_" + triggerSet + "_" + variable + ".png").c_str() );
 
 }
 
@@ -61,6 +86,80 @@ TH2D* get2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string t
 
   //h_sf->Print("all");
   return h_sf;
+}
+
+
+TH2D* get2DScaleFactorDifferenceHistogram(TCanvas* c0, TObjArray* array, string triggerSet, string variable, string type)
+{
+  // *** 1. Set BCDEF file, get BCDEF histogram, and initialize difference histogram to 0s
+  string hist = ("h_" + triggerSet + "_" + variable).c_str();
+  TFile* f_all = (TFile*)array->FindObject( (topDir + "/tth_dileptonic_2DscaleFactors_2017BCDEF_" + date + ".root").c_str() );
+  
+  TH2D* h2_all     = (TH2D*)f_all->Get( hist.c_str() );
+  TH2D* h2_fullDiff = (TH2D*)h2_all->Clone();
+  TH2D* h2_tempDiff = new TH2D();
+  for(int x_b=1; x_b < h2_all->GetNbinsX()+1; x_b++) {
+    for(int y_b=1; y_b < h2_all->GetNbinsY()+1; y_b++) {
+      h2_fullDiff->SetBinContent(x_b, y_b, 0);
+      h2_fullDiff->SetBinError(x_b, y_b, 0);
+    }
+  }
+
+  // *** 2A. Set up iterator over SF files and run over them (lumi)
+  if (type.find("max")!=string::npos)  {
+    TIter next(array); 
+    TFile *f_SFfile = new TFile(); 
+    while( (f_SFfile = (TFile*)next()) ) 
+      { 
+	string tempName = f_SFfile->GetName();
+	if ( tempName.find("2017BCDEF")==string::npos ) {
+	  h2_tempDiff = (TH2D*)f_SFfile->Get( hist.c_str() );
+	  h2_tempDiff->Add(h2_all, -1); // get diff of BCDEF w.r.t. period under consideration
+	  for(int x_b=1; x_b < h2_all->GetNbinsX()+1; x_b++) {
+	    for(int y_b=1; y_b < h2_all->GetNbinsY()+1; y_b++) {
+	      if( abs(h2_tempDiff->GetBinContent(x_b, y_b)) > abs(h2_fullDiff->GetBinContent(x_b, y_b))) {
+		h2_fullDiff->SetBinContent(x_b, y_b, h2_tempDiff->GetBinContent(x_b, y_b));
+		h2_fullDiff->SetBinError  (x_b, y_b, h2_tempDiff->GetBinError(x_b, y_b));
+	      } // set max diff for bin
+	    } // y_b loop
+	  } // x_b loop
+	} // end if statement protecting against BCDEF
+      } // end loop over SF files
+  }// end max option
+  else if (type.find("lumi")!=string::npos) {
+    TFile* f_B = (TFile*)array->FindObject( (topDir + "/tth_dileptonic_2DscaleFactors_2017B_" + date + ".root").c_str() );
+    TFile* f_C = (TFile*)array->FindObject( (topDir + "/tth_dileptonic_2DscaleFactors_2017C_" + date + ".root").c_str() );
+    TFile* f_D = (TFile*)array->FindObject( (topDir + "/tth_dileptonic_2DscaleFactors_2017D_" + date + ".root").c_str() );
+    TFile* f_E = (TFile*)array->FindObject( (topDir + "/tth_dileptonic_2DscaleFactors_2017E_" + date + ".root").c_str() );
+    TFile* f_F = (TFile*)array->FindObject( (topDir + "/tth_dileptonic_2DscaleFactors_2017F_" + date + ".root").c_str() );
+    TH2D*  h_B = (TH2D*)f_B->Get(hist.c_str() );
+    TH2D*  h_C = (TH2D*)f_C->Get(hist.c_str() );
+    TH2D*  h_D = (TH2D*)f_D->Get(hist.c_str() );
+    TH2D*  h_E = (TH2D*)f_E->Get(hist.c_str() );
+    TH2D*  h_F = (TH2D*)f_F->Get(hist.c_str() );
+    h_B->Scale(0.115);
+    h_C->Scale(0.232);
+    h_D->Scale(0.102);
+    h_E->Scale(0.224);
+    h_F->Scale(0.326);
+
+    TH2D* lumiSum = (TH2D*)h_B->Clone();
+    lumiSum->Add(h_C);
+    lumiSum->Add(h_D);
+    lumiSum->Add(h_E);
+    lumiSum->Add(h_F);
+  
+    h2_fullDiff = (TH2D*)h2_all->Clone();
+    h2_fullDiff->Add(lumiSum, -1);
+  }//end lumi option
+
+  string maxName = h2_fullDiff->GetName();
+  h2_fullDiff->SetName(  (maxName + "_" + type + "Diff_periodDep").c_str() );
+  h2_fullDiff->SetTitle( (maxName + "_" + type + "Diff_periodDep").c_str() );
+
+  print2DScaleFactorHistogramSimple(c0, h2_fullDiff, triggerSet, (variable + "_" + type + "Diff_periodDep").c_str() );
+
+  return h2_fullDiff;
 }
 
 void print2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable, bool dumpErrorHisto=false)
@@ -116,7 +215,6 @@ void print2DScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string 
     c0->Print( (topDir + "/h_2DSF_" + triggerSet + "_" + variable + "_errorHisto.png").c_str() );
   }
 }
-
 
 TH1D* getScaleFactorHistogram(TCanvas* c0, TFile* ttbar, TFile* data, string triggerSet, string variable)
 {
@@ -673,23 +771,30 @@ void makePeriodComparison(TCanvas* c0, TFile* allPeriod, TFile* periodB, TFile* 
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  string date = "10-05-18";
+  date = "11-15-18";
   topDir = (date + "_files/").c_str();
-  string recoVersion = "r0";
+  string recoVersion = "r7";
+  string diffType = "max"; // types: lumi, max
   bool dumpSFfile = true;
 
   // *** 0. Input/output setup
   // ** I. Read files
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-29-18.root").c_str(), "READ");
   //TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_" + recoVersion + ".root").c_str(), "READ");
-  TFile* mc_ttbar = new TFile( (topDir + "/outfile_ttbarMC_DL_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v9_" + recoVersion + ".root").c_str(), "READ");
-  TFile* data_B   = new TFile( (topDir + "/outfile_MET_RunB_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_C   = new TFile( (topDir + "/outfile_MET_RunC_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_D   = new TFile( (topDir + "/outfile_MET_RunD_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_E   = new TFile( (topDir + "/outfile_MET_RunE_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_F   = new TFile( (topDir + "/outfile_MET_RunF_v9_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-
+  TFile* mc_ttbar = new TFile( (topDir + "/outfile_ttbarMC_DL_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_B   = new TFile( (topDir + "/outfile_MET_RunB_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_C   = new TFile( (topDir + "/outfile_MET_RunC_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_D   = new TFile( (topDir + "/outfile_MET_RunD_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_E   = new TFile( (topDir + "/outfile_MET_RunE_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_F   = new TFile( (topDir + "/outfile_MET_RunF_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TObjArray* a_dataFiles = new TObjArray();
+  a_dataFiles->AddLast(data_MET);
+  a_dataFiles->AddLast(data_B);
+  a_dataFiles->AddLast(data_C);
+  a_dataFiles->AddLast(data_D);
+  a_dataFiles->AddLast(data_E);
+  a_dataFiles->AddLast(data_F);
 
   // ** II. Check subdirectory structure for requested options and create directories if necessary
   topDir = (topDir + "/" + recoVersion + "/").c_str(); 
@@ -768,7 +873,7 @@ void produceCombinedEff()
   //drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
   drawNomDenomHistSingleSample(c1, data_MET, "dataBCDEF", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "met");
   drawNomDenomHistSingleSample(c1, data_MET, "dataBCDEF", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "el0_pt");
-  drawNomDenomHistSingleSample(c1, data_MET, "dataBCDEF", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
+  //drawNomDenomHistSingleSample(c1, data_MET, "dataBCDEF", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
 
 
   // *** 6. Print 1D SF plots
@@ -802,26 +907,70 @@ void produceCombinedEff()
   makePeriodComparison(c1, data_MET, data_B, data_C, data_D, data_E, data_F, mc_ttbar, "EMu_OR__X__allMET");
 
   // *** 9. Dump SF file for analyzers 
+
   if (dumpSFfile) {
-    TFile* f_outfileSF = new TFile( (topDir + "/tth_dileptonic_2DscaleFactors_" + date + ".root").c_str(), "RECREATE");
-    f_outfileSF->cd();
+    TFile* f_outfileSF = new TFile();
+    TObjArray *a_SFfiles = new TObjArray();
     
-    TH2D* h_mu0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta");
-    TH2D* h_mu1_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu1_pt_vs_eta");
-    TH2D* h_mu0_eta_mu1_eta = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_eta_vs_mu1_eta");
-    TH2D* h_mu0_pt_mu1_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleMu_OR__X__allMET", "mu0_pt_vs_mu1_pt");
-    TH2D* h_el0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_pt_vs_eta");
-    TH2D* h_el1_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el1_pt_vs_eta");
-    TH2D* h_el0_eta_el1_eta = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_eta_vs_el1_eta");
-    TH2D* h_el0_pt_el1_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "DoubleEl_OR__X__allMET", "el0_pt_vs_el1_pt");
-    TH2D* h_emu_mu0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt_vs_eta");
-    TH2D* h_emu_el0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "el0_pt_vs_eta");
-    TH2D* h_emu_mu0_eta_el0_eta = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_eta_vs_el0_eta");
-    TH2D* h_emu_mu0_pt_el0_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, data_MET, "EMu_OR__X__allMET", "mu0_pt_vs_el0_pt");
+    // ** A. Make SF files
+    TIter next(a_dataFiles); 
+    TFile *dataFile = new TFile(); 
+    while( (dataFile = (TFile*)next()) ) 
+      { 
+	std::cout << "Processing SF outfile for " << dataFile->GetName() << std::endl;
+	string dataFileName = dataFile->GetName();
+	string period = "";
+	if ( dataFileName.find("RunBCDEF")!=string::npos )  period = "2017BCDEF";
+	else if ( dataFileName.find("RunB")!=string::npos ) period = "2017B";
+	else if ( dataFileName.find("RunC")!=string::npos ) period = "2017C";
+	else if ( dataFileName.find("RunD")!=string::npos ) period = "2017D";
+	else if ( dataFileName.find("RunE")!=string::npos ) period = "2017E";
+	else if ( dataFileName.find("RunF")!=string::npos ) period = "2017F";
+	else
+	  std::cout << "HALP, I DON'T KNOW WHAT RUN PERIOD I'M USING" << std::endl;
+	
+	f_outfileSF = new TFile( (topDir + "/tth_dileptonic_2DscaleFactors_" + period + "_" + date + ".root").c_str(), "RECREATE");
+	f_outfileSF->cd();
+	
+	TH2D* h_mu0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta");
+	TH2D* h_mu1_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "DoubleMu_OR__X__allMET", "mu1_pt_vs_eta");
+	TH2D* h_mu0_eta_mu1_eta = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "DoubleMu_OR__X__allMET", "mu0_eta_vs_mu1_eta");
+	TH2D* h_mu0_pt_mu1_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "DoubleMu_OR__X__allMET", "mu0_pt_vs_mu1_pt");
+	TH2D* h_el0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "DoubleEl_OR__X__allMET", "el0_pt_vs_eta");
+	TH2D* h_el1_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "DoubleEl_OR__X__allMET", "el1_pt_vs_eta");
+	TH2D* h_el0_eta_el1_eta = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "DoubleEl_OR__X__allMET", "el0_eta_vs_el1_eta");
+	TH2D* h_el0_pt_el1_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "DoubleEl_OR__X__allMET", "el0_pt_vs_el1_pt");
+	TH2D* h_emu_mu0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "EMu_OR__X__allMET", "mu0_pt_vs_eta");
+	TH2D* h_emu_el0_pt_eta      = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "EMu_OR__X__allMET", "el0_pt_vs_eta");
+	TH2D* h_emu_mu0_eta_el0_eta = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "EMu_OR__X__allMET", "mu0_eta_vs_el0_eta");
+	TH2D* h_emu_mu0_pt_el0_pt   = get2DScaleFactorHistogram(c1, mc_ttbar, dataFile, "EMu_OR__X__allMET", "mu0_pt_vs_el0_pt");
+	
+	f_outfileSF->Write();
+	a_SFfiles->AddLast(f_outfileSF);
+	//f_outfileSF->Close();
+      }
+    
+    // ** B. Make period dependent comparisons between SF files
+    f_outfileSF = new TFile( (topDir + "/tth_dileptonic_2DscaleFactors_2017BCDEF_" + date + "_" + diffType + "Diff_periodDep.root").c_str(), "RECREATE");
+    
+    TH2D* diff_mu0_pt_mu1_pt   = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "DoubleMu_OR__X__allMET", "mu0_pt_vs_mu1_pt", diffType);
+    TH2D* diff_mu0_eta_mu1_eta = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "DoubleMu_OR__X__allMET", "mu0_eta_vs_mu1_eta", diffType);
+    TH2D* diff_mu0_pt_eta      = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta", diffType);
+    TH2D* diff_mu1_pt_eta      = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "DoubleMu_OR__X__allMET", "mu1_pt_vs_eta", diffType);
+    
+    TH2D* diff_el0_pt_el1_pt   = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "DoubleEl_OR__X__allMET", "el0_pt_vs_el1_pt", diffType);
+    TH2D* diff_el0_eta_el1_eta = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "DoubleEl_OR__X__allMET", "el0_eta_vs_el1_eta", diffType);  
+    TH2D* diff_el0_pt_eta      = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "DoubleEl_OR__X__allMET", "el0_pt_vs_eta", diffType);
+    TH2D* diff_el1_pt_eta      = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "DoubleEl_OR__X__allMET", "el1_pt_vs_eta", diffType);
+    
+    TH2D* diff_EMu_mu0_pt_el0_pt   = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "EMu_OR__X__allMET", "mu0_pt_vs_el0_pt", diffType);
+    TH2D* diff_EMu_mu0_eta_el0_eta = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "EMu_OR__X__allMET", "mu0_eta_vs_el0_eta", diffType);
+    TH2D* diff_EMu_mu0_pt_eta      = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "EMu_OR__X__allMET", "mu0_pt_vs_eta", diffType);
+    TH2D* diff_EMu_el0_pt_eta      = get2DScaleFactorDifferenceHistogram(c1, a_SFfiles, "EMu_OR__X__allMET", "el0_pt_vs_eta", diffType);
 
     f_outfileSF->Write();
     f_outfileSF->Close();
-    
-  }
 
+  } // END dumpSF LOOP
+  
 }
