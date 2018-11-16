@@ -84,6 +84,9 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_njets").c_str() );
   h0->Fill( jetMetTool.nJets, lepSF );
 
+  h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_nbtags").c_str() );
+  h0->Fill( jetMetTool.nBTags, lepSF );
+
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mll").c_str() );
   h0->Fill( lepTool.mll, lepSF );
   
@@ -239,6 +242,12 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_njets->SetXTitle("N_{jets}");
   h_njets->SetYTitle("Entries / Bin");
 
+  // N_btags
+  // === 11-15-18 (how did i not have this before?) ===
+  TH1D* h_nbtags = new TH1D( ("h_" + nameHLT + stream + "_nbtags").c_str(),  ("h_" + nameHLT + stream + "_nbtags").c_str(), 8, 0, 8);  
+  h_nbtags->SetXTitle("N_{b-tags}");
+  h_nbtags->SetYTitle("Entries / Bin");
+
   // m_ll
   TH1D* h_mll = new TH1D( ("h_" + nameHLT + stream + "_mll").c_str(),  ("h_" + nameHLT + stream + "_mll").c_str(), 25, 0, 200);
   h_mll->SetXTitle("M_{ll}");
@@ -326,6 +335,7 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   array->AddLast(h_mu0_relIso);
   array->AddLast(h_el0_relIso);
   array->AddLast(h_njets);
+  array->AddLast(h_nbtags);
   array->AddLast(h_mll);
   array->AddLast(h_met);
   array->AddLast(h_nPV);
