@@ -16,13 +16,18 @@
 
 #include "../cmsStyle/tdrStyle.C"
 #include "../cmsStyle/CMS_lumi.C"
+#include "crossSections.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>
 
 
+void returnSampleXsec(string sample)
+{
 
-void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string stream="")
+}
+
+void fillHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string filename, string stream="")
 {
   // initialization
   TH1D* h0 = new TH1D();
@@ -30,10 +35,13 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
   if (stream !=  "")
     stream = ("_" + stream).c_str();
 
+  double totalWeight = 1.;
 
+  // ** I. lepton SFs
   double lepSF = 1.;
   double muonSF = 1.;
   double electronSF = 1.;
+
   if (lepTool.isMC) {
     electronSF = lepTool.leadIDSF_el*lepTool.subIDSF_el * lepTool.leadRecoIsoSF_el*lepTool.subRecoIsoSF_el;
     muonSF = lepTool.leadIDSF_mu*lepTool.subIDSF_mu * lepTool.leadRecoIsoSF_mu*lepTool.subRecoIsoSF_mu;
@@ -41,13 +49,9 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
     muonSF = (muonSF==0) ? 1 : muonSF; // FIXME [11-15-18], these 0 values of SFs need to be handled more intelligently
     lepSF = electronSF * muonSF;
   }
+
+  // ** II. cross-section SFs
   
-  if (lepSF!=1 && lepTool.passDLCuts_el)
-    std::cout << "DL(ee): lepSF = " << lepSF << "\telectronSF = " << electronSF << "\tmuonSF = " << muonSF << std::endl;
-  if (lepSF!=1 && lepTool.passDLCuts_mu)
-    std::cout << "DL(mumu): lepSF = " << lepSF << "\telectronSF = " << electronSF << "\tmuonSF = " << muonSF << std::endl;
-  if (lepSF!=1 && lepTool.passDLCuts_emu)
-    std::cout << "DL(emu): lepSF = " << lepSF << "\telectronSF = " << electronSF << "\tmuonSF = " << muonSF << std::endl;
 
   // ===  Method B: FAST  ===
   //cout << ("h_" + nameHLT + stream + "_el0_pt").c_str() << endl;
@@ -132,18 +136,18 @@ void fillEfficiencyHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMe
 
 }
 
-void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, bool splitStreams=false)
+void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string filename, bool splitStreams=false)
 {
   //cout << "fillEfficiencyHistograms()" << endl;
-  fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT);
+  fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename);
 
   // fill histograms separated by stream if necessary --> should be needed for denominator in efficiency calculations
   if (splitStreams) {
-    if ( lepTool.passSLCuts_el && jetMetTool.passSLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamSL");
-    if ( lepTool.passSLCuts_mu && jetMetTool.passSLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamSL");
-    if ( lepTool.passDLCuts_el && jetMetTool.passDLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "elStreamDL");
-    if ( lepTool.passDLCuts_mu && jetMetTool.passDLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "muStreamDL");
-    if ( lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillEfficiencyHistogramsByStream( lepTool, jetMetTool, array, nameHLT, "emuStreamDL");
+    if ( lepTool.passSLCuts_el && jetMetTool.passSLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "elStreamSL");
+    if ( lepTool.passSLCuts_mu && jetMetTool.passSLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "muStreamSL");
+    if ( lepTool.passDLCuts_el && jetMetTool.passDLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "elStreamDL");
+    if ( lepTool.passDLCuts_mu && jetMetTool.passDLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "muStreamDL");
+    if ( lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "emuStreamDL");
   }
 
 }

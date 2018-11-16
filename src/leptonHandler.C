@@ -48,6 +48,7 @@ leptonHandler::leptonHandler()
 
   isMC = false;
   dataPeriod = "";
+  dataStream = "";
   b_periodDep__HLT_IsoMu24_eta2p1 = false;
   b_periodDep__doubleMu_noMass = false;
   b_periodDep__doubleMu_withMass = false;
@@ -78,13 +79,21 @@ void leptonHandler::setFlags(bool passMC, string inputFile)
     else
     std::cout << "muTool.isMC = false!" << endl;*/
   if (!isMC){
-    if (inputFile.find("Run2017A") != string::npos) dataPeriod = "A";
+    // *** I. Period
+    if (inputFile.find("Run2017A") != string::npos)      dataPeriod = "A";
     else if (inputFile.find("Run2017B") != string::npos) dataPeriod = "B";
     else if (inputFile.find("Run2017C") != string::npos) dataPeriod = "C";
     else if (inputFile.find("Run2017D") != string::npos) dataPeriod = "D";
     else if (inputFile.find("Run2017E") != string::npos) dataPeriod = "E";
     else if (inputFile.find("Run2017F") != string::npos) dataPeriod = "F";
     else                                                 dataPeriod = "";
+  
+    // *** II. Stream
+    if (inputFile.find("DoubleMu") != string::npos)      dataStream == "mumu";
+    else if (inputFile.find("DoubleEl") != string::npos) dataStream == "ee";
+    else if (inputFile.find("EMu") != string::npos)      dataStream == "emu";
+    else                                                 dataStream == "";
+
   }
   
 }
@@ -318,25 +327,26 @@ void leptonHandler::checkCategoryCuts()
   // ###   DL mumu   ###
   if ( (nMuons==2 && nElectrons==0) && leadPt_mu >= 25 && subPt_mu >= 15){
     mll = calculateDileptonMass(leadIndex_mu, subIndex_mu);
-    if (mll > 20 && (mll < 76 || mll > 106) &&
-	leadCharge_mu*subCharge_mu == -1)
+    if (mll > 20 && (mll < 76 || mll > 106) && leadCharge_mu*subCharge_mu == -1 &&
+	(isMC || (!isMC && (dataStream=="" || dataStream=="mumu")) ) ) 
       passDLCuts_mu = true;
   }
-
+  
   // ###   DL ee   ###
   if ( (nMuons==0 && nElectrons==2) && leadPt_el >= 25 && subPt_el >= 15){
     mll = calculateDileptonMass(leadIndex_el, subIndex_el);
-    if (mll > 20 && (mll < 76 || mll > 106) &&
-	leadCharge_el*subCharge_el == -1)
+    if (mll > 20 && (mll < 76 || mll > 106) && leadCharge_el*subCharge_el == -1 &&
+	(isMC || (!isMC && (dataStream=="" || dataStream=="ee")) ) )
       passDLCuts_el = true;
   }
-
+  
   // ###   DL emu   ###
   if ( (nMuons==1 && nElectrons==1) && ((leadPt_mu >= 25 && leadPt_el >= 15) || (leadPt_el >= 25 && leadPt_mu >= 15)) ){
     mll = calculateDileptonMass(leadIndex_mu, leadIndex_el);
     if(isDebug)
       cout << "Event " << ev->evt_ << " , leadCharge_mu " << leadCharge_mu << " , leadCharge_el " << leadCharge_el << endl;
-    if (mll > 20 && leadCharge_mu*leadCharge_el == -1)
+    if (mll > 20 && leadCharge_mu*leadCharge_el == -1 &&
+	(isMC || (!isMC && (dataStream=="" || dataStream=="emu")) ) )
       passDLCuts_emu = true;
   }
   

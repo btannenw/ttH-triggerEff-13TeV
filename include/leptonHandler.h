@@ -66,6 +66,7 @@ class leptonHandler{
       bool isMC;
       bool isDebug;
       string dataPeriod;
+      string dataStream;
       bool b_periodDep__HLT_IsoMu24_eta2p1;
       bool b_periodDep__doubleMu_noMass;
       bool b_periodDep__doubleMu_withMass;
