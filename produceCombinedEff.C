@@ -325,6 +325,7 @@ void print1DScaleFactorHistogramCollection(TCanvas* c0, TFile* ttbar, TFile* dat
   }
   print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "met");
   print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "njets");
+  //print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "nbtags");
   print1DScaleFactorHistogram(c0, ttbar, data, triggerSet, "nPV");
 
 }
@@ -406,6 +407,7 @@ void drawDoubleEfficiencyCollection(TCanvas* c0, TFile* ttbar, TFile* data, stri
   }
   drawDoubleEfficiency( c0, ttbar, data, triggerSet, "met", addSF );
   drawDoubleEfficiency( c0, ttbar, data, triggerSet, "njets", addSF );
+  //drawDoubleEfficiency( c0, ttbar, data, triggerSet, "nbtags", addSF );
   drawDoubleEfficiency( c0, ttbar, data, triggerSet, "nPV", addSF );
 
 }
@@ -482,6 +484,7 @@ void drawSingleTriggerTwoSamplesCollection(TCanvas* c0, TFile* ttbar, TFile* dat
   }
   drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "met" );
   drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "njets" );
+  //drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "nbtags" );
   drawSingleTriggerTwoSamples( c0, ttbar, data, triggerSet, "nPV" );
 }
 
@@ -764,6 +767,7 @@ void makePeriodComparison(TCanvas* c0, TFile* allPeriod, TFile* periodB, TFile* 
   }
   drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "met");
   drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "njets");
+  //drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "nbtags");
   drawPeriodComparison( c0, allPeriod, periodB, periodC, periodD, periodE, periodF, ttbar, triggerSet, "nPV");
   
 }
@@ -771,10 +775,10 @@ void makePeriodComparison(TCanvas* c0, TFile* allPeriod, TFile* periodB, TFile* 
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  date = "11-15-18";
+  date = "11-18-18";
   topDir = (date + "_files/").c_str();
-  string recoVersion = "r7";
-  string diffType = "max"; // types: lumi, max
+  string recoVersion = "r6";
+  string diffType = "lumi"; // types: lumi, max
   bool dumpSFfile = true;
 
   // *** 0. Input/output setup
@@ -869,6 +873,7 @@ void produceCombinedEff()
   drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "met");
   drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "el0_pt");
   drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "njets");
+  //drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "nbtags");
   drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "EMu_OR__X__allMET", "HLT_allMET_emuStreamDL", "mu0_pt");
   //drawNomDenomHistSingleSample(c1, mc_ttbar, "ttbarMC", "SingleEl__X__allMET", "HLT_allMET_elStreamSL", "el0_pt");
   drawNomDenomHistSingleSample(c1, data_MET, "dataBCDEF", "DoubleEl_OR__X__allMET", "HLT_allMET_elStreamDL", "met");
