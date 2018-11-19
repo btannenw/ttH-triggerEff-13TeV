@@ -89,10 +89,10 @@ void leptonHandler::setFlags(bool passMC, string inputFile)
     else                                                 dataPeriod = "";
   
     // *** II. Stream
-    if (inputFile.find("DoubleMu") != string::npos)      dataStream == "mumu";
-    else if (inputFile.find("DoubleEl") != string::npos) dataStream == "ee";
-    else if (inputFile.find("EMu") != string::npos)      dataStream == "emu";
-    else                                                 dataStream == "";
+    if (inputFile.find("DoubleMu") != string::npos)      dataStream = "mumu";
+    else if (inputFile.find("DoubleEl") != string::npos) dataStream = "ee";
+    else if (inputFile.find("EMu") != string::npos)      dataStream = "emu";
+    else                                                 dataStream = "";
 
   }
   

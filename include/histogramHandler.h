@@ -22,11 +22,6 @@
 #include <sys/types.h>
 
 
-void returnSampleXsec(string sample)
-{
-
-}
-
 void fillHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string filename, string stream="")
 {
   // initialization
@@ -49,89 +44,95 @@ void fillHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMetTool, TOb
     muonSF = (muonSF==0) ? 1 : muonSF; // FIXME [11-15-18], these 0 values of SFs need to be handled more intelligently
     lepSF = electronSF * muonSF;
   }
+  totalWeight*=lepSF;
 
   // ** II. cross-section SFs
-  
+  /*double xSec = 999999;
+  Color_t c_plotColor = 0;
+  string sampleName = "PENELOPE";
+  setSampleVariables(filename, &xSec, &c_plotColor, &sampleName);
+  std::cout << "sampleName: " << sampleName << "\txSec [pb]: " << xSec << "\tplotColor: " << c_plotColor << std::endl;
+  */
 
   // ===  Method B: FAST  ===
   //cout << ("h_" + nameHLT + stream + "_el0_pt").c_str() << endl;
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt").c_str() );
-  h0->Fill( lepTool.leadPt_el, lepSF );
+  h0->Fill( lepTool.leadPt_el, totalWeight );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el1_pt").c_str() );
-  h0->Fill( lepTool.subPt_el, lepSF );
+  h0->Fill( lepTool.subPt_el, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_eta").c_str() );
-  h0->Fill( lepTool.leadEta_el, lepSF );
+  h0->Fill( lepTool.leadEta_el, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el1_eta").c_str() );
-  h0->Fill( lepTool.subEta_el, lepSF );
+  h0->Fill( lepTool.subEta_el, totalWeight );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt").c_str() );
-  h0->Fill( lepTool.leadPt_mu, lepSF );
+  h0->Fill( lepTool.leadPt_mu, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu1_pt").c_str() );
-  h0->Fill( lepTool.subPt_mu, lepSF );
+  h0->Fill( lepTool.subPt_mu, totalWeight );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta").c_str() );
-  h0->Fill( lepTool.leadEta_mu, lepSF );
+  h0->Fill( lepTool.leadEta_mu, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu1_eta").c_str() );
-  h0->Fill( lepTool.subEta_mu, lepSF );
+  h0->Fill( lepTool.subEta_mu, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_relIso").c_str() );
-  h0->Fill( lepTool.leadRelIso_mu, lepSF );
+  h0->Fill( lepTool.leadRelIso_mu, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_relIso").c_str() );
-  h0->Fill( lepTool.leadRelIso_el, lepSF );
+  h0->Fill( lepTool.leadRelIso_el, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_njets").c_str() );
-  h0->Fill( jetMetTool.nJets, lepSF );
+  h0->Fill( jetMetTool.nJets, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_nbtags").c_str() );
-  h0->Fill( jetMetTool.nBTags, lepSF );
+  h0->Fill( jetMetTool.nBTags, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_mll").c_str() );
-  h0->Fill( lepTool.mll, lepSF );
+  h0->Fill( lepTool.mll, totalWeight );
   
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_met").c_str() );
-  h0->Fill( jetMetTool.MET, lepSF );
+  h0->Fill( jetMetTool.MET, totalWeight );
 
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_nPV").c_str() );
-  h0->Fill( jetMetTool.nPV, lepSF );
+  h0->Fill( jetMetTool.nPV, totalWeight );
 
   // di-muon (and e+mu)
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str() );
-  h2->Fill( lepTool.leadPt_mu, abs(lepTool.leadEta_mu), lepSF );
+  h2->Fill( lepTool.leadPt_mu, abs(lepTool.leadEta_mu), totalWeight );
 
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu1_pt_vs_eta").c_str() );
-  h2->Fill( lepTool.subPt_mu, abs(lepTool.subEta_mu), lepSF );
+  h2->Fill( lepTool.subPt_mu, abs(lepTool.subEta_mu), totalWeight );
 
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt_vs_mu1_pt").c_str() );
-  h2->Fill( lepTool.leadPt_mu, lepTool.subPt_mu, lepSF );
+  h2->Fill( lepTool.leadPt_mu, lepTool.subPt_mu, totalWeight );
 
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta_vs_mu1_eta").c_str() );
-  h2->Fill( abs(lepTool.leadEta_mu), abs(lepTool.subEta_mu), lepSF );
+  h2->Fill( abs(lepTool.leadEta_mu), abs(lepTool.subEta_mu), totalWeight );
 
   // di-electron (and e+mu)
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str() );
-  h2->Fill( lepTool.leadPt_el, abs(lepTool.leadEta_el), lepSF );
+  h2->Fill( lepTool.leadPt_el, abs(lepTool.leadEta_el), totalWeight );
 
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el1_pt_vs_eta").c_str() );
-  h2->Fill( lepTool.subPt_el, abs(lepTool.subEta_el), lepSF );
+  h2->Fill( lepTool.subPt_el, abs(lepTool.subEta_el), totalWeight );
 
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt_vs_el1_pt").c_str() );
-  h2->Fill( lepTool.leadPt_el, lepTool.subPt_el, lepSF );
+  h2->Fill( lepTool.leadPt_el, lepTool.subPt_el, totalWeight );
 
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_eta_vs_el1_eta").c_str() );
-  h2->Fill( abs(lepTool.leadEta_el), abs(lepTool.subEta_el), lepSF );
+  h2->Fill( abs(lepTool.leadEta_el), abs(lepTool.subEta_el), totalWeight );
 
   // e+mu only
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt_vs_el0_pt").c_str() );
-  h2->Fill( lepTool.leadPt_mu, lepTool.leadPt_el, lepSF );
+  h2->Fill( lepTool.leadPt_mu, lepTool.leadPt_el, totalWeight );
 
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta_vs_el0_eta").c_str() );
-  h2->Fill( abs(lepTool.leadEta_mu), abs(lepTool.leadEta_el), lepSF );
+  h2->Fill( abs(lepTool.leadEta_mu), abs(lepTool.leadEta_el), totalWeight );
 
 
 }
@@ -150,6 +151,7 @@ void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, T
     if ( lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "emuStreamDL");
   }
 
+  
 }
 
 void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
