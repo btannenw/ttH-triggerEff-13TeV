@@ -256,7 +256,7 @@ void jetMetHandler::applyJetCuts()
     if (nJets >= 4 && nBTags >= 2 && MET > 20) passSLJetMetCuts = true;
   }
 
-  if (nJets >= 3 && ( ((lTool.passDLCuts_mu || lTool.passDLCuts_el) && MET>40) || (lTool.passDLCuts_emu) )) passDLJetMetCuts = true; // FIXME, only for trig study systematic [11-15-18]  
+  if (nPV < 30 && ( ((lTool.passDLCuts_mu || lTool.passDLCuts_el) && MET>40) || (lTool.passDLCuts_emu) )) passDLJetMetCuts = true; // FIXME, only for trig study systematic [11-15-18]  
 }
 
 void jetMetHandler::Event(yggdrasilEventVars* eve, leptonHandler lep, bool passDebug)

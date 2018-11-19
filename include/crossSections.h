@@ -8,6 +8,7 @@
 double xSec = 999999;
 Color_t c_plotColor = 0;
 string sampleName = "PENELOPE";
+double nEvents = 1;
 
 // *** 1. Branching ratios
 double BR_Hbb   = 0.5824;
@@ -53,101 +54,120 @@ void setSampleVariables(string filename, double xSec, Color_t c_plotColor, strin
     xSec = xSec_ttHTobb;
     sampleName = "ttHTobb";
     c_plotColor = c_ttH;
+    nEvents = 8000000;
   }
   else if( filename.find("TTToSemiLeptonic") != string::npos ) {
     xSec = xSec_TTToSemiLeptonic;
     sampleName = "TTToSemiLeptonic";
     c_plotColor = c_ttbar_SL;
+    nEvents = ;
   }
   else if( filename.find("TTTo2L2Nu") != string::npos ) {
     xSec = xSec_TTTo2L2Nu;
     sampleName = "TTTo2L2Nu";
     c_plotColor = c_ttbar_DL;
+    nEvents = ;
   }
   else if( filename.find("TTToHadronic") != string::npos ) {
     xSec = xSec_TTToHadronic;
     sampleName = "TTToHadronic";
     c_plotColor = c_ttbar_had;
+    nEvents = ;
   }
   else if( filename.find("ST_s_channel_4f_leptonDecays") != string::npos ) {
     xSec = xSec_ST_s_channel_4f_leptonDecays;
     sampleName = "ST_s_channel_4f_leptonDecays";
     c_plotColor = c_singleTop;
+    nEvents = ;
   }
   else if( filename.find("ST_t_channel_top_4f_inclusiveDecays") != string::npos ) {     
     xSec = xSec_ST_t_channel_top_4f_inclusiveDecays;
     sampleName = "ST_t_channel_top_4f_inclusiveDecays";
     c_plotColor = c_singleTop;
+    nEvents = ;
   }
   else if( filename.find("ST_t_channel_antitop_4f_inclusiveDecays") != string::npos ) {
     xSec = xSec_ST_t_channel_antitop_4f_inclusiveDecays;
     sampleName = "ST_t_channel_antitop_4f_inclusiveDecays";
     c_plotColor = c_singleTop;
+    nEvents = ;
   }
   else if( filename.find("ST_tW_top_5f_inclusiveDecays") != string::npos ) {
     xSec = xSec_ST_tW_top_5f_inclusiveDecays;
     sampleName = "ST_tW_top_5f_inclusiveDecays";
     c_plotColor = c_singleTop;
+    nEvents = ;
   }
   else if( filename.find("ST_tW_antitop_5f_inclusiveDecays") != string::npos ) {
     xSec = xSec_ST_tW_antitop_5f_inclusiveDecays;
     sampleName = "ST_tW_antitop_5f_inclusiveDecays";
     c_plotColor = c_singleTop;
+    nEvents = ;
   }
   else if( filename.find("WJetsToLNu") != string::npos ) {
     xSec = xSec_WJetsToLNu;
     sampleName = "WJetsToLNu";
     c_plotColor = c_Vjets;
+    nEvents = ;
   }
   else if( filename.find("WW") != string::npos ) {
     xSec = xSec_WW;
     sampleName = "WW";
     c_plotColor = c_diboson;
+    nEvents = ;
   }
   else if( filename.find("WZ") != string::npos ) {
     xSec = xSec_WZ;
     sampleName = "WZ";
     c_plotColor = c_diboson;
+    nEvents = ;
   }
   else if( filename.find("ZZ") != string::npos ) {
     xSec = xSec_ZZ;
     sampleName = "ZZ";
     c_plotColor = c_diboson;
+    nEvents = ;
   }
   else if( filename.find("DYJetsToLL_M_10to50") != string::npos ) {
     xSec = xSec_DYJetsToLL_M_10to50;
     sampleName = "DYJetsToLL_M_10to50";
     c_plotColor = c_Vjets;
+    nEvents = ;
   }
   else if( filename.find("DYJetsToLL_M_50") != string::npos ) {
     xSec = xSec_DYJetsToLL_M_50;
     sampleName = "DYJetsToLL_M_50";
     c_plotColor = c_Vjets;
+    nEvents = ;
   }
   else if( filename.find("TTWJetsToLNu") != string::npos ) {
     xSec = xSec_TTWJetsToLNu;
     sampleName = "TTWJetsToLNu";
     c_plotColor = c_ttV;
+    nEvents = ;
   }
   else if( filename.find("TTWJetsToQQ") != string::npos ) {
     xSec = xSec_TTWJetsToQQ;
     sampleName = "TTWJetsToQQ";
     c_plotColor = c_ttV;
+    nEvents = ;
   }
   else if( filename.find("TTZToLLNuNu_M_10") != string::npos ) {
     xSec = xSec_TTZToLLNuNu_M_10;
     sampleName = "TTZToLLNuNu_M_10";
     c_plotColor = c_ttV;
+    nEvents = ;
   }
   else if( filename.find("TTZToQQ") != string::npos ) {
     xSec = xSec_TTZToQQ;
     sampleName = "TTZToQQ";
     c_plotColor = c_ttV;
+    nEvents = ;
   }
   else { 
     xSec = 999999;
     c_plotColor = 0;
     sampleName = "PENELOPE";
-
+    nEvents = ;
   }
 }
