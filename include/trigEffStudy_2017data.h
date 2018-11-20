@@ -64,7 +64,6 @@ TObjArray* a_DoubleMu_OR__X__allMET = new TObjArray();
 TObjArray* a_DoubleEl_OR__X__allMET = new TObjArray();
 TObjArray* a_EMu_OR__X__allMET = new TObjArray();
 
-
 TObjArray* a_Efficiencies = new TObjArray();
 
 std::vector <std::string> metTriggers = 

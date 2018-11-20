@@ -49,6 +49,7 @@ class jetMetHandler{
       double MET;
       double MET_phi;
       double nPV;
+      double ttbarJetID;
       bool passOneMETTrigger;
       bool passAllMETTriggers;
       bool isDebug;

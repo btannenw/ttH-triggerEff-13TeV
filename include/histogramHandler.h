@@ -16,7 +16,7 @@
 
 #include "../cmsStyle/tdrStyle.C"
 #include "../cmsStyle/CMS_lumi.C"
-#include "crossSections.h"
+//#include "crossSections.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -56,6 +56,8 @@ void fillHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMetTool, TOb
 
   // ===  Method B: FAST  ===
   //cout << ("h_" + nameHLT + stream + "_el0_pt").c_str() << endl;
+
+  //std::cout << "FILL\t" <<("h_" + nameHLT + stream + "_el0_pt").c_str() << std::endl;
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_el0_pt").c_str() );
   h0->Fill( lepTool.leadPt_el, totalWeight );
   
@@ -101,6 +103,8 @@ void fillHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMetTool, TOb
   h0 = (TH1D*)array->FindObject( ("h_" + nameHLT + stream + "_nPV").c_str() );
   h0->Fill( jetMetTool.nPV, totalWeight );
 
+  if ( nameHLT.find("Channel")!=string::npos ) return; //skip filling of trigger SFs for analysis plots
+
   // di-muon (and e+mu)
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_pt_vs_eta").c_str() );
   h2->Fill( lepTool.leadPt_mu, abs(lepTool.leadEta_mu), totalWeight );
@@ -134,7 +138,7 @@ void fillHistogramsByStream(leptonHandler lepTool, jetMetHandler jetMetTool, TOb
   h2 = (TH2D*)array->FindObject( ("h_" + nameHLT + stream + "_mu0_eta_vs_el0_eta").c_str() );
   h2->Fill( abs(lepTool.leadEta_mu), abs(lepTool.leadEta_el), totalWeight );
 
-
+  return;
 }
 
 void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string filename, bool splitStreams=false)
@@ -149,10 +153,34 @@ void fillEfficiencyHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, T
     if ( lepTool.passDLCuts_el && jetMetTool.passDLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "elStreamDL");
     if ( lepTool.passDLCuts_mu && jetMetTool.passDLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "muStreamDL");
     if ( lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, filename, "emuStreamDL");
-  }
-
-  
+  } 
 }
+
+void fillStackHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string nameHLT, string sample)
+{
+  //cout << "fillEfficiencyHistograms()" << endl;
+  fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, sample);
+  if ( jetMetTool.nJets == 2 && jetMetTool.nBTags == 1) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_2j1b").c_str() );
+  if ( jetMetTool.nJets == 2 && jetMetTool.nBTags == 2) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_2j2b").c_str() );
+  if ( jetMetTool.nJets == 3 && jetMetTool.nBTags == 1) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_3j1b").c_str() );
+  if ( jetMetTool.nJets == 3 && jetMetTool.nBTags == 2) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_3j2b").c_str() );
+  if ( jetMetTool.nJets == 3 && jetMetTool.nBTags == 3) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_3j3b").c_str() );
+  if ( jetMetTool.nJets >= 4 && jetMetTool.nBTags == 1) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_4j1b").c_str() );
+  if ( jetMetTool.nJets >= 4 && jetMetTool.nBTags == 2) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_4j2b").c_str() );
+  if ( jetMetTool.nJets >= 4 && jetMetTool.nBTags == 3) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_4j3b").c_str() );
+  if ( jetMetTool.nJets >= 4 && jetMetTool.nBTags >= 4) fillHistogramsByStream( lepTool, jetMetTool, array, nameHLT, sample, (sample + "_4j4b").c_str() );
+}
+
+void fillStackHistogramsByChannel(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string sample)
+{
+  // *** 1. Dilepton, ee
+  if ((lepTool.passSLtriggers_el || lepTool.passDLtriggers_el) && lepTool.passDLCuts_el && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, a_sample, "eeChannel", sample);
+  // *** 2. Dilepton, mumu
+  if ((lepTool.passSLtriggers_mu || lepTool.passDLtriggers_mu) && lepTool.passDLCuts_mu && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, a_sample, "mumuChannel", sample);
+  // *** 3. Dilepton, emu
+  if ((lepTool.passSLtriggers_el || lepTool.passSLtriggers_mu || lepTool.passDLtriggers_emu) && lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, a_sample, "emuChannel", sample);
+}
+
 
 void init2DCorrelationHistograms(TObjArray* array, string nameHLT)
 {
@@ -187,6 +215,8 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   // === pre 04-11-18 ===
   //const Int_t nbins_pt = 27; 
   //Double_t edges_pt[nbins_pt + 1] = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 300.0}; 
+
+  //std::cout << "INIT\t" << ("h_" + nameHLT + stream + "_el0_pt").c_str() << std::endl;
   TH1D* h_el0_pt = new TH1D( ("h_" + nameHLT + stream + "_el0_pt").c_str(),  ("h_" + nameHLT + stream + "_el0_pt").c_str(), nbins_pt, edges_pt );
   h_el0_pt->SetXTitle("Leading Electron p_{T} [GeV]");
   h_el0_pt->SetYTitle("Entries / Bin");
@@ -294,6 +324,24 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_el0_relIso->SetXTitle("Leading Electron Rel. Iso");
   h_el0_relIso->SetYTitle("Entries / Bin");
 
+  array->AddLast(h_el0_pt);
+  array->AddLast(h_el1_pt);
+  array->AddLast(h_el0_eta);
+  array->AddLast(h_el1_eta);
+  array->AddLast(h_mu0_pt);
+  array->AddLast(h_mu1_pt);
+  array->AddLast(h_mu0_eta);
+  array->AddLast(h_mu1_eta);
+  array->AddLast(h_mu0_relIso);
+  array->AddLast(h_el0_relIso);
+  array->AddLast(h_njets);
+  array->AddLast(h_nbtags);
+  array->AddLast(h_mll);
+  array->AddLast(h_met);
+  array->AddLast(h_nPV);
+
+  if ( nameHLT.find("Channel")!=string::npos ) return; //skip filling of trigger SFs for analysis plots
+
   // 2D di-electron (and e+mu) 
   TH2D* h_el0_pt_vs_eta = new TH2D( ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(),  ("h_" + nameHLT + stream + "_el0_pt_vs_eta").c_str(), nbins_pt_2D, edges_pt_2D, nbins_eta_2D, edges_eta_2D );
   h_el0_pt_vs_eta->SetXTitle("Leading Electron p_{T} [GeV]");
@@ -330,35 +378,20 @@ void createEfficiencyHistograms(TObjArray* array, string nameHLT, string stream=
   h_mu0_pt_vs_el0_pt->SetXTitle("Leading Muon p_{T} [GeV]");
   h_mu0_pt_vs_el0_pt->SetYTitle("Leading Electron p_{T} [GeV]");
 
-  array->AddLast(h_el0_pt);
-  array->AddLast(h_el1_pt);
-  array->AddLast(h_el0_eta);
-  array->AddLast(h_el1_eta);
-  array->AddLast(h_mu0_pt);
-  array->AddLast(h_mu1_pt);
-  array->AddLast(h_mu0_eta);
-  array->AddLast(h_mu1_eta);
-  array->AddLast(h_mu0_relIso);
-  array->AddLast(h_el0_relIso);
-  array->AddLast(h_njets);
-  array->AddLast(h_nbtags);
-  array->AddLast(h_mll);
-  array->AddLast(h_met);
-  array->AddLast(h_nPV);
-
   array->AddLast(h_el0_pt_vs_eta);
   array->AddLast(h_el1_pt_vs_eta);
   array->AddLast(h_el0_eta_vs_el1_eta);
   array->AddLast(h_el0_pt_vs_el1_pt);
-
+  
   array->AddLast(h_mu0_pt_vs_eta);
   array->AddLast(h_mu1_pt_vs_eta);
   array->AddLast(h_mu0_eta_vs_mu1_eta);
   array->AddLast(h_mu0_pt_vs_mu1_pt);
-
+  
   array->AddLast(h_mu0_pt_vs_el0_pt);
   array->AddLast(h_mu0_eta_vs_el0_eta);
 
+  return;
 }
 
 
@@ -381,6 +414,48 @@ void initializeHistograms(TObjArray* array, string nameHLT, bool splitStreams=fa
   init2DCorrelationHistograms(array, nameHLT);
   initEfficiencyHistograms(array, nameHLT, splitStreams);
 
+  return;
+}
+
+void initStackHistograms(TObjArray* array, string nameHLT, string sample)
+{
+  // always create general histograms
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample).c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_2j1b").c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_2j2b").c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_3j1b").c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_3j2b").c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_3j3b").c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_4j1b").c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_4j2b").c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_4j3b").c_str() );
+  createEfficiencyHistograms(array, nameHLT, ("_" + sample + "_4j4b").c_str() );
+  
+}
+void initializeStackHistograms(TObjArray* array, string sample)
+{
+  if (sample.find("ttbar")==string::npos) { // simple if not ttbar
+    initStackHistograms(array, "eeChannel", sample);
+    initStackHistograms(array, "emuChannel", sample);
+    initStackHistograms(array, "mumuChannel", sample);
+  }
+  else { // if ttbar, need separate histograms for tt+X flavors
+    initStackHistograms(array, "eeChannel",   "ttlf");
+    initStackHistograms(array, "emuChannel",  "ttlf");
+    initStackHistograms(array, "mumuChannel", "ttlf");
+    initStackHistograms(array, "eeChannel",   "ttcc");
+    initStackHistograms(array, "emuChannel",  "ttcc");
+    initStackHistograms(array, "mumuChannel", "ttcc");
+    initStackHistograms(array, "eeChannel",   "ttbb");
+    initStackHistograms(array, "emuChannel",  "ttbb");
+    initStackHistograms(array, "mumuChannel", "ttbb");
+    initStackHistograms(array, "eeChannel",   "ttb");
+    initStackHistograms(array, "emuChannel",  "ttb");
+    initStackHistograms(array, "mumuChannel", "ttb");
+    initStackHistograms(array, "eeChannel",   "tt2b");
+    initStackHistograms(array, "emuChannel",  "tt2b");
+    initStackHistograms(array, "mumuChannel", "tt2b");
+  }
   return;
 }
 
