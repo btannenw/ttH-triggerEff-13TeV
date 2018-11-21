@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--outputDir", help="output directory for processed histograms and roofiles")
 parser.add_argument("--inputTXTfile", help=".txt file containing list of input files for a given sample")
 parser.add_argument("--isMC", help="flag whether sample is Monte Carlo (true) or data (false)")
+parser.add_argument("--trigSF", help="flag whether run is for trigger SF study (true) or analysis plots (false)", action='store_false')
 args = parser.parse_args()
 
 if (len(vars(args)) != 3): # 3 --> three for options
@@ -56,7 +57,14 @@ else:
     else:
         print '-- Setting isMC = {0}'.format(args.isMC)
 
-# ** D. Exit if no grid proxy
+# ** D. Test trigSF flag and exit if not sensible
+if(args.trigSFMC is False):
+    print "#### Running in analysis plotting mode ####\n"
+else:
+    print "#### Running in triggerSF mode ####\n"
+
+
+# ** E. Exit if no grid proxy
 if ( not os.path.exists(os.path.expandvars("$X509_USER_PROXY")) ):
     print "#### No GRID PROXY detected. Please do voms-proxy-init -voms cms before submitting Condor jobs ####.\nEXITING"
     quit()
