@@ -174,11 +174,11 @@ void fillStackHistograms(leptonHandler lepTool, jetMetHandler jetMetTool, TObjAr
 void fillStackHistogramsByChannel(leptonHandler lepTool, jetMetHandler jetMetTool, TObjArray* array, string sample)
 {
   // *** 1. Dilepton, ee
-  if ((lepTool.passSLtriggers_el || lepTool.passDLtriggers_el) && lepTool.passDLCuts_el && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, a_sample, "eeChannel", sample);
+  if ((lepTool.passSLtriggers_el || lepTool.passDLtriggers_el) && lepTool.passDLCuts_el && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, array, "eeChannel", sample);
   // *** 2. Dilepton, mumu
-  if ((lepTool.passSLtriggers_mu || lepTool.passDLtriggers_mu) && lepTool.passDLCuts_mu && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, a_sample, "mumuChannel", sample);
+  if ((lepTool.passSLtriggers_mu || lepTool.passDLtriggers_mu) && lepTool.passDLCuts_mu && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, array, "mumuChannel", sample);
   // *** 3. Dilepton, emu
-  if ((lepTool.passSLtriggers_el || lepTool.passSLtriggers_mu || lepTool.passDLtriggers_emu) && lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, a_sample, "emuChannel", sample);
+  if ((lepTool.passSLtriggers_el || lepTool.passSLtriggers_mu || lepTool.passDLtriggers_emu) && lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillStackHistograms(lepTool, jetMetTool, array, "emuChannel", sample);
 }
 
 

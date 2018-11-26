@@ -1,4 +1,4 @@
-rm *postMCsync_v0*.txt
+rm *postMCsync_v0*.txt -v
 
 ls /eos/uscms/store/group/lpctthrun2/UVA/ICHEP2018/MC/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/crab_ICHEP18_postMCsync_v0_TTto2L2Nu/*/*/*.root > TTTo2L2Nu_postMCsync_v0.txt
 ls /eos/uscms/store/group/lpctthrun2/UVA/ICHEP2018/MC/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/crab_ICHEP18_postMCsync_v0_TTtoSemiLep/*/*/y*.root > TTToSemiLep_postMCsync_v0.txt

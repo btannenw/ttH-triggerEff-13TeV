@@ -142,7 +142,6 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
 
   initializeHistograms(a_HLT_SingleMu, "HLT_SingleMu");
   initializeHistograms(a_HLT_SingleEl, "HLT_SingleEl");
-  initializeHistograms(a_HLT_allMET, "HLT_allMET", true);
   initializeHistograms(a_SingleMu__X__allMET, "SingleMu__X__allMET");
   initializeHistograms(a_SingleEl__X__allMET, "SingleEl__X__allMET");
   */
@@ -157,6 +156,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   initializeHistograms(a_HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
   initializeHistograms(a_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ");
   */
+
+  initializeHistograms(a_HLT_allMET, "HLT_allMET", true);
 
   initializeHistograms(a_HLT_DoubleMu, "HLT_DoubleMu");
   initializeHistograms(a_HLT_DoubleEl, "HLT_DoubleEl");
@@ -241,12 +242,13 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
     // * c. Use multiple triggers defined in handlers
     if ( lepTool.passSLtriggers_el && lepTool.passSLCuts_el && jetMetTool.passSLJetMetCuts) fillEfficiencyHistograms(lepTool, jetMetTool, a_HLT_SingleEl, "HLT_SingleEl", p_passFile.c_str());
     if ( lepTool.passSLtriggers_mu && lepTool.passSLCuts_mu && jetMetTool.passSLJetMetCuts) fillEfficiencyHistograms(lepTool, jetMetTool, a_HLT_SingleMu, "HLT_SingleMu", p_passFile.c_str());
-    if ( jetMetTool.passAllMETTriggers) fillEfficiencyHistograms(lepTool, jetMetTool, a_HLT_allMET, "HLT_allMET", p_passFile.c_str(), true);
+
     if ( lepTool.passSLtriggers_mu && jetMetTool.passAllMETTriggers && lepTool.passSLCuts_mu && jetMetTool.passSLJetMetCuts) fillEfficiencyHistograms(lepTool, jetMetTool, a_SingleMu__X__allMET, "SingleMu__X__allMET", p_passFile.c_str());
     if ( lepTool.passSLtriggers_el && jetMetTool.passAllMETTriggers && lepTool.passSLCuts_el && jetMetTool.passSLJetMetCuts) fillEfficiencyHistograms(lepTool, jetMetTool, a_SingleEl__X__allMET, "SingleEl__X__allMET", p_passFile.c_str());
     */
 
     // * d. Dilepton stuff   
+    if ( jetMetTool.passAllMETTriggers) fillEfficiencyHistograms(lepTool, jetMetTool, a_HLT_allMET, "HLT_allMET", p_passFile.c_str(), true);
     // I. using only DL triggers
     // dilepton, ee
     if ((lepTool.passDLtriggers_el) && lepTool.passDLCuts_el && jetMetTool.passDLJetMetCuts) fillEfficiencyHistograms(lepTool, jetMetTool, a_HLT_DoubleEl, "HLT_DoubleEl", p_passFile.c_str());
@@ -320,6 +322,7 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   
   makeEfficiencyHistograms( c0, a_SingleMu__X__allMET, "SingleMu__X__allMET", a_HLT_allMET, "HLT_allMET_muStreamSL");
   makeEfficiencyHistograms( c0, a_SingleEl__X__allMET, "SingleEl__X__allMET", a_HLT_allMET, "HLT_allMET_elStreamSL");*/
+
   makeEfficiencyHistograms( c0, a_DoubleMu__X__allMET, "DoubleMu__X__allMET", a_HLT_allMET, "HLT_allMET_muStreamDL");
   makeEfficiencyHistograms( c0, a_DoubleEl__X__allMET, "DoubleEl__X__allMET", a_HLT_allMET, "HLT_allMET_elStreamDL");
   makeEfficiencyHistograms( c0, a_EMu__X__allMET, "EMu__X__allMET", a_HLT_allMET, "HLT_allMET_emuStreamDL");

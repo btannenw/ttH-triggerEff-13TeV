@@ -14,7 +14,7 @@ parser.add_argument("--isMC", help="flag whether sample is Monte Carlo (true) or
 parser.add_argument("--trigSF", help="flag whether run is for trigger SF study (true) or analysis plots (false)", action='store_false')
 args = parser.parse_args()
 
-if (len(vars(args)) != 3): # 3 --> three for options
+if (len(vars(args)) != 4): # 4 --> four: one for each options
     os.system('python submitSampleToCondor.py -h')
     quit()
 
@@ -58,7 +58,7 @@ else:
         print '-- Setting isMC = {0}'.format(args.isMC)
 
 # ** D. Test trigSF flag and exit if not sensible
-if(args.trigSFMC is False):
+if(args.trigSF is False):
     print "#### Running in analysis plotting mode ####\n"
 else:
     print "#### Running in triggerSF mode ####\n"
