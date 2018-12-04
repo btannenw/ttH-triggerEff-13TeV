@@ -37,7 +37,7 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_11-18-18/";
+  topDir = "plots_12-03-18/";
   if (p_topDir != "") topDir = p_topDir;
   isMC = true;
   if (p_isMC != "") isMC = p_isMC=="true" ? true : false;
@@ -46,14 +46,14 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   printPlots = true;
   dumpFile = true;
   verbose = false;
-
+  printCSV = true;
 
   // ** B. Set input file
   TChain* fChain = new TChain("ttHTreeMaker/worldTree");
   if(singleFile) { // single file
     if (p_passFile==""){ // basically a local test
       if (isMC){
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_11-06-18_v26_recipeTest.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/ttH-triggerEff-13TeV/updateRootFiles_12-2018/yggdrasil_treeMaker_ttH_sync_12-03-18_v27_addV2_newJEC_newJER.root");
       }
       else{ // data!
 	fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
@@ -127,6 +127,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   lumi_sqrtS = "#sqrt{s} = 13 TeV";       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
   int iPeriod = 0;    // 1=7TeV, 2=8TeV, 3=7+8TeV, 7=7+8+13TeV, 0=free form (uses lumi_sqrtS)  
 
+  // * iv. Set CSV outputs if doing sync
+  if (printCSV)  setSyncFiles(topDir, "updateCheck_v27_addV2_newJEC_newJER", "addV2_newJEC_newJER");
 
 
   // *** 1. Define histograms and canvasses
@@ -272,6 +274,9 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
     if ((lepTool.passSLtriggers_el || lepTool.passSLtriggers_mu || lepTool.passDLtriggers_emu) && lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts) fillEfficiencyHistograms(lepTool, jetMetTool, a_HLT_EMu_OR, "HLT_EMu_OR", p_passFile.c_str());
     if ((lepTool.passSLtriggers_el || lepTool.passSLtriggers_mu || lepTool.passDLtriggers_emu) && lepTool.passDLCuts_emu && jetMetTool.passDLJetMetCuts && jetMetTool.passAllMETTriggers) fillEfficiencyHistograms(lepTool, jetMetTool, a_EMu_OR__X__allMET, "EMu_OR__X__allMET", p_passFile.c_str());
 
+    // ** C. print CSV lines if appropriate
+    if(printCSV) printEventToCSV( eve, lepTool, jetMetTool, isDebug);
+      
   }
   
   // *** 4. Make plots
@@ -340,6 +345,8 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
     while ( TEfficiency *tEff = (TEfficiency*)next() )
       tEff->Write();
   }
+
+  if (printCSV) closeCSVFiles();
 
   return;
 }

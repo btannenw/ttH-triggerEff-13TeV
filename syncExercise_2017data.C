@@ -33,12 +33,16 @@
 
 void printProgBar( int percent );
 void plot2Dcorr( TCanvas*& c0, TH2D*& h0, string xtitle, string ytitle);
+double metCutDL = 40;
+double metCutSL = 20;
+double nJetsCutSL = 0;
+double nJetsCutDL = 2;
 
 void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFile="")
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_11-14-18/";
+  topDir = "plots_12-03-18/";
   if (p_topDir != "") topDir = p_topDir;
   isMC = true;
   if (p_isMC != "") isMC = p_isMC=="true" ? true : false;
@@ -50,11 +54,6 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
   printPlots = false;
   dumpFile = true;
   verbose = false;
-  nJetsCutSL = 0;
-  nJetsCutDL = 2;
-  metCutSL = 20;
-  metCutDL = 40;
-
 
   // ** B. Set input file
   TChain* fChain = new TChain("ttHTreeMaker/worldTree");
@@ -62,7 +61,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
     if (p_passFile==""){ // basically a local test
       if (isMC){
 	//fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-10-18_v10_full.root");
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_11-06-18_v26_recipeTest.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/updateRootFiles_12-2018/yggdrasil_treeMaker_ttH_sync_12-03-18_v27_freshCheckout.root");
       }
       else{ // data!
 	//fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");

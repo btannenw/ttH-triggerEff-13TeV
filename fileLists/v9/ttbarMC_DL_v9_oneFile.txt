@@ -1,0 +1,1 @@
+root://cmseos.fnal.gov//store/group/lpctthrun2/UVA/ICHEP2018/MC/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/crab_ICHEP18_trigEff_v9_TTbarDL_MC/180829_170537/0000/yggdrasil_treeMaker_slimmed_JEC-V8_10.root

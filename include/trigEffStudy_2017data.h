@@ -9,6 +9,7 @@
 #include "YggdrasilEventVars.h"
 #include "leptonHandler.h"
 #include "jetMetHandler.h"
+#include "synchronizationHandler.h"
 
 // top level vars
 std::string topDir, fileList, date;
