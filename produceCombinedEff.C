@@ -648,8 +648,13 @@ void dumpCorrelationNumbers(TFile* f0, string sample, string triggerSet)
 
     // ** Step 5: Output results
     corrTXT << std::fixed;
+    /*
     corrTXT << "Old Correlation between " << h_corr->GetXaxis()->GetTitle() << " and " << h_corr->GetYaxis()->GetTitle() << " = \t" << std::setprecision(3) << correlation << " +/- " << correlation_err << ",\t GetCorrelationFactor() = " << h_corr->GetCorrelationFactor() << endl;  
     corrTXT << "New Correlation between " << h_corr->GetXaxis()->GetTitle() << " and " << h_corr->GetYaxis()->GetTitle() << " = \t" << std::setprecision(3) << Xcorr << " +/- " << Xcorr_err << endl;
+    */
+ corrTXT << "Old Correlation between " << triggerSet << " and " << metTriggers.at(i) << " = \t" << std::setprecision(3) << correlation << " +/- " << correlation_err << ",\t GetCorrelationFactor() = " << h_corr->GetCorrelationFactor() << endl;  
+    corrTXT << "New Correlation between " << triggerSet << " and " << metTriggers.at(i) << " = \t" << std::setprecision(3) << Xcorr << " +/- " << Xcorr_err << endl;
+
     corrTXT << std::setprecision(5) << "Old calculations,\t eff_lep = " << eff_lep << " +/- " << eff_lep_err << ",\t eff_met = " << eff_met << " +/- " << eff_met_err << ",\t eff_lepXmet = " << eff_lepXmet << " +/- " << eff_lepXmet_err << endl;
     corrTXT << std::setprecision(5) << "New calculations,\t eff_lep = " << Xeff_lep << " +/- " << Xeff_lep_err << ",\t eff_met = " << Xeff_met << " +/- " << Xeff_met_err << ",\t eff_lepXmet = " << Xeff_lepXmet << " +/- " << Xeff_lepXmet_err << endl;
     
@@ -777,7 +782,7 @@ void produceCombinedEff()
   // now sourced from include/trigEffStudy_2017data.h
   date = "11-18-18";
   topDir = (date + "_files/").c_str();
-  string recoVersion = "r6";
+  string recoVersion = "r9";
   string diffType = "lumi"; // types: lumi, max
   bool dumpSFfile = true;
 

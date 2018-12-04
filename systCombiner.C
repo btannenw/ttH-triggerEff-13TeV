@@ -105,6 +105,85 @@ TH2D* get2DScaleFactorDifferenceHistogram(TCanvas* c0, TH2D* h_nom, TH2D* h_nJet
 }
 
 
+
+TH2D* get2DScaleFactorDifferenceHistogram_v2(TCanvas* c0, TH2D* h_nom, TH2D* h_nJetsHigh, TH2D* h_nJetsLow, TH2D* h_nPVHigh, TH2D* h_nPVLow, TH2D* h_METHigh, TH2D* h_METLow, string triggerSet, string variable)
+{
+  TH2D* h_fullDiff = (TH2D*)h_nom->Clone();
+  for(int x_b=1; x_b < h_nom->GetNbinsX()+1; x_b++) {
+    for(int y_b=1; y_b < h_nom->GetNbinsY()+1; y_b++) {
+      h_fullDiff->SetBinContent(x_b, y_b, 0);
+      h_fullDiff->SetBinError(x_b, y_b, 0);
+    }
+  }
+
+  TH2D* h_njh = (TH2D*)h_nom->Clone();
+  h_njh->Add(h_nJetsHigh, -1);
+  TH2D* h_njl = (TH2D*)h_nom->Clone();
+  h_njl->Add(h_nJetsLow, -1);
+  TH2D* h_npvh = (TH2D*)h_nom->Clone();
+  h_npvh->Add(h_nPVHigh, -1);
+  TH2D* h_npvl = (TH2D*)h_nom->Clone();
+  h_npvl->Add(h_nPVLow, -1);
+  TH2D* h_meth = (TH2D*)h_nom->Clone();
+  h_meth->Add(h_METHigh, -1);
+  TH2D* h_metl = (TH2D*)h_nom->Clone();
+  h_metl->Add(h_METLow, -1);
+
+  for(int x_b=1; x_b < h_nom->GetNbinsX()+1; x_b++) {
+    for(int y_b=1; y_b < h_nom->GetNbinsY()+1; y_b++) {
+      
+      if( abs(h_njh->GetBinContent(x_b, y_b)) > abs(h_fullDiff->GetBinContent(x_b, y_b))) {
+	h_fullDiff->SetBinContent(x_b, y_b, h_njh->GetBinContent(x_b, y_b));
+	h_fullDiff->SetBinError  (x_b, y_b, h_njh->GetBinError(x_b, y_b));
+      } // end if statement for nJets high
+
+      if( abs(h_njl->GetBinContent(x_b, y_b)) > abs(h_fullDiff->GetBinContent(x_b, y_b))) {
+	h_fullDiff->SetBinContent(x_b, y_b, h_njl->GetBinContent(x_b, y_b));
+	h_fullDiff->SetBinError  (x_b, y_b, h_njl->GetBinError(x_b, y_b));
+      } // end if statement for nJets high
+
+      if( abs(h_npvh->GetBinContent(x_b, y_b)) > abs(h_fullDiff->GetBinContent(x_b, y_b))) {
+	h_fullDiff->SetBinContent(x_b, y_b, h_npvh->GetBinContent(x_b, y_b));
+	h_fullDiff->SetBinError  (x_b, y_b, h_npvh->GetBinError(x_b, y_b));
+      } // end if statement for nJets high
+
+      if( abs(h_npvl->GetBinContent(x_b, y_b)) > abs(h_fullDiff->GetBinContent(x_b, y_b))) {
+	h_fullDiff->SetBinContent(x_b, y_b, h_npvl->GetBinContent(x_b, y_b));
+	h_fullDiff->SetBinError  (x_b, y_b, h_npvl->GetBinError(x_b, y_b));
+      } // end if statement for nJets high
+
+      if( abs(h_meth->GetBinContent(x_b, y_b)) > abs(h_fullDiff->GetBinContent(x_b, y_b))) {
+	h_fullDiff->SetBinContent(x_b, y_b, h_meth->GetBinContent(x_b, y_b));
+	h_fullDiff->SetBinError  (x_b, y_b, h_meth->GetBinError(x_b, y_b));
+      } // end if statement for MET high
+
+      if( abs(h_metl->GetBinContent(x_b, y_b)) > abs(h_fullDiff->GetBinContent(x_b, y_b))) {
+	h_fullDiff->SetBinContent(x_b, y_b, h_metl->GetBinContent(x_b, y_b));
+	h_fullDiff->SetBinError  (x_b, y_b, h_metl->GetBinError(x_b, y_b));
+      } // end if statement for MET low
+
+    } // y_b loop
+  } // x_b loop
+
+  
+  string maxName = h_fullDiff->GetName();
+  h_fullDiff->SetName(  (maxName + "_maxDiff_nJetsNPVMET").c_str() );
+  h_fullDiff->SetTitle( (maxName + "_maxDiff_nJetsNPVMET").c_str() );
+  
+  print2DScaleFactorHistogramSimple(c0, h_fullDiff, triggerSet, (variable + "_maxDiff_nJetsNPVMET").c_str() );
+  
+  delete h_npvl;
+  delete h_npvh;
+  delete h_metl;
+  delete h_meth;
+  delete h_njl;
+  delete h_njh;
+
+  return h_fullDiff;
+
+}
+
+
 TH2D* make2DSFwithSysts(TCanvas* c0, TObjArray* array, string triggerSet, string variable){
   string hist = ("h_" + triggerSet + "_" + variable).c_str();
   TH2D* h_nom       = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r2/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
@@ -113,21 +192,32 @@ TH2D* make2DSFwithSysts(TCanvas* c0, TObjArray* array, string triggerSet, string
   TH2D* h_lowNjets  = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r5/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
   TH2D* h_highNPV   = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r6/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
   TH2D* h_lowNPV    = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r7/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
+  TH2D* h_lowMET    = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r8/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
+  TH2D* h_highMET   = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r9/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
 
 
+  // *** A. Set correlation error
+  double totalCorrelationBinError = 0.0;
+  if (triggerSet.find("DoubleEl")!=string::npos)      totalCorrelationBinError = 0.001;
+  else if (triggerSet.find("DoubleMu")!=string::npos) totalCorrelationBinError = 0.005;
+  else if (triggerSet.find("EMu")!=string::npos)      totalCorrelationBinError = 0.001;
+    
+  // *** B. Get period dependence error (lumi-weighted)
   TH2D* nom_with_systs  = (TH2D*)h_nom->Clone();
   TH2D* syst_periodDep  = (TH2D*)h_periodDep->Clone();
-  TH2D* syst_highLowNjetsNPV = get2DScaleFactorDifferenceHistogram(c0, h_nom, h_highNjets, h_lowNjets, h_highNPV, h_lowNPV, triggerSet, variable);
-
   print2DScaleFactorHistogramSimple(c0, h_periodDep, triggerSet, (variable + "_lumiDiff_periodDep").c_str() );
 
-  // *** A. first get max diff of high/low nJets/nPV w.r.t. nominal
+  // *** C. first get max diff of high/low nJets/nPV w.r.t. nominal
+  //TH2D* syst_highLowNjetsNPV = get2DScaleFactorDifferenceHistogram(c0, h_nom, h_highNjets, h_lowNjets, h_highNPV, h_lowNPV, triggerSet, variable);
+  TH2D* syst_highLowNjetsNPVMET = get2DScaleFactorDifferenceHistogram_v2(c0, h_nom, h_highNjets, h_lowNjets, h_highNPV, h_lowNPV, h_highMET, h_lowMET, triggerSet, variable);
 
-  // *** B. then calculate full error envelope
+
+  // *** D. then calculate full error envelope
   double binError = 0;
   for(int x_b=1; x_b < nom_with_systs->GetNbinsX()+1; x_b++) {
     for(int y_b=1; y_b < nom_with_systs->GetNbinsY()+1; y_b++) {
-      binError = sqrt( nom_with_systs->GetBinError(x_b, y_b)*nom_with_systs->GetBinError(x_b, y_b) + syst_periodDep->GetBinContent(x_b, y_b)*syst_periodDep->GetBinContent(x_b, y_b) + syst_highLowNjetsNPV->GetBinContent(x_b, y_b)*syst_highLowNjetsNPV->GetBinContent(x_b, y_b) );
+      //binError = sqrt( nom_with_systs->GetBinError(x_b, y_b)*nom_with_systs->GetBinError(x_b, y_b) + syst_periodDep->GetBinContent(x_b, y_b)*syst_periodDep->GetBinContent(x_b, y_b) + syst_highLowNjetsNPV->GetBinContent(x_b, y_b)*syst_highLowNjetsNPV->GetBinContent(x_b, y_b) + totalCorrelationBinError*totalCorrelationBinError);
+      binError = sqrt( nom_with_systs->GetBinError(x_b, y_b)*nom_with_systs->GetBinError(x_b, y_b) + syst_periodDep->GetBinContent(x_b, y_b)*syst_periodDep->GetBinContent(x_b, y_b) + syst_highLowNjetsNPVMET->GetBinContent(x_b, y_b)*syst_highLowNjetsNPVMET->GetBinContent(x_b, y_b) + totalCorrelationBinError*totalCorrelationBinError);
       nom_with_systs->SetBinError(x_b, y_b, binError);
     }
   }
@@ -136,6 +226,9 @@ TH2D* make2DSFwithSysts(TCanvas* c0, TObjArray* array, string triggerSet, string
   nom_with_systs->SetTitle( (hname + "_withSysts").c_str() );
 
   print2DScaleFactorHistogramSimple(c0, nom_with_systs, triggerSet, (variable + "_withSysts").c_str() );
+  
+  delete syst_highLowNjetsNPVMET;
+  delete syst_periodDep;
 
   return nom_with_systs;
 }
@@ -197,8 +290,10 @@ void systCombiner()
   TFile *f_lowNjets  = new TFile("./11-18-18_files/r5/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
   TFile *f_highNPV   = new TFile("./11-18-18_files/r6/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
   TFile *f_lowNPV    = new TFile("./11-18-18_files/r7/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
+  TFile *f_highMET   = new TFile("./11-18-18_files/r9/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
+  TFile *f_lowMET    = new TFile("./11-18-18_files/r8/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
 
-  TFile *f_outSysts  = new TFile("./11-18-18_files/r2/tth_dileptonic_2DscaleFactors_withSysts_2017BCDEF_11-15-18.root", "RECREATE");
+  TFile *f_outSysts  = new TFile("./11-18-18_files/r2/tth_dileptonic_2DscaleFactors_withSysts_2017BCDEF_11-26-18.root", "RECREATE");
   
   TObjArray* f_infiles = new TObjArray();
   f_infiles->AddLast(f_nom);
@@ -207,6 +302,8 @@ void systCombiner()
   f_infiles->AddLast(f_lowNjets);
   f_infiles->AddLast(f_highNPV);
   f_infiles->AddLast(f_lowNPV);
+  f_infiles->AddLast(f_highMET);
+  f_infiles->AddLast(f_lowMET);
 
   // *** 2. Get Histograms
   TH2D* h_DoubleMu_mu0_pt_eta      = make2DSFwithSysts(c1, f_infiles, "DoubleMu_OR__X__allMET", "mu0_pt_vs_eta");
