@@ -26,9 +26,11 @@ string recoVersion;
 void print2DScaleFactorHistogramSimple(TCanvas* c0, TH2D* h2, string triggerSet, string variable)
 {
   gStyle->SetPaintTextFormat("1.3f");
+  gStyle->SetPaintTextFormat("1.2f");
 
   c0->cd();
-  h2->Draw("colz TEXT");
+  //h2->Draw("colz TEXT");
+  h2->Draw("colz e TEXT");
 
   TLatex ltx1;
   ltx1.SetTextAlign(9);

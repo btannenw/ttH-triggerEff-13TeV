@@ -17,6 +17,13 @@ git ls-tree -r master --name-only
 
 ======   to make repo push-able from FNAL  ======
 check 
+
 >$ git remote -v
+
 and if not using git username
+
 >$ git remote set-url origin https://btannenw@github.com/<REPO>
+
+or
+
+>$ git remote set-url origin git@github.com:btannenw/<REPO>.git
