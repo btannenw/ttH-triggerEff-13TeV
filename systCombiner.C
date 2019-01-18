@@ -188,14 +188,14 @@ TH2D* get2DScaleFactorDifferenceHistogram_v2(TCanvas* c0, TH2D* h_nom, TH2D* h_n
 
 TH2D* make2DSFwithSysts(TCanvas* c0, TObjArray* array, string triggerSet, string variable){
   string hist = ("h_" + triggerSet + "_" + variable).c_str();
-  TH2D* h_nom       = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r2/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
-  TH2D* h_periodDep = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r2/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18_lumiDiff_periodDep.root"))->Get( (hist + "_lumiDiff_periodDep").c_str() );
-  TH2D* h_highNjets = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r4/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
-  TH2D* h_lowNjets  = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r5/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
-  TH2D* h_highNPV   = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r6/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
-  TH2D* h_lowNPV    = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r7/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
-  TH2D* h_lowMET    = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r8/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
-  TH2D* h_highMET   = (TH2D*) ((TFile*)array->FindObject("./11-18-18_files/r9/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root"))->Get( hist.c_str() );
+  TH2D* h_nom       = (TH2D*) ((TFile*)array->FindObject("./01-17-19_files/r0/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root"))->Get( hist.c_str() );
+  TH2D* h_periodDep = (TH2D*) ((TFile*)array->FindObject("./01-17-19_files/r0/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19_lumiDiff_periodDep.root"))->Get( (hist + "_lumiDiff_periodDep").c_str() );
+  TH2D* h_highNjets = (TH2D*) ((TFile*)array->FindObject("./01-17-19_files/r1/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root"))->Get( hist.c_str() );
+  TH2D* h_lowNjets  = (TH2D*) ((TFile*)array->FindObject("./01-17-19_files/r2/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root"))->Get( hist.c_str() );
+  TH2D* h_lowNPV    = (TH2D*) ((TFile*)array->FindObject("./01-17-19_files/r3/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root"))->Get( hist.c_str() );
+  TH2D* h_highNPV   = (TH2D*) ((TFile*)array->FindObject("./01-17-19_files/r4/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root"))->Get( hist.c_str() );
+  TH2D* h_lowMET    = (TH2D*) ((TFile*)array->FindObject("./01-17-19_files/r5/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root"))->Get( hist.c_str() );
+  TH2D* h_highMET   = (TH2D*) ((TFile*)array->FindObject("./01-17-19_files/r6/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root"))->Get( hist.c_str() );
 
 
   // *** A. Set correlation error
@@ -268,9 +268,9 @@ TH2D* make2DSFwithSysts(TCanvas* c0, TFile* nom, TFile* periodDep, TFile* highME
 
 void systCombiner()
 {
-  date = "11-18-18";
+  date = "01-17-19";
   topDir = (date + "_files/").c_str();
-  recoVersion = "r2";
+  recoVersion = "r0";
   topDir = (topDir + "/" + recoVersion + "/").c_str(); 
 
 
@@ -286,16 +286,17 @@ void systCombiner()
   lumiTextSize = 0.3;
 
   // *** 1. Set input and output files
-  TFile *f_nom       = new TFile("./11-18-18_files/r2/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
-  TFile *f_periodDep = new TFile("./11-18-18_files/r2/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18_lumiDiff_periodDep.root", "READ");
-  TFile *f_highNjets = new TFile("./11-18-18_files/r4/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
-  TFile *f_lowNjets  = new TFile("./11-18-18_files/r5/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
-  TFile *f_highNPV   = new TFile("./11-18-18_files/r6/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
-  TFile *f_lowNPV    = new TFile("./11-18-18_files/r7/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
-  TFile *f_highMET   = new TFile("./11-18-18_files/r9/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
-  TFile *f_lowMET    = new TFile("./11-18-18_files/r8/tth_dileptonic_2DscaleFactors_2017BCDEF_11-18-18.root", "READ");
+  TFile *f_nom       = new TFile("./01-17-19_files/r0/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root", "READ");
+  TFile *f_periodDep = new TFile("./01-17-19_files/r0/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19_lumiDiff_periodDep.root", "READ");
+  TFile *f_highNjets = new TFile("./01-17-19_files/r1/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root", "READ");
+  TFile *f_lowNjets  = new TFile("./01-17-19_files/r2/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root", "READ");
+  TFile *f_lowNPV    = new TFile("./01-17-19_files/r3/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root", "READ");
+  TFile *f_highNPV   = new TFile("./01-17-19_files/r4/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root", "READ");
+  TFile *f_lowMET    = new TFile("./01-17-19_files/r5/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root", "READ");
+  TFile *f_highMET   = new TFile("./01-17-19_files/r6/tth_dileptonic_2DscaleFactors_2017BCDEF_01-17-19.root", "READ");
 
-  TFile *f_outSysts  = new TFile("./11-18-18_files/r2/tth_dileptonic_2DscaleFactors_withSysts_2017BCDEF_11-26-18.root", "RECREATE");
+
+  TFile *f_outSysts  = new TFile( ("./01-17-19_files/r0/tth_dileptonic_2DscaleFactors_withSysts_2017BCDEF_"+date+".root").c_str(), "RECREATE");
   
   TObjArray* f_infiles = new TObjArray();
   f_infiles->AddLast(f_nom);

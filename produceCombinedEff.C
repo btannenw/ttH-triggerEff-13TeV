@@ -780,9 +780,9 @@ void makePeriodComparison(TCanvas* c0, TFile* allPeriod, TFile* periodB, TFile* 
 void produceCombinedEff()
 {
   // now sourced from include/trigEffStudy_2017data.h
-  date = "11-18-18";
+  date = "01-17-19";
   topDir = (date + "_files/").c_str();
-  string recoVersion = "r9";
+  string recoVersion = "r6";
   string diffType = "lumi"; // types: lumi, max
   bool dumpSFfile = true;
 
@@ -790,13 +790,13 @@ void produceCombinedEff()
   // ** I. Read files
   //TFile* mc_ttbar     = new TFile( (topDir + "/outfile_ttbarMC_v7_" + recoVersion + "_08-29-18.root").c_str(), "READ");
   //TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_v7_" + recoVersion + ".root").c_str(), "READ");
-  TFile* mc_ttbar = new TFile( (topDir + "/outfile_ttbarMC_DL_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_B   = new TFile( (topDir + "/outfile_MET_RunB_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_C   = new TFile( (topDir + "/outfile_MET_RunC_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_D   = new TFile( (topDir + "/outfile_MET_RunD_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_E   = new TFile( (topDir + "/outfile_MET_RunE_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
-  TFile* data_F   = new TFile( (topDir + "/outfile_MET_RunF_postMCsync_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* mc_ttbar = new TFile( (topDir + "/outfile_ttbarMC_DL_triggerSF_newJECJER_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_MET = new TFile( (topDir + "/outfile_MET_RunBCDEF_triggerSF_newJECJER_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_B   = new TFile( (topDir + "/outfile_MET_RunB_triggerSF_newJECJER_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_C   = new TFile( (topDir + "/outfile_MET_RunC_triggerSF_newJECJER_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_D   = new TFile( (topDir + "/outfile_MET_RunD_triggerSF_newJECJER_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_E   = new TFile( (topDir + "/outfile_MET_RunE_triggerSF_newJECJER_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
+  TFile* data_F   = new TFile( (topDir + "/outfile_MET_RunF_triggerSF_newJECJER_v0_" + recoVersion + "_" + date + ".root").c_str(), "READ");
   TObjArray* a_dataFiles = new TObjArray();
   a_dataFiles->AddLast(data_MET);
   a_dataFiles->AddLast(data_B);
