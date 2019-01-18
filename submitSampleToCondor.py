@@ -58,7 +58,7 @@ else:
         print '-- Setting isMC = {0}'.format(args.isMC)
 
 # ** D. Test trigSF flag and exit if not sensible
-if(args.trigSF is False):
+if(args.trigSF is True):
     print "#### Running in analysis plotting mode ####\n"
 else:
     print "#### Running in triggerSF mode ####\n"
@@ -73,7 +73,7 @@ if ( not os.path.exists(os.path.expandvars("$X509_USER_PROXY")) ):
 # *** 1. Create .tar of directory and store in personal EOS
 print "##########     Tarring workdir     ##########"
 tarball_name = "{0}.tar.gz".format(args.outputDir)
-os.system("tar -cvzf {0} ./ --exclude 'plots*' --exclude '.git' --exclude 'test*' --exclude 'submitOneFile_' --exclude '*.tar.gz' --exclude 'ttbar*' --exclude '*-18' --exclude '*2018' --exclude 'MET*' --exclude 'single*' --exclude 'pass*' --exclude 'quick*' --exclude 'oldFilelists' --exclude 'jetHT*'".format(tarball_name))
+os.system("tar -cvzf {0} ./ --exclude 'plots*' --exclude '.git' --exclude 'test*' --exclude 'submitOneFile_' --exclude '*.tar.gz' --exclude 'ttbar*' --exclude '*-18' --exclude '*-19' --exclude '*2018' --exclude '*2019' --exclude 'MET*' --exclude 'single*' --exclude 'pass*' --exclude 'quick*' --exclude 'oldFilelists' --exclude 'jetHT*' --exclude 'fileLists*'".format(tarball_name))
 if ( not os.path.exists("/eos/uscms/store/user/benjtann/{0}/".format(args.outputDir)) ):
     os.system("mkdir /eos/uscms/store/user/benjtann/{0}/".format(args.outputDir))
 os.system("xrdcp {0} root://cmseos.fnal.gov//store/user/benjtann/{1}/".format(tarball_name, args.outputDir))
@@ -101,7 +101,7 @@ for line in txtfile:
     os.system("echo Error = {0}/condor_err/outfile_{1}.err >> {2}".format(args.outputDir, number, jdl_filename))
     os.system("echo Log = {0}/condor_logs/outfile_{1}.log >> {2}".format(args.outputDir, number, jdl_filename))
     os.system("echo x509userproxy = ${{X509_USER_PROXY}} >> {0}".format(jdl_filename))
-    os.system("echo Arguments = {0} {1} {2} {3} >> {4}".format(args.outputDir, args.isMC, infile, tarball_name, jdl_filename))
+    os.system("echo Arguments = {0} {1} {2} {3} {4} >> {5}".format(args.outputDir, args.isMC, infile, (not args.trigSF), tarball_name, jdl_filename))
     os.system("echo Queue 1 >> {0}".format(jdl_filename))   
 
     

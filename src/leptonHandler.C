@@ -390,7 +390,8 @@ void leptonHandler::checkHLTTriggers()
   passDLtriggers_mu = ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ || ev->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_ ? true : false;
   */
   // electron triggers
-  passSLtriggers_el = ev->passHLT_Ele35_WPTight_Gsf_v_ || ev->passHLT_Ele28_eta2p1_WPTight_Gsf_HT150_v_ ? true : false;
+  passSLtriggers_el = ev->passHLT_Ele35_WPTight_Gsf_v_ || (ev->passHLT_Ele28_eta2p1_WPTight_Gsf_HT150_v_ && !isTrigSF) ? true : false;
+  //passSLtriggers_el = ev->passHLT_Ele35_WPTight_Gsf_v_ || (ev->passHLT_Ele28_eta2p1_WPTight_Gsf_HT150_v_ ) ? true : false;
   passDLtriggers_el = ev->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v_ || ev->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ ? true : false;
  
   //if (passDLtriggers_el)
@@ -403,11 +404,12 @@ void leptonHandler::checkHLTTriggers()
 
 }
 
-void leptonHandler::Event(yggdrasilEventVars* eve, bool passDebug)
+void leptonHandler::Event(yggdrasilEventVars* eve, bool passDebug, bool passTrigSF)
 {
   // *** 1. Intialize some things
   ev = eve;
   isDebug = passDebug;
+  isTrigSF = passTrigSF;
   passSLCuts_el = false;
   passSLCuts_mu = false;
   passDLCuts_el = false;

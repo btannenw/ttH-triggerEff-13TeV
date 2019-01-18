@@ -22,7 +22,7 @@ void setSyncFiles(string topDir, string txtName, string csvTag = "")
   
   missingEventsTXT << "run,lumi,event,passDLtriggers_el,passDLtriggers_mu,passDLtriggers_emu,passDLCuts_el,passDLCuts_mu,passDLCuts_emu,n_jets,n_btags,el1_pt,el1_iso,el2_pt,el2_iso,mu1_pt,mu1_iso,mu2_pt,mu2_iso,jet1_pt,jet2_pt,jet1_csv,jet2_csv,MET_pt,mll,nElectrons,nMuons,MET_Type1xy,MET_Type1xy_sync" << endl;
   
-  string csvName = csvTag=="" ? (topDir + "/csv_ttH_ben.csv").c_str() : (topDir + "/csv_ttH_ben_" + csvTag + "_.csv").c_str();
+  string csvName = csvTag=="" ? (topDir + "/csv_ttH_ben.csv").c_str() : (topDir + "/csv_ttH_ben_" + csvTag + ".csv").c_str();
   csvFile.open( csvName.c_str() );
   csvFile << "run,lumi,event,is_e,is_mu,is_ee,is_emu,is_mumu,n_jets,n_btags,lep1_pt,lep1_eta,lep1_iso,lep1_pdgId,lep1_idSF,lep1_isoSF,lep1_seed,lep2_pt,lep2_eta,lep2_iso,lep2_pdgId,lep2_idSF,lep2_isoSF,lep2_seed,jet1_pt,jet1_eta,jet1_phi,jet1_jesSF,jet1_jesSF_up,jet1_jesSF_down,jet1_jesSF_PileUpDataMC_down,jet1_jesSF_RelativeFSR_up,jet1_jerSF_nominal,jet1_csv,jet1_PUJetId,jet1_PUJetDiscriminant,jet1_seed,jet2_pt,jet2_eta,jet2_phi,jet2_jesSF,jet2_jesSF_up,jet2_jesSF_down,jet2_jesSF_PileUpDataMC_down,jet2_jesSF_RelativeFSR_up,jet2_jerSF_nominal,jet2_csv,jet2_PUJetId,jet2_PUJetDiscriminant,jet2_seed,MET_pt,MET_phi,MET_pt_phiCor,MET_phi_phiCor,mll,ttHFCategory,ttHFGenFilterTag,n_interactions,puWeight,csvSF,csvSF_lf_up,csvSF_hf_down,csvSF_cErr1_down,pdf_up,pdf_down,me_up,me_down,triggerSF,top_pt_weight,bdt_output,dnn_ttH_output,dnn_ttbb_output" << endl;
 

@@ -29,7 +29,7 @@ class jetMetHandler{
 
       // === Functions === //
       void test();
-      void Event(yggdrasilEventVars* eve, leptonHandler lep, bool passDebug);
+      void Event(yggdrasilEventVars* eve, leptonHandler lep, bool passDebug, bool passTrigSF);
 
       // === Variables === //
       bool passLeadingJetCuts;
@@ -53,6 +53,7 @@ class jetMetHandler{
       bool passOneMETTrigger;
       bool passAllMETTriggers;
       bool isDebug;
+      bool isTrigSF;
 
       // === Variables === //
       TH1D* h_jet_cutflow;
@@ -79,6 +80,7 @@ class jetMetHandler{
       int subIndex;
       string metXTriggerBits;
       bool passDebug;
+      bool passTrigSF;
 
 }; // End of class prototype
 

@@ -33,27 +33,38 @@
 void printProgBar( int percent );
 void plot2Dcorr( TCanvas*& c0, TH2D*& h0, string xtitle, string ytitle);
 
-void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFile="")
+void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFile="", string p_trigSF="")
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_12-03-18/";
+  topDir = "plots_01-17-19/";
   if (p_topDir != "") topDir = p_topDir;
   isMC = true;
-  if (p_isMC != "") isMC = p_isMC=="true" ? true : false;
+  if (p_isMC != "") isMC = (p_isMC=="true" || p_isMC=="True") ? true : false;
+  if (p_trigSF != "") isTrigSF = (p_trigSF=="true" || p_trigSF=="True") ? true : false;
+
+  if(isTrigSF) cout<<"### p_trigSF=="<<p_trigSF<<" is TRUE!!!"<<endl;
+  else         cout<<"### p_trigSF=="<<p_trigSF<<" is FALSE!!!"<<endl; 
+
   singleFile = true;
   fileList="";
   printPlots = true;
   dumpFile = true;
   verbose = false;
   printCSV = true;
+  // clean up output if grid submission for trigSF
+  if(isTrigSF) {
+    printCSV=false;
+    //printPlots = false;
+  }
 
   // ** B. Set input file
   TChain* fChain = new TChain("ttHTreeMaker/worldTree");
   if(singleFile) { // single file
     if (p_passFile==""){ // basically a local test
       if (isMC){
-	fChain->AddFile("/uscms/home/benjtann/nobackup/ttH-triggerEff-13TeV/updateRootFiles_12-2018/yggdrasil_treeMaker_ttH_sync_12-03-18_v27_addV2_newJEC_newJER.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/ttH-triggerEff-13TeV/updateRootFiles_12-2018/yggdrasil_treeMaker_ttH_sync_01-08-19_v0_oldV1_oldJEC_newBTagSF.root");
+	//fChain->AddFile("/uscms/home/benjtann/nobackup/ttH-triggerEff-13TeV/updateRootFiles_12-2018/yggdrasil_treeMaker_ttH_sync_12-04-18_v27_allOld.root");
       }
       else{ // data!
 	fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
@@ -128,7 +139,7 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
   int iPeriod = 0;    // 1=7TeV, 2=8TeV, 3=7+8TeV, 7=7+8+13TeV, 0=free form (uses lumi_sqrtS)  
 
   // * iv. Set CSV outputs if doing sync
-  if (printCSV)  setSyncFiles(topDir, "updateCheck_v27_addV2_newJEC_newJER", "addV2_newJEC_newJER");
+  if (printCSV)  setSyncFiles(topDir, "updateCheck_v28_addV2_newBTagSF", "addV2_newBTagSF");
 
 
   // *** 1. Define histograms and canvasses
@@ -194,10 +205,19 @@ void trigEffStudy_2017data(string p_topDir="", string p_isMC="", string p_passFi
     if (i == t_entries-1) {printProgBar(100); cout << endl;}
     
     fChain->GetEntry(i);
+    
+    // ** 0. Set debug flags per event
+    if ( !isTrigSF && ( eve->evt_ == 3280938 || eve->evt_ == 6895311 || eve->evt_ == 7772097 || eve->evt_ == 6896348 || eve->evt_ == 7984706 || eve->evt_ == 7247651 || eve->evt_ == 6896671)
+	//eve->evt_ == 34837976 || eve->evt_ == 227079011 || eve->evt_ == 4511372
+	//eve->evt_ == 7893371 || eve->evt_ == 3690607 || eve->evt_ == 7773934 || eve->evt_ ==7646645 || eve->evt_ == 7774148 || eve->evt_ == 7772809 // n_jets and n_btags mismatch in MC [FIXED]
+	 ) 
+      isDebug = true;
+    else
+      isDebug = false;
 
     // ** I. Get objects 
-    lepTool.Event(eve, isDebug);
-    jetMetTool.Event(eve, lepTool, isDebug);
+    lepTool.Event(eve, isDebug, isTrigSF);
+    jetMetTool.Event(eve, lepTool, isDebug, isTrigSF);
 
 
     // ** II. 2D Correlations comparing SL triggers to MET triggers

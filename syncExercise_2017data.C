@@ -42,7 +42,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
 {
   // *** 0. Set style, set file, set output directory
   // ** A. Set output directory and global bools
-  topDir = "plots_12-03-18/";
+  topDir = "plots_01-08-18/";
   if (p_topDir != "") topDir = p_topDir;
   isMC = true;
   if (p_isMC != "") isMC = p_isMC=="true" ? true : false;
@@ -61,7 +61,7 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
     if (p_passFile==""){ // basically a local test
       if (isMC){
 	//fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/yggdrasil_treeMaker_ttH_sync_10-10-18_v10_full.root");
-	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/updateRootFiles_12-2018/yggdrasil_treeMaker_ttH_sync_12-03-18_v27_freshCheckout.root");
+	fChain->AddFile("/uscms/home/benjtann/nobackup/sync/ttH-triggerEff-13TeV/updateRootFiles_12-2018/yggdrasil_treeMaker_ttH_sync_12-06-18_v28_hardV1_addV2_newBTagSF.root");
       }
       else{ // data!
 	//fChain->AddFile("rootfiles/data/SingleElectron_Run2017B-17Nov2017-v1_treeMaker_5.root");
@@ -180,7 +180,8 @@ void syncExercise_2017data(string p_topDir="", string p_isMC="", string p_passFi
     fChain->GetEntry(i);
 
     // ** 0. Set debug flags per event
-    if ( eve->evt_ == 34837976 || eve->evt_ == 227079011 || eve->evt_ == 4511372
+    if ( eve->evt_ == 3280938
+	//eve->evt_ == 34837976 || eve->evt_ == 227079011 || eve->evt_ == 4511372
 	//eve->evt_ == 7893371 || eve->evt_ == 3690607 || eve->evt_ == 7773934 || eve->evt_ ==7646645 || eve->evt_ == 7774148 || eve->evt_ == 7772809 // n_jets and n_btags mismatch in MC [FIXED]
 	 ) 
 
