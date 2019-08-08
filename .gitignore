@@ -3,3 +3,5 @@ test_*
 *.root
 *.tar.gz
 *-18
+*-19
+*.jdl
